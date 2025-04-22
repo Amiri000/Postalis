@@ -1,7 +1,6 @@
 package sad.ami.postalis.mixin;
 
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -11,8 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import sad.ami.postalis.client.screen.base.IPostalisScreen;
-import sad.ami.postalis.items.base.ISwordItem;
+import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin {
@@ -26,8 +24,7 @@ public abstract class CameraMixin {
 
     @Inject(method = "setup", at = @At("RETURN"), cancellable = true)
     private void setupCustomCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        if (!(entity instanceof LocalPlayer player) || level == null || !(player.getMainHandItem().getItem() instanceof ISwordItem)
-                || !(Minecraft.getInstance().screen instanceof IPostalisScreen))
+        if (!(entity instanceof LocalPlayer player) || !ChecklistAbilityScreen.isChecklistScreen())
             return;
 
         Vec3 eyePos = player.getEyePosition(partialTick);

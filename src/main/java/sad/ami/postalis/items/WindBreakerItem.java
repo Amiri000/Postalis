@@ -6,9 +6,7 @@ import net.minecraft.world.level.Level;
 import sad.ami.postalis.items.base.BaseSwordItem;
 
 public class WindBreakerItem extends BaseSwordItem {
-
     @Override
     public void inHand(Player player, ItemStack stack, Level level) {
-        System.out.println("GGG");
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
@@ -26,6 +27,14 @@ public class OpenChecklistScreenHandler {
         mc.setScreen(new ChecklistAbilityScreen());
         oldCameraType = mc.options.getCameraType();
         mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+    }
+
+    @SubscribeEvent
+    public static void onRenderGUILayer(RenderGuiLayerEvent.Pre event) {
+        if (!ChecklistAbilityScreen.isChecklistScreen() || !event.getName().toString().equals("minecraft:hotbar"))
+            return;
+
+        event.setCanceled(true);
     }
 
     @SubscribeEvent

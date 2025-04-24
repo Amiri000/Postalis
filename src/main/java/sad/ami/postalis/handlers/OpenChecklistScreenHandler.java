@@ -1,5 +1,6 @@
 package sad.ami.postalis.handlers;
 
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
@@ -12,6 +13,8 @@ import sad.ami.postalis.items.base.ISwordItem;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class OpenChecklistScreenHandler {
+    public static CameraType oldCameraType;
+
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer localPlayer)
@@ -20,9 +23,9 @@ public class OpenChecklistScreenHandler {
 
         Minecraft mc = Minecraft.getInstance();
 
-//        if (mc.options.getCameraType() != CameraType.THIRD_PERSON_BACK)
-//            mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
         mc.setScreen(new ChecklistAbilityScreen());
+        oldCameraType = mc.options.getCameraType();
+        mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
     }
 
     @SubscribeEvent
@@ -32,5 +35,4 @@ public class OpenChecklistScreenHandler {
 
         event.setCanceled(true);
     }
-
 }

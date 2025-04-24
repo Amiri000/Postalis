@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import sad.ami.postalis.client.screen.base.IPostalisScreen;
+import sad.ami.postalis.handlers.OpenChecklistScreenHandler;
 import sad.ami.postalis.items.base.ISwordItem;
 
 public class ChecklistAbilityScreen extends Screen implements IPostalisScreen {
@@ -22,6 +23,13 @@ public class ChecklistAbilityScreen extends Screen implements IPostalisScreen {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+
+        Minecraft.getInstance().options.setCameraType(OpenChecklistScreenHandler.oldCameraType);
     }
 
     public static boolean isChecklistScreen() {

@@ -17,11 +17,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import sad.ami.postalis.Postalis;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 
 @Mixin(Gui.class)
 public class GuiMixin {
     @Final
+    @Shadow
     private Minecraft minecraft;
 
     @Shadow
@@ -63,8 +65,10 @@ public class GuiMixin {
                 alpha = 255;
 
             if (alpha > 0) {
-                var texture = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/item/diamond_sword.png"); // for example
-                var iconX = (guiGraphics.guiWidth() - hud.getFont().width(lastToolHighlight.getHighlightTip(mutablecomponent))) / 2 - 20;
+                var texture = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/gui/selected_item_textures.png");
+
+                int textWidth = hud.getFont().width(lastToolHighlight.getHighlightTip(mutablecomponent));
+                int centerX = guiGraphics.guiWidth() / 2;
 
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
@@ -75,7 +79,10 @@ public class GuiMixin {
                 guiGraphics.pose().translate(0, 0, 100);
 
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha / 255.0F);
-                guiGraphics.blit(texture, iconX, k, 0, 0, 16, 16, 16, 16);
+
+                guiGraphics.blit(texture, centerX - textWidth / 2 - 58, k - 2, 1, 0, 55, 10, 130, 10);
+                guiGraphics.blit(texture, centerX + textWidth / 2 + 3, k - 2, 75, 0, 55, 10, 130, 10);
+
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
                 guiGraphics.pose().popPose();

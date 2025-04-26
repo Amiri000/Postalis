@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
+import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.utils.PlayerUtils;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -41,6 +42,9 @@ public class OpenChecklistScreenHandler {
                 oldCameraType = mc.options.getCameraType();
 
                 mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+
+                if (PostalisConfig.isHintVisible())
+                    PostalisConfig.disabledVisibleHint();
             }
         }
     }

@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.handlers.HotkeyHandlers;
 import sad.ami.postalis.handlers.OpenChecklistScreenHandler;
 import sad.ami.postalis.utils.PlayerUtils;
@@ -44,7 +45,7 @@ public abstract class GuiMixin {
 
         var player = minecraft.player;
 
-        if (player == null || guiGraphics == null || !PlayerUtils.inMainHandPostalisSword(player))
+        if (player == null || guiGraphics == null || !PlayerUtils.inMainHandPostalisSword(player) || !PostalisConfig.isHintVisible())
             return;
 
         var font = minecraft.font;

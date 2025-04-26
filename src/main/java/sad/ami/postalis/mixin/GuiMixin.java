@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -52,6 +51,7 @@ public abstract class GuiMixin {
 
         var holdTime = OpenChecklistScreenHandler.holdTime;
         var player = minecraft.player;
+
         if (player == null || !(player.getMainHandItem().getItem() instanceof ISwordItem))
             return;
 
@@ -62,25 +62,19 @@ public abstract class GuiMixin {
             return;
 
         var hud = (Gui) (Object) this;
-        var mutablecomponent = Component.empty().append(lastToolHighlight.getHoverName()).withStyle(lastToolHighlight.getRarity().getStyleModifier());
+        var mutablecomponent = Component.empty().append(lastToolHighlight.getHoverName()).withStyle(lastToolHighlight.getRarity().getStyleModifier()).withStyle(ChatFormatting.ITALIC);
 
-        if (lastToolHighlight.has(DataComponents.CUSTOM_NAME))
-            mutablecomponent.withStyle(ChatFormatting.ITALIC);
+        var k = (guiGraphics.guiHeight() - Math.max(yShift, 59)) + (minecraft.gameMode.canHurtPlayer() ? 0 : 14);
+        var alpha = Math.min(255, (int) (toolHighlightTimer * 256.0F / 10.0F));
 
-        int k = guiGraphics.guiHeight() - Math.max(yShift, 59);
-
-        if (!minecraft.gameMode.canHurtPlayer())
-            k += 14;
-
-        int alpha = (int) (toolHighlightTimer * 256.0F / 10.0F);
-        if (alpha > 255) alpha = 255;
-        if (alpha <= 0) return;
+        if (alpha <= 0)
+            return;
 
         var texture = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/gui/selected_item_textures.png");
-        int textWidth = hud.getFont().width(lastToolHighlight.getHighlightTip(mutablecomponent));
-        int centerX = guiGraphics.guiWidth() / 2;
+        var textWidth = hud.getFont().width(lastToolHighlight.getHighlightTip(mutablecomponent));
+        var centerX = guiGraphics.guiWidth() / 2;
 
-        float progress = Math.min(1.0f, holdTime / 20f);
+        var progress = Math.min(1.0f, holdTime / 20f);
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

@@ -18,9 +18,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
+import sad.ami.postalis.handlers.HotkeyHandlers;
 import sad.ami.postalis.handlers.OpenChecklistScreenHandler;
-import sad.ami.postalis.items.base.ISwordItem;
+import sad.ami.postalis.utils.PlayerUtils;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
@@ -36,23 +36,37 @@ public abstract class GuiMixin {
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void onRenderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (!ChecklistAbilityScreen.isChecklistScreen())
+        if (PlayerUtils.isChecklistScreen()) {
+            ci.cancel();
+
+            return;
+        }
+
+        var player = minecraft.player;
+
+        if (player == null || guiGraphics == null || !PlayerUtils.inMainHandPostalisSword(player))
             return;
 
-        ci.cancel();
+        var font = minecraft.font;
+        var color = 0xFFFFFFFF;
+
+        var text = Component.translatable("warning.postalis.screen", HotkeyHandlers.CHECKLIST_MENU.getTranslatedKeyMessage().getString());
+
+        guiGraphics.drawString(font, text, (guiGraphics.guiWidth() / 2) - font.width(text) / 2, ((guiGraphics.guiHeight() / 2) - font.lineHeight / 2) + 13, color, true);
     }
 
     @Inject(method = "renderSelectedItemName(Lnet/minecraft/client/gui/GuiGraphics;I)V", at = @At("HEAD"), cancellable = true)
     private void postalis$renderIconNextToText(GuiGraphics guiGraphics, int yShift, CallbackInfo ci) {
-        if (ChecklistAbilityScreen.isChecklistScreen()) {
+        if (PlayerUtils.isChecklistScreen()) {
             ci.cancel();
+
             return;
         }
 
         var holdTime = OpenChecklistScreenHandler.holdTime;
         var player = minecraft.player;
 
-        if (player == null || !(player.getMainHandItem().getItem() instanceof ISwordItem))
+        if (player == null || !PlayerUtils.inMainHandPostalisSword(player))
             return;
 
         if (holdTime > 0)
@@ -86,7 +100,7 @@ public abstract class GuiMixin {
 
         guiGraphics.setColor(Mth.lerp(progress, 1.0f, 0.1f), Mth.lerp(progress, 1.0f, 0.2f), Mth.lerp(progress, 1.0f, 1.0f), alpha / 255.0F);
         guiGraphics.blit(texture, centerX - textWidth / 2 - 58, k - 2, 1, 0, 55, 10, 130, 10);
-        guiGraphics.blit(texture, centerX + textWidth / 2 + 3, k - 2, 75, 0, 55, 10, 130, 10);
+        guiGraphics.blit(texture, centerX + textWidth / 2 + 2, k - 2, 75, 0, 55, 10, 130, 10);
 
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         guiGraphics.pose().popPose();

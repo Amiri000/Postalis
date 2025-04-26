@@ -10,7 +10,7 @@ import sad.ami.postalis.Postalis;
 
 @EventBusSubscriber(modid = Postalis.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class HotkeyHandlers {
-    public static final KeyMapping CHECKLIST_MENU = new KeyMapping("key.postalis.checklist_menu", GLFW.GLFW_KEY_V, "Postalis");
+    public static final KeyMapping CHECKLIST_MENU = new KeyMapping("key.postalis.checklist_menu", GLFW.GLFW_KEY_Z, "Postalis");
 
     @SubscribeEvent
     public static void onKeybindingRegistry(RegisterKeyMappingsEvent event) {

@@ -1,5 +1,9 @@
 {
-  "creative.tab.postalis": "Postalis",
+  "creative.postalis.tab": "Postalis",
+  "warning.postalis.screen": "Удерживай клавишу [%1$s]",
+  "key.postalis.checklist_menu": "Открыть меню характеристик",
 
-  "item.postalis.wind_breaker": "Ветролом"
+  "item.postalis.wind_breaker": "Ветролом",
+
+  "block.postalis.heavens_forge": "Кузня небес"
 }

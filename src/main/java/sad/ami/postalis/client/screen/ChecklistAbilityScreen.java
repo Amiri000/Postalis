@@ -31,13 +31,4 @@ public class ChecklistAbilityScreen extends Screen implements IPostalisScreen {
 
         Minecraft.getInstance().options.setCameraType(OpenChecklistScreenHandler.oldCameraType);
     }
-
-    public static boolean isChecklistScreen() {
-        var mc = Minecraft.getInstance();
-
-        if (mc.player == null)
-            return false;
-
-        return mc.player.getMainHandItem().getItem() instanceof ISwordItem && mc.screen instanceof ChecklistAbilityScreen;
-    }
 }

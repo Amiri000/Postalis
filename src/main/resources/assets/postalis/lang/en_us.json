@@ -1,5 +1,9 @@
 {
-  "creative.tab.postalis": "Postalis",
+  "creative.postalis.tab": "Postalis",
+  "warning.postalis.screen": "Hold the key [%1$s]",
+  "key.postalis.checklist_menu": "Open characteristics menu",
 
-  "item.postalis.wind_breaker": "Wind Breaker"
+  "item.postalis.wind_breaker": "Wind Breaker",
+
+  "block.postalis.heavens_forge": "Heavens Forge"
 }

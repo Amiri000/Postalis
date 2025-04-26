@@ -1,15 +1,10 @@
 package sad.ami.postalis.handlers;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.items.base.ISwordItem;
 
 @EventBusSubscriber(modid = Postalis.MODID)

@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 
-public class BaseSwordItem extends SwordItem implements ISwordItem, PostalisItem {
+public class BaseSwordItem extends SwordItem implements ISwordItem, IPostalis {
     public BaseSwordItem() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE).stacksTo(1));
     }

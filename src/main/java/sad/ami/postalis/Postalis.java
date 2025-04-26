@@ -3,6 +3,7 @@ package sad.ami.postalis;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import sad.ami.postalis.init.BlockRegistry;
 import sad.ami.postalis.init.CreativeTabRegistry;
 import sad.ami.postalis.init.ItemRegistry;
 
@@ -12,6 +13,7 @@ public class Postalis {
 
     public Postalis(IEventBus modEventBus, ModContainer modContainer) {
         CreativeTabRegistry.CREATIVE_TAB.register(modEventBus);
-        ItemRegistry.ITEMS.register(modEventBus);
+        BlockRegistry.BLOCKS.register(modEventBus);
+        ItemRegistry.register(modEventBus);
     }
 }

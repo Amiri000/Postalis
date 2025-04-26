@@ -52,14 +52,13 @@ public abstract class GuiMixin {
 
         var holdTime = OpenChecklistScreenHandler.holdTime;
         var player = minecraft.player;
-
         if (player == null || !(player.getMainHandItem().getItem() instanceof ISwordItem))
             return;
 
         if (holdTime > 0)
             toolHighlightTimer = 20;
 
-        if (toolHighlightTimer <= 0 || lastToolHighlight.isEmpty() || minecraft.gameMode == null)
+        if (toolHighlightTimer <= 0 || lastToolHighlight.isEmpty() || minecraft.gameMode == null || !lastToolHighlight.is(player.getMainHandItem().getItem()))
             return;
 
         var hud = (Gui) (Object) this;

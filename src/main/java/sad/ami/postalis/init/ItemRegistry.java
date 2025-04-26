@@ -1,7 +1,9 @@
 package sad.ami.postalis.init;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import sad.ami.postalis.Postalis;
@@ -12,4 +14,11 @@ public class ItemRegistry {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Postalis.MODID);
 
     public static final DeferredHolder<Item, BaseSwordItem> WIND_BREAKER = ITEMS.register("wind_breaker", WindBreakerItem::new);
+
+    public static void register(IEventBus bus) {
+        for (var block : BlockRegistry.BLOCKS.getEntries())
+            ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
+
+        ITEMS.register(bus);
+    }
 }

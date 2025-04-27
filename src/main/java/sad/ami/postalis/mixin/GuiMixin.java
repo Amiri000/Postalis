@@ -49,11 +49,9 @@ public abstract class GuiMixin {
             return;
 
         var font = minecraft.font;
-        var color = 0xFFFFFFFF;
-
         var text = Component.translatable("warning.postalis.screen", HotkeyHandlers.CHECKLIST_MENU.getTranslatedKeyMessage().getString());
 
-        guiGraphics.drawString(font, text, (guiGraphics.guiWidth() / 2) - font.width(text) / 2, ((guiGraphics.guiHeight() / 2) - font.lineHeight / 2) + 13, color, true);
+        guiGraphics.drawString(font, text, (guiGraphics.guiWidth() / 2) - font.width(text) / 2, ((guiGraphics.guiHeight() / 2) - font.lineHeight / 2) + 13, 0xFFFFFFFF, true);
     }
 
     @Inject(method = "renderSelectedItemName(Lnet/minecraft/client/gui/GuiGraphics;I)V", at = @At("HEAD"), cancellable = true)
@@ -81,9 +79,6 @@ public abstract class GuiMixin {
 
         var k = (guiGraphics.guiHeight() - Math.max(yShift, 59)) + (minecraft.gameMode.canHurtPlayer() ? 0 : 14);
         var alpha = Math.min(255, (int) (toolHighlightTimer * 256.0F / 10.0F));
-
-        if (alpha <= 0)
-            return;
 
         var texture = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/gui/selected_item_textures.png");
         var textWidth = hud.getFont().width(lastToolHighlight.getHighlightTip(mutablecomponent));

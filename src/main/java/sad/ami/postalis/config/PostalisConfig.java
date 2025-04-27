@@ -11,7 +11,7 @@ public class PostalisConfig {
     public PostalisConfig(ModConfigSpec.Builder builder) {
         builder.push("General Settings");
 
-        visibleHint = builder.comment("Hint for holding the key when opening the attributes menu for the first time.")
+        visibleHint = builder.comment("Hint for holding the key when opening the characteristics menu for the first time.")
                 .define("visibleHint", true);
 
         builder.pop();
@@ -19,7 +19,6 @@ public class PostalisConfig {
 
     public static void disabledVisibleHint() {
         CONFIG.visibleHint.set(false);
-
         CLIENT_SPEC.save();
     }
 

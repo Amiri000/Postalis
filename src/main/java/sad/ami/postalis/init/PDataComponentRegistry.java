@@ -1,0 +1,15 @@
+package sad.ami.postalis.init;
+
+import com.mojang.serialization.Codec;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import sad.ami.postalis.Postalis;
+
+public class PDataComponentRegistry {
+    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Postalis.MODID);
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> STRING = DATA_COMPONENTS.register("string",
+            () -> DataComponentType.<String>builder().persistent(Codec.STRING).build());
+}

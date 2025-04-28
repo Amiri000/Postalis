@@ -17,6 +17,6 @@ public class BaseSwordItem extends SwordItem implements ISwordItem, IPostalis {
         if (!(entity instanceof Player player) || player.getMainHandItem() != stack && player.getOffhandItem() != stack)
             return;
 
-        inHand(player, stack, level);
+        inMainHand(player, stack, level);
     }
 }

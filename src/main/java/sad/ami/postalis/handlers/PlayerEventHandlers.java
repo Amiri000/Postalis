@@ -1,5 +1,6 @@
 package sad.ami.postalis.handlers;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
@@ -14,8 +15,8 @@ public class PlayerEventHandlers {
         var player = event.getEntity();
         var stack = player.getMainHandItem();
 
-        if (stack.getItem() instanceof ISwordItem postalisItem)
-            postalisItem.onAttacked(player, stack, player.getCommandSenderWorld());
+        if (stack.getItem() instanceof ISwordItem postalisItem && event.getTarget() instanceof LivingEntity target)
+            postalisItem.onAttacked(player, target, stack, player.getCommandSenderWorld());
     }
 
     @SubscribeEvent

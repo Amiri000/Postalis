@@ -5,10 +5,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import sad.ami.postalis.config.PostalisConfig;
-import sad.ami.postalis.init.BlockRegistry;
-import sad.ami.postalis.init.CreativeTabRegistry;
-import sad.ami.postalis.init.EntityRegistry;
-import sad.ami.postalis.init.ItemRegistry;
+import sad.ami.postalis.init.*;
 
 @Mod(Postalis.MODID)
 public class Postalis {
@@ -18,6 +15,7 @@ public class Postalis {
         CreativeTabRegistry.CREATIVE_TAB.register(modEventBus);
         BlockRegistry.BLOCKS.register(modEventBus);
         EntityRegistry.ENTITIES.register(modEventBus);
+        PDataComponentRegistry.DATA_COMPONENTS.register(modEventBus);
 
         ItemRegistry.register(modEventBus);
 

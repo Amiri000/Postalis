@@ -1,15 +1,25 @@
 package sad.ami.postalis.handlers;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.items.base.ISwordItem;
+import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.TickingUseItemPacket;
 
 @EventBusSubscriber(modid = Postalis.MODID)
 public class PlayerEventHandlers {
+    private static int holdTickCount = 0;
+    private static Item prevItem = Items.AIR;
+
     @SubscribeEvent
     public static void onPlayerAttacked(AttackEntityEvent event) {
         var player = event.getEntity();
@@ -26,5 +36,31 @@ public class PlayerEventHandlers {
 
         if (itemEntity.getItem().getItem() instanceof ISwordItem postalisItem)
             postalisItem.onToss(player, itemEntity, player.getCommandSenderWorld());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer localPlayer))
+            return;
+
+        var currentItem = localPlayer.getMainHandItem().getItem();
+
+        if (!(currentItem instanceof ISwordItem))
+            return;
+
+        if (currentItem != prevItem) {
+            holdTickCount = 0;
+            prevItem = currentItem;
+        }
+
+        if (!Minecraft.getInstance().options.keyUse.isDown()) {
+            if (holdTickCount <= 0 || localPlayer.tickCount % 2 == 0)
+                return;
+
+            holdTickCount--;
+        } else
+            holdTickCount++;
+
+        NetworkHandler.sendToServer(new TickingUseItemPacket(currentItem.getDefaultInstance(), holdTickCount));
     }
 }

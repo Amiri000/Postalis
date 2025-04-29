@@ -10,9 +10,13 @@ public interface ISwordItem {
     default void onAttacked(Player player, LivingEntity target, ItemStack stack, Level level) {
     }
 
-    default void onToss(Player player, ItemEntity itemEntity, Level level){
+    default void onToss(Player player, ItemEntity itemEntity, Level level) {
     }
 
-    default void inMainHand(Player player, ItemStack stack, Level level){
+    default void inMainHand(Player player, ItemStack stack, Level level) {
+    }
+
+    default void onHeldTickInMainHand(Player player, ItemStack stack, Level level, int tickCount) {
+
     }
 }

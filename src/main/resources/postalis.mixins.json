@@ -8,7 +8,9 @@
     "GuiMixin"
   ],
   "client": [
-    "CameraMixin"
+    "CameraMixin",
+    "item.ItemInHandRendererMixin",
+    "item.ItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

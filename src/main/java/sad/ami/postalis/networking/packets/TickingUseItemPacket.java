@@ -10,27 +10,33 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.items.base.ISwordItem;
+import sad.ami.postalis.items.base.IHoldTickItem;
 
 @Data
 @AllArgsConstructor
 public class TickingUseItemPacket implements CustomPacketPayload {
     private final ItemStack stack;
     private final int tickCount;
+    private final boolean isTicking;
 
     public static final Type<TickingUseItemPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "manage_link"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TickingUseItemPacket> STREAM_CODEC = StreamCodec.composite(
             ItemStack.STREAM_CODEC, TickingUseItemPacket::getStack,
             ByteBufCodecs.INT, TickingUseItemPacket::getTickCount,
+            ByteBufCodecs.BOOL, TickingUseItemPacket::isTicking,
             TickingUseItemPacket::new
     );
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             var player = ctx.player();
+            var item = (IHoldTickItem) stack.getItem();
+            var level = player.getCommandSenderWorld();
 
-            ((ISwordItem) stack.getItem()).onHeldTickInMainHand(player, stack, player.getCommandSenderWorld(), tickCount);
+            if (isTicking) {
+                item.onHeldTickInMainHand(player, stack, level, tickCount);
+            }
         });
     }
 

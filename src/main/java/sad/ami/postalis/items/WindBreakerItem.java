@@ -8,10 +8,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
+import sad.ami.postalis.items.base.IHoldTickItem;
 
 import java.util.UUID;
 
-public class WindBreakerItem extends BaseSwordItem {
+public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
     @Override
     public void inMainHand(Player player, ItemStack stack, Level level) {
         if (!level.isClientSide())
@@ -44,7 +45,7 @@ public class WindBreakerItem extends BaseSwordItem {
 
     @Override
     public void onHeldTickInMainHand(Player player, ItemStack stack, Level level, int tickCount) {
-
+        System.out.println(tickCount);
     }
 
     public void saveUUID(ItemStack stack, UUID uuid) {

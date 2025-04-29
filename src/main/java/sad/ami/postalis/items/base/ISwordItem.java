@@ -15,8 +15,4 @@ public interface ISwordItem {
 
     default void inMainHand(Player player, ItemStack stack, Level level) {
     }
-
-    default void onHeldTickInMainHand(Player player, ItemStack stack, Level level, int tickCount) {
-
-    }
 }

@@ -12,6 +12,7 @@ import sad.ami.postalis.Postalis;
 import sad.ami.postalis.items.base.IHoldTickItem;
 import sad.ami.postalis.items.base.ISwordItem;
 import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.LastTickUsePacket;
 import sad.ami.postalis.networking.packets.TickingUseItemPacket;
 
 @EventBusSubscriber(modid = Postalis.MODID)
@@ -41,19 +42,17 @@ public class PlayerEventHandlers {
         if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer localPlayer))
             return;
 
-        var currentStack = localPlayer.getMainHandItem();
-
         if (Minecraft.getInstance().options.keyUse.isDown() && localPlayer.getMainHandItem().getItem() instanceof IHoldTickItem) {
             holdClientTickCount++;
 
-            NetworkHandler.sendToServer(new TickingUseItemPacket(currentStack, holdClientTickCount, true));
+            NetworkHandler.sendToServer(new TickingUseItemPacket(localPlayer.getMainHandItem(), holdClientTickCount, true));
         } else {
             if (holdClientTickCount == 0)
                 return;
 
             holdClientTickCount = 0;
 
-            //NetworkHandler.sendToServer(new TickingUseItemPacket(currentStack, holdClientTickCount, false));
+            NetworkHandler.sendToServer(new LastTickUsePacket(holdClientTickCount));
         }
     }
 }

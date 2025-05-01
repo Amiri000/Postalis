@@ -16,14 +16,14 @@ import sad.ami.postalis.items.base.ISwordItem;
 public abstract class ItemInHandRendererMixin {
     @Inject(method = "renderArmWithItem", at = @At("HEAD"))
     private void onRenderArmWithItem(AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equippedProgress, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
-        if (stack.getItem() instanceof ISwordItem ) {
-            float progress = (float) player.tickCount / 20;
-
-            float forwardOffset = progress * 0.3f;
-            float upwardOffset = progress * 0.2f;
-
-           // poseStack.translate(0.0f, upwardOffset, forwardOffset);
-        }
+//        if (stack.getItem() instanceof ISwordItem ) {
+//            float progress = (float) player.tickCount / 20;
+//
+//            float forwardOffset = progress * 0.3f;
+//            float upwardOffset = progress * 0.2f;
+//
+//           // poseStack.translate(0.0f, upwardOffset, forwardOffset);
+//        }
 
     }
 

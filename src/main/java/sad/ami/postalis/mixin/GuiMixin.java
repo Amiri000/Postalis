@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.config.PostalisConfig;
-import sad.ami.postalis.handlers.HotkeyHandlers;
-import sad.ami.postalis.handlers.OpenChecklistScreenHandler;
+import sad.ami.postalis.init.HotkeyRegistry;
+import sad.ami.postalis.client.ClientPlayerHandlers;
 import sad.ami.postalis.utils.PlayerUtils;
 
 @Mixin(Gui.class)
@@ -49,7 +49,7 @@ public abstract class GuiMixin {
             return;
 
         var font = minecraft.font;
-        var text = Component.translatable("warning.postalis.screen", HotkeyHandlers.CHECKLIST_MENU.getTranslatedKeyMessage().getString());
+        var text = Component.translatable("warning.postalis.screen", HotkeyRegistry.CHECKLIST_MENU.getTranslatedKeyMessage().getString());
 
         guiGraphics.drawString(font, text, (guiGraphics.guiWidth() / 2) - font.width(text) / 2, ((guiGraphics.guiHeight() / 2) - font.lineHeight / 2) + 13, 0xFFFFFFFF, true);
     }
@@ -62,7 +62,7 @@ public abstract class GuiMixin {
             return;
         }
 
-        var holdTime = OpenChecklistScreenHandler.holdTime;
+        var holdTime = ClientPlayerHandlers.holdTime;
         var player = minecraft.player;
 
         if (player == null || !PlayerUtils.inMainHandPostalisSword(player))

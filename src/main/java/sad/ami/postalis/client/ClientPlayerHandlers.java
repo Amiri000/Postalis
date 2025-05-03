@@ -1,4 +1,4 @@
-package sad.ami.postalis.handlers;
+package sad.ami.postalis.client;
 
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -6,15 +6,18 @@ import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
+import sad.ami.postalis.handlers.PlayerEventHandlers;
+import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.utils.PlayerUtils;
 
 @EventBusSubscriber(Dist.CLIENT)
-public class OpenChecklistScreenHandler {
+public class ClientPlayerHandlers {
     public static CameraType oldCameraType;
     public static int holdTime = 0;
 
@@ -23,7 +26,7 @@ public class OpenChecklistScreenHandler {
         if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer localPlayer))
             return;
 
-        if (!HotkeyHandlers.CHECKLIST_MENU.isDown()) {
+        if (!HotkeyRegistry.CHECKLIST_MENU.isDown()) {
             if (holdTime <= 0 || localPlayer.tickCount % 2 == 0)
                 return;
 
@@ -46,6 +49,14 @@ public class OpenChecklistScreenHandler {
                 if (PostalisConfig.isHintVisible())
                     PostalisConfig.disabledVisibleHint();
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onKeyPress(InputEvent.InteractionKeyMappingTriggered event) {
+        if (PlayerEventHandlers.holdClientTickCount != 0) {
+            event.setSwingHand(false);
+            event.setCanceled(true);
         }
     }
 

@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import sad.ami.postalis.client.screen.base.IPostalisScreen;
-import sad.ami.postalis.handlers.OpenChecklistScreenHandler;
+import sad.ami.postalis.client.ClientPlayerHandlers;
 
 public class ChecklistAbilityScreen extends Screen implements IPostalisScreen {
     public ChecklistAbilityScreen() {
@@ -26,6 +26,6 @@ public class ChecklistAbilityScreen extends Screen implements IPostalisScreen {
     public void onClose() {
         super.onClose();
 
-        Minecraft.getInstance().options.setCameraType(OpenChecklistScreenHandler.oldCameraType);
+        Minecraft.getInstance().options.setCameraType(ClientPlayerHandlers.oldCameraType);
     }
 }

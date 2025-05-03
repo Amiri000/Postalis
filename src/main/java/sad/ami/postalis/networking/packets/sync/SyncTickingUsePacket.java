@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.PlayerItemInteraction;
-import sad.ami.postalis.items.base.IHoldTickItem;
+import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
 
 public record SyncTickingUsePacket(ItemStack stack, int tickCount, boolean isTicking) implements CustomPacketPayload {
     public static final Type<SyncTickingUsePacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "ticking_use"));

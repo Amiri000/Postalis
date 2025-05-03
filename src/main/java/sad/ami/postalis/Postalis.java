@@ -13,7 +13,9 @@ import net.neoforged.fml.config.ModConfig;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sad.ami.postalis.api.PlayerItemInteraction;
 import sad.ami.postalis.config.PostalisConfig;
+import sad.ami.postalis.handlers.PlayerEventHandlers;
 import sad.ami.postalis.init.*;
+import sad.ami.postalis.utils.PlayerUtils;
 
 @Mod(Postalis.MODID)
 public class Postalis {
@@ -33,12 +35,12 @@ public class Postalis {
     public static void fgfg(ItemStack stack, ItemDisplayContext context, boolean leftHanded, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, BakedModel model, CallbackInfo ci) {
         var mc = Minecraft.getInstance();
 
-        if (mc.player == null || mc.player.getMainHandItem() != stack && mc.player.getOffhandItem() != stack || context == ItemDisplayContext.GUI
+        if (mc.player == null || stack.getItem() != ItemRegistry.WIND_BREAKER.get() || context == ItemDisplayContext.GUI || !PlayerUtils.isSameUUID(stack, mc.player.getUUID())
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
-        float time = PlayerItemInteraction.serverTickCount + mc.getTimer().getGameTimeDeltaPartialTick(false);
-        float amplitude = Math.min(((float) PlayerItemInteraction.serverTickCount / 20) * 0.04F, 0.5f);
+        float time = PlayerEventHandlers.holdClientTickCount + mc.getTimer().getGameTimeDeltaPartialTick(false);
+        float amplitude = Math.min(((float) PlayerEventHandlers.holdClientTickCount / 20) * 0.04F, 0.5f);
         float frequency = 0.25f;
 
         poseStack.translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);

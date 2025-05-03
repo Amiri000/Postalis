@@ -4,11 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import sad.ami.postalis.client.screen.base.IPostalisScreen;
 import sad.ami.postalis.handlers.OpenChecklistScreenHandler;
-import sad.ami.postalis.items.base.ISwordItem;
 
 public class ChecklistAbilityScreen extends Screen implements IPostalisScreen {
     public ChecklistAbilityScreen() {

@@ -1,4 +1,4 @@
-package sad.ami.postalis.items.base;
+package sad.ami.postalis.items.base.interfaces;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -9,7 +9,7 @@ public interface IHoldTickItem {
 
     }
 
-    default void onStoppedUssd(Player player, ItemStack stack, Level level){
+    default void onStoppedUssd(Player player, ItemStack stack, Level level) {
 
     }
 }

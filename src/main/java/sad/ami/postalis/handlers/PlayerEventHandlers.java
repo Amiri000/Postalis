@@ -9,15 +9,15 @@ import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.items.base.IHoldTickItem;
-import sad.ami.postalis.items.base.ISwordItem;
+import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
+import sad.ami.postalis.items.base.interfaces.ISwordItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.LastTickUsePacket;
-import sad.ami.postalis.networking.packets.TickingUseItemPacket;
+import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 
 @EventBusSubscriber(modid = Postalis.MODID)
 public class PlayerEventHandlers {
-    private static int holdClientTickCount = 0;
+    public static int holdClientTickCount = 0;
 
     @SubscribeEvent
     public static void onPlayerAttacked(AttackEntityEvent event) {
@@ -45,7 +45,7 @@ public class PlayerEventHandlers {
         if (Minecraft.getInstance().options.keyUse.isDown() && localPlayer.getMainHandItem().getItem() instanceof IHoldTickItem) {
             holdClientTickCount++;
 
-            NetworkHandler.sendToServer(new TickingUseItemPacket(localPlayer.getMainHandItem(), holdClientTickCount, true));
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(localPlayer.getMainHandItem(), holdClientTickCount, true));
         } else {
             if (holdClientTickCount == 0)
                 return;

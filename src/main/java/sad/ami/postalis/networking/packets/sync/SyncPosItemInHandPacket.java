@@ -1,5 +1,6 @@
 package sad.ami.postalis.networking.packets.sync;
 
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -17,7 +18,7 @@ public record SyncPosItemInHandPacket(Vec3 pos, UUID playerUUID, ItemStack stack
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncPosItemInHandPacket> STREAM_CODEC = StreamCodec.composite(
             StreamCodecs.VEC3_STREAM_CODEC, SyncPosItemInHandPacket::pos,
-            StreamCodecs.UUID_STREAM_CODEC, SyncPosItemInHandPacket::playerUUID,
+            UUIDUtil.STREAM_CODEC, SyncPosItemInHandPacket::playerUUID,
             ItemStack.STREAM_CODEC, SyncPosItemInHandPacket::stack,
             SyncPosItemInHandPacket::new
     );

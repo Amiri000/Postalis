@@ -1,4 +1,4 @@
-package sad.ami.postalis.items.base;
+package sad.ami.postalis.items.base.interfaces;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -14,5 +14,8 @@ public interface ISwordItem {
     }
 
     default void inMainHand(Player player, ItemStack stack, Level level) {
+
     }
+
+
 }

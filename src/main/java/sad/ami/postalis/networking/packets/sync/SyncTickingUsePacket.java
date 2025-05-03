@@ -1,7 +1,5 @@
-package sad.ami.postalis.networking.packets;
+package sad.ami.postalis.networking.packets.sync;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,20 +11,14 @@ import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.PlayerItemInteraction;
 import sad.ami.postalis.items.base.IHoldTickItem;
 
-@Data
-@AllArgsConstructor
-public class TickingUseItemPacket implements CustomPacketPayload {
-    private final ItemStack stack;
-    private final int tickCount;
-    private final boolean isTicking;
+public record SyncTickingUsePacket(ItemStack stack, int tickCount, boolean isTicking) implements CustomPacketPayload {
+    public static final Type<SyncTickingUsePacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "ticking_use"));
 
-    public static final Type<TickingUseItemPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "ticking_use"));
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, TickingUseItemPacket> STREAM_CODEC = StreamCodec.composite(
-            ItemStack.STREAM_CODEC, TickingUseItemPacket::getStack,
-            ByteBufCodecs.INT, TickingUseItemPacket::getTickCount,
-            ByteBufCodecs.BOOL, TickingUseItemPacket::isTicking,
-            TickingUseItemPacket::new
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncTickingUsePacket> STREAM_CODEC = StreamCodec.composite(
+            ItemStack.STREAM_CODEC, SyncTickingUsePacket::stack,
+            ByteBufCodecs.INT, SyncTickingUsePacket::tickCount,
+            ByteBufCodecs.BOOL, SyncTickingUsePacket::isTicking,
+            SyncTickingUsePacket::new
     );
 
     public void handle(IPayloadContext ctx) {

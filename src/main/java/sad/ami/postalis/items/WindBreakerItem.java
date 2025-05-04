@@ -3,15 +3,13 @@ package sad.ami.postalis.items;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import sad.ami.postalis.api.PlayerItemInteraction;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
 
 public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
     @Override
     public void inMainHand(Player player, ItemStack stack, Level level) {
-        if (!level.isClientSide())
-            return;
-
         //        var minecraft = Minecraft.getInstance();
 //
 //        if (!minecraft.options.keyUse.isDown()
@@ -38,7 +36,7 @@ public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
     }
 
     @Override
-    public void onHeldTickInMainHand(Player player, ItemStack stack, Level level, int tickCount) {
+    public void onHeldTickInMainHand(Player player, Level level, int tickCount) {
 
     }
 }

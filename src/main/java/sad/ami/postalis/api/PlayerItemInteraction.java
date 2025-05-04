@@ -5,7 +5,7 @@ import lombok.Setter;
 import net.minecraft.world.phys.Vec3;
 
 public class PlayerItemInteraction {
-    public static int serverTickCount = 0;
+    public static int useTickCount = 0;
 
     @Getter
     @Setter

@@ -39,8 +39,8 @@ public class Postalis {
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
-        float time = PlayerEventHandlers.holdClientTickCount + mc.getTimer().getGameTimeDeltaPartialTick(false);
-        float amplitude = Math.min(((float) PlayerEventHandlers.holdClientTickCount / 20) * 0.04F, 0.5f);
+        float time = PlayerItemInteraction.useTickCount + mc.getTimer().getGameTimeDeltaPartialTick(false);
+        float amplitude = Math.min(((float) PlayerItemInteraction.useTickCount / 20) * 0.04F, 0.5f);
         float frequency = 0.25f;
 
         poseStack.translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);

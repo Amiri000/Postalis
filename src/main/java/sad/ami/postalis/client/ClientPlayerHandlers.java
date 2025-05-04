@@ -1,14 +1,10 @@
 package sad.ami.postalis.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -20,6 +16,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import sad.ami.postalis.api.PlayerItemInteraction;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.handlers.PlayerEventHandlers;
@@ -62,7 +59,6 @@ public class ClientPlayerHandlers {
         }
     }
 
-
     @SubscribeEvent
     public static void onRenderWorld(RenderLevelStageEvent event) {
         if (mc.level == null || mc.player == null || event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
@@ -70,24 +66,39 @@ public class ClientPlayerHandlers {
 
         var poseStack = event.getPoseStack();
         var itemRenderer = mc.getItemRenderer();
+        var camera = event.getCamera();
+        var camPos = camera.getPosition();
+        var partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        var tickCount = PlayerItemInteraction.useTickCount;
 
-        poseStack.pushPose();
+        var buffer = mc.renderBuffers().bufferSource();
 
-        var cameraPos = event.getCamera().getPosition();
+        for (var player : mc.level.players()) {
+            if (player.isInvisible() || !PlayerUtils.inMainHandPostalisSword(player))
+                continue;
 
-        poseStack.translate(0 - cameraPos.x, 100 - cameraPos.y, 0 - cameraPos.z);
-        poseStack.mulPose(Axis.YP.rotationDegrees((System.currentTimeMillis() % 3600) / 10f));
+            double x = Mth.lerp(partialTick, player.xOld, player.getX());
+            double y = Mth.lerp(partialTick, player.yOld, player.getY()) + player.getEyeHeight() + 0.6;
+            double z = Mth.lerp(partialTick, player.zOld, player.getZ());
 
-        var stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
+            float progress = tickCount == 0 ? 0f : Mth.clamp((tickCount + partialTick) / 20f, 0f, 1f);
+            Vec3 lookVec = player.getLookAngle().normalize().scale(progress * 2.0);
 
-        itemRenderer.render(stack, ItemDisplayContext.FIXED, false, poseStack, mc.renderBuffers().bufferSource(), 15728880, OverlayTexture.NO_OVERLAY, itemRenderer.getModel(stack, mc.level, mc.player, 0));
+            poseStack.pushPose();
+            poseStack.translate(x + lookVec.x - camPos.x, y + lookVec.y - camPos.y, z + lookVec.z - camPos.z);
+            poseStack.scale(0.5f, 0.5f, 0.5f);
 
-        poseStack.popPose();
+            ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
+
+            itemRenderer.render(stack, ItemDisplayContext.FIXED, player == mc.player, poseStack, buffer, 15728880, OverlayTexture.NO_OVERLAY, itemRenderer.getModel(stack, mc.level, player, 0));
+
+            poseStack.popPose();
+        }
     }
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.InteractionKeyMappingTriggered event) {
-        if (PlayerEventHandlers.holdClientTickCount != 0) {
+        if (PlayerItemInteraction.useTickCount != 0) {
             event.setSwingHand(false);
             event.setCanceled(true);
         }

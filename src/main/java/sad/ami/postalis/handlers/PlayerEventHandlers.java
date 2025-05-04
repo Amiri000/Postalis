@@ -9,16 +9,15 @@ import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.api.PlayerItemInteraction;
 import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
 import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.LastTickUsePacket;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
+import sad.ami.postalis.utils.PlayerUtils;
 
 @EventBusSubscriber(modid = Postalis.MODID)
 public class PlayerEventHandlers {
-    public static int holdClientTickCount = 0;
-
     @SubscribeEvent
     public static void onPlayerAttacked(AttackEntityEvent event) {
         var player = event.getEntity();
@@ -39,20 +38,23 @@ public class PlayerEventHandlers {
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer localPlayer))
+        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer player))
             return;
 
-        if (Minecraft.getInstance().options.keyUse.isDown() && localPlayer.getMainHandItem().getItem() instanceof IHoldTickItem) {
-            holdClientTickCount++;
+        if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
+            PlayerItemInteraction.useTickCount++;
 
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(localPlayer.getMainHandItem(), holdClientTickCount, true));
+            ((IHoldTickItem) player.getMainHandItem().getItem()).onHeldTickInMainHand(player, player.getCommandSenderWorld(), PlayerItemInteraction.useTickCount);
+
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, true));
         } else {
-            if (holdClientTickCount == 0)
+            if (PlayerItemInteraction.useTickCount == 0)
                 return;
 
-            holdClientTickCount = 0;
+            PlayerItemInteraction.useTickCount = 0;
 
-            NetworkHandler.sendToServer(new LastTickUsePacket(holdClientTickCount));
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, false));
         }
+
     }
 }

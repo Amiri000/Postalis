@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.networking.packets.LastTickUsePacket;
 import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 
@@ -19,7 +18,6 @@ public class NetworkHandler {
         final PayloadRegistrar registrar = event.registrar(Postalis.MODID).versioned("1.0").optional();
 
         registrar.playToServer(SyncTickingUsePacket.TYPE, SyncTickingUsePacket.STREAM_CODEC, SyncTickingUsePacket::handle);
-        registrar.playToServer(LastTickUsePacket.TYPE, LastTickUsePacket.STREAM_CODEC, LastTickUsePacket::handle);
         registrar.playToServer(SyncPosItemInHandPacket.TYPE, SyncPosItemInHandPacket.STREAM_CODEC, SyncPosItemInHandPacket::handle);
     }
 

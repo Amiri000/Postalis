@@ -1,13 +1,16 @@
 package sad.ami.postalis.networking;
 
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.networking.packets.CastAnimationPacket;
 import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 
@@ -19,6 +22,8 @@ public class NetworkHandler {
 
         registrar.playToServer(SyncTickingUsePacket.TYPE, SyncTickingUsePacket.STREAM_CODEC, SyncTickingUsePacket::handle);
         registrar.playToServer(SyncPosItemInHandPacket.TYPE, SyncPosItemInHandPacket.STREAM_CODEC, SyncPosItemInHandPacket::handle);
+
+        registrar.playToClient(CastAnimationPacket.TYPE, CastAnimationPacket.STREAM_CODEC, CastAnimationPacket::handle);
     }
 
     public static <T extends CustomPacketPayload> void sendToServer(T message) {
@@ -27,5 +32,11 @@ public class NetworkHandler {
 
     public static <T extends CustomPacketPayload> void sendToClient(T message, ServerPlayer player) {
         PacketDistributor.sendToPlayer(player, message);
+    }
+
+    public static void sendToTracking(Player caster, boolean start) {
+        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
+            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
+                sendToClient(new CastAnimationPacket(caster.getId(), start), player);
     }
 }

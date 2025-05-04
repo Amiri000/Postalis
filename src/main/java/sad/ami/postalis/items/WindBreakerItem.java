@@ -3,9 +3,10 @@ package sad.ami.postalis.items;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import sad.ami.postalis.api.PlayerItemInteraction;
+import sad.ami.postalis.api.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
+import sad.ami.postalis.networking.NetworkHandler;
 
 public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
     @Override
@@ -37,7 +38,7 @@ public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
 
     @Override
     public void onHeldTickInMainHand(Player player, Level level, int tickCount) {
-
+        NetworkHandler.sendToTracking(player, true);
     }
 }
 

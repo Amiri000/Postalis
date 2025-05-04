@@ -2,9 +2,11 @@ package sad.ami.postalis.mixin.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -19,23 +21,22 @@ import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
 
-@Mixin(ItemRenderer.class)
+@Mixin(ItemInHandRenderer.class)
 public class ItemRendererMixin {
-    @Inject(method = "render", at = @At("HEAD"))
-    private void onRenderItem(ItemStack stack, ItemDisplayContext context, boolean leftHanded, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, BakedModel model, CallbackInfo ci) {
-        Postalis.fgfg(stack, context, leftHanded, poseStack, buffer, light, overlay, model, ci);
+    @Inject(method = "renderItem", at = @At("HEAD"))
+    private void onRenderItem(LivingEntity entity, ItemStack stack, ItemDisplayContext context, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed, CallbackInfo ci) {
+        Postalis.fgfg(stack, context, leftHand, poseStack, buffer, ci);
     }
 
-    @Inject(method = "render", at = @At("RETURN"))
-    private void onRenderItemPost(ItemStack stack, ItemDisplayContext context, boolean leftHanded, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, BakedModel model, CallbackInfo ci) {
+    @Inject(method = "renderItem", at = @At("RETURN"))
+    private void onRenderItemPost(LivingEntity entity, ItemStack stack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed, CallbackInfo ci) {
         if (!(stack.getItem() instanceof BaseSwordItem baseSword))
             return;
 
         var mc = Minecraft.getInstance();
         var player = mc.player;
 
-        if (mc.isPaused() || player == null || player.tickCount % 5 != 0 || context != ItemDisplayContext.FIRST_PERSON_RIGHT_HAND && context != ItemDisplayContext.FIRST_PERSON_LEFT_HAND
-                && context != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND && context != ItemDisplayContext.THIRD_PERSON_LEFT_HAND)
+        if (mc.isPaused() || player == null || player.tickCount % 5 != 0)
             return;
 
         var localPos = new Vector4f(0, 0, 0, 1).mul(poseStack.last().pose());

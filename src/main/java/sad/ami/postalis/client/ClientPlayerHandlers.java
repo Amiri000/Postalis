@@ -16,12 +16,15 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import sad.ami.postalis.api.ClientCastAnimation;
 import sad.ami.postalis.api.PlayerItemInteraction;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
-import sad.ami.postalis.handlers.PlayerEventHandlers;
 import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.init.ItemRegistry;
+import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
+import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 import sad.ami.postalis.utils.PlayerUtils;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -32,16 +35,31 @@ public class ClientPlayerHandlers {
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer localPlayer))
+        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer player))
             return;
 
+        if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
+            PlayerItemInteraction.useTickCount++;
+
+            ((IHoldTickItem) player.getMainHandItem().getItem()).onHeldTickInMainHand(player, player.getCommandSenderWorld(), PlayerItemInteraction.useTickCount);
+
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, true));
+        } else {
+            if (PlayerItemInteraction.useTickCount == 0)
+                return;
+
+            PlayerItemInteraction.useTickCount = 0;
+
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, false));
+        }
+
         if (!HotkeyRegistry.CHECKLIST_MENU.isDown()) {
-            if (holdTime <= 0 || localPlayer.tickCount % 2 == 0)
+            if (holdTime <= 0 || player.tickCount % 2 == 0)
                 return;
 
             holdTime--;
         } else {
-            if (PlayerUtils.inMainHandPostalisSword(localPlayer)) {
+            if (PlayerUtils.inMainHandPostalisSword(player)) {
                 holdTime++;
 
                 if (holdTime < 20)
@@ -69,19 +87,29 @@ public class ClientPlayerHandlers {
         var camera = event.getCamera();
         var camPos = camera.getPosition();
         var partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        var tickCount = PlayerItemInteraction.useTickCount;
-
         var buffer = mc.renderBuffers().bufferSource();
+
+        if (mc.player.tickCount % 5 == 0)
+            ClientCastAnimation.clientTick();
 
         for (var player : mc.level.players()) {
             if (player.isInvisible() || !PlayerUtils.inMainHandPostalisSword(player))
                 continue;
 
+            int animationTicks = ClientCastAnimation.getAnimationTicks(player);
+
+            if (animationTicks <= 0)
+                continue;
+
+            System.out.println(animationTicks);
+
             double x = Mth.lerp(partialTick, player.xOld, player.getX());
             double y = Mth.lerp(partialTick, player.yOld, player.getY()) + player.getEyeHeight() + 0.6;
             double z = Mth.lerp(partialTick, player.zOld, player.getZ());
 
-            float progress = tickCount == 0 ? 0f : Mth.clamp((tickCount + partialTick) / 20f, 0f, 1f);
+            float progress = 1.0f - (animationTicks - partialTick) / 20f;
+            progress = Mth.clamp(progress, 0f, 1f);
+
             Vec3 lookVec = player.getLookAngle().normalize().scale(progress * 2.0);
 
             poseStack.pushPose();
@@ -89,7 +117,6 @@ public class ClientPlayerHandlers {
             poseStack.scale(0.5f, 0.5f, 0.5f);
 
             ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
-
             itemRenderer.render(stack, ItemDisplayContext.FIXED, player == mc.player, poseStack, buffer, 15728880, OverlayTexture.NO_OVERLAY, itemRenderer.getModel(stack, mc.level, player, 0));
 
             poseStack.popPose();

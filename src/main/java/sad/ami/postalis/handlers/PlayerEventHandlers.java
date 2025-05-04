@@ -35,26 +35,4 @@ public class PlayerEventHandlers {
         if (itemEntity.getItem().getItem() instanceof ISwordItem postalisItem)
             postalisItem.onToss(player, itemEntity, player.getCommandSenderWorld());
     }
-
-    @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer player))
-            return;
-
-        if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
-            PlayerItemInteraction.useTickCount++;
-
-            ((IHoldTickItem) player.getMainHandItem().getItem()).onHeldTickInMainHand(player, player.getCommandSenderWorld(), PlayerItemInteraction.useTickCount);
-
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, true));
-        } else {
-            if (PlayerItemInteraction.useTickCount == 0)
-                return;
-
-            PlayerItemInteraction.useTickCount = 0;
-
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, false));
-        }
-
-    }
 }

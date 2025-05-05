@@ -9,7 +9,7 @@ public class ClientCastAnimation {
     private static final Map<Integer, Integer> animationTicks = new HashMap<>();
 
     public static void startAnimation(Player player) {
-        animationTicks.put(player.getId(), 20);
+        animationTicks.put(player.getId(), 100);
     }
 
     public static void stopAnimation(Player player) {

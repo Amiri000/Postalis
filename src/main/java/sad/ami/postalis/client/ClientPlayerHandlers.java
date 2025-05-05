@@ -38,6 +38,8 @@ public class ClientPlayerHandlers {
         if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer player))
             return;
 
+        ClientCastAnimation.clientTick();
+
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
             PlayerItemInteraction.useTickCount++;
 
@@ -89,27 +91,20 @@ public class ClientPlayerHandlers {
         var partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         var buffer = mc.renderBuffers().bufferSource();
 
-        if (mc.player.tickCount % 5 == 0)
-            ClientCastAnimation.clientTick();
-
         for (var player : mc.level.players()) {
             if (player.isInvisible() || !PlayerUtils.inMainHandPostalisSword(player))
                 continue;
 
             int animationTicks = ClientCastAnimation.getAnimationTicks(player);
 
-            if (animationTicks <= 0)
+            if (animationTicks < 1)
                 continue;
-
-            System.out.println(animationTicks);
 
             double x = Mth.lerp(partialTick, player.xOld, player.getX());
             double y = Mth.lerp(partialTick, player.yOld, player.getY()) + player.getEyeHeight() + 0.6;
             double z = Mth.lerp(partialTick, player.zOld, player.getZ());
 
-            float progress = 1.0f - (animationTicks - partialTick) / 20f;
-            progress = Mth.clamp(progress, 0f, 1f);
-
+            var progress = Mth.clamp(1.0f - (animationTicks - partialTick) / 20f, 0f, 1f);
             Vec3 lookVec = player.getLookAngle().normalize().scale(progress * 2.0);
 
             poseStack.pushPose();

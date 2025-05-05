@@ -29,17 +29,12 @@ public class CastAnimationPacket implements CustomPacketPayload {
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
+            var mc = Minecraft.getInstance();
 
-            var entity = mc.level.getEntity(getEntityId());
+            if (mc.level == null)
+                return;
 
-            if (entity instanceof Player player) {
-                if (isStart()) {
-                    ClientCastAnimation.startAnimation(player);
-                } else {
-                    ClientCastAnimation.stopAnimation(player);
-                }
-            }
+            ClientCastAnimation.startAnimation((Player) mc.level.getEntity(getEntityId()));
         });
     }
 

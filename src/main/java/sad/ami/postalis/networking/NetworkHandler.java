@@ -33,10 +33,4 @@ public class NetworkHandler {
     public static <T extends CustomPacketPayload> void sendToClient(T message, ServerPlayer player) {
         PacketDistributor.sendToPlayer(player, message);
     }
-
-    public static void sendToTracking(Player caster, boolean start) {
-        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
-            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
-                sendToClient(new CastAnimationPacket(caster.getId(), start), player);
-    }
 }

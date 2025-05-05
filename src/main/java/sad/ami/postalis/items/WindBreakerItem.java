@@ -1,12 +1,14 @@
 package sad.ami.postalis.items;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import sad.ami.postalis.api.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
 import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.CastAnimationPacket;
 
 public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
     @Override
@@ -37,8 +39,10 @@ public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
     }
 
     @Override
-    public void onHeldTickInMainHand(Player player, Level level, int tickCount) {
-        NetworkHandler.sendToTracking(player, true);
+    public void onHeldTickInMainHand(Player caster, Level level, int tickCount) {
+        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
+            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
+                NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId(), true), player);
     }
 }
 

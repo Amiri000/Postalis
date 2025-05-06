@@ -1,16 +1,15 @@
 package sad.ami.postalis.networking;
 
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.networking.packets.CastAnimationPacket;
+import sad.ami.postalis.networking.packets.sync.animations.BroadcastChargeTicksPacket;
+import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
 import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 
@@ -24,6 +23,7 @@ public class NetworkHandler {
         registrar.playToServer(SyncPosItemInHandPacket.TYPE, SyncPosItemInHandPacket.STREAM_CODEC, SyncPosItemInHandPacket::handle);
 
         registrar.playToClient(CastAnimationPacket.TYPE, CastAnimationPacket.STREAM_CODEC, CastAnimationPacket::handle);
+        registrar.playToClient(BroadcastChargeTicksPacket.TYPE, BroadcastChargeTicksPacket.STREAM_CODEC, BroadcastChargeTicksPacket::handle);
     }
 
     public static <T extends CustomPacketPayload> void sendToServer(T message) {

@@ -5,17 +5,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Vector4f;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.api.event.RendererItemInHandEvent;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.networking.NetworkHandler;
@@ -23,8 +27,19 @@ import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
 
 @Mixin(ItemInHandRenderer.class)
 public class ItemRendererMixin {
+    @Shadow
+    @Final
+    private ItemRenderer itemRenderer;
+
     @Inject(method = "renderItem", at = @At("HEAD"))
     private void onRenderItem(LivingEntity entity, ItemStack stack, ItemDisplayContext context, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed, CallbackInfo ci) {
+        var event = NeoForge.EVENT_BUS.post(new RendererItemInHandEvent(itemRenderer, entity, stack, context, poseStack, buffer, seed));
+
+        if (event.isCanceled())
+            return;
+
+        event.getRenderer().renderStatic(event.getEntity(), event.getStack(), event.getContext(), leftHand, event.getPoseStack(), event.getBuffer(), event.getEntity().level(), event.getLight(), seed, OverlayTexture.NO_OVERLAY);
+
         Postalis.fgfg(stack, context, leftHand, poseStack, buffer, ci);
     }
 

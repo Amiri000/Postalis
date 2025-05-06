@@ -1,16 +1,11 @@
 package sad.ami.postalis.items;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import sad.ami.postalis.items.base.BaseSwordItem;
-import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
-import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.CastAnimationPacket;
 
-public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
+public class WindBreakerItem extends BaseSwordItem {
     @Override
     public void inMainHand(Player player, ItemStack stack, Level level) {
         //        var minecraft = Minecraft.getInstance();
@@ -38,11 +33,19 @@ public class WindBreakerItem extends BaseSwordItem implements IHoldTickItem {
 
     }
 
-    @Override
-    public void onHeldTickInMainHand(Player caster, Level level, int tickCount) {
-        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
-            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
-                NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId(), true), player);
-    }
+
+//    @Override
+//    static void onInteractionItem(Player caster, Level level, UseStage stage, int tickCount) {
+//        if (level.isClientSide())
+//            return;
+//
+//        for (var target : level.players())
+//            if (!target.getUUID().equals(caster.getUUID()))
+//                NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(caster.getId(), tickCount), (ServerPlayer) target);
+//
+//        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
+//            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
+//                NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId(), true), player);
+//    }
 }
 

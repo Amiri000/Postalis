@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class ClientCastAnimation {
     private static final Map<Integer, Integer> animationTicks = new HashMap<>();
+    private static final Map<Integer, Integer> chargeTicksMap = new HashMap<>();
 
     public static void startAnimation(Player player) {
         animationTicks.put(player.getId(), 100);
@@ -23,5 +24,13 @@ public class ClientCastAnimation {
 
     public static int getAnimationTicks(Player player) {
         return animationTicks.getOrDefault(player.getId(), 0);
+    }
+
+    public static void putChargeTicks(Player player, int ticks) {
+        chargeTicksMap.put(player.getId(), ticks);
+    }
+
+    public static int getChargeTicks(Player player) {
+        return chargeTicksMap.getOrDefault(player.getId(), 0);
     }
 }

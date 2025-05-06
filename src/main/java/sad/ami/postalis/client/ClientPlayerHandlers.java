@@ -2,7 +2,6 @@ package sad.ami.postalis.client;
 
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -11,18 +10,15 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.client.event.*;
 import sad.ami.postalis.api.ClientCastAnimation;
-import sad.ami.postalis.api.PlayerItemInteraction;
+import sad.ami.postalis.api.event.RendererItemInHandEvent;
+import sad.ami.postalis.api.interaction.PlayerInteractionItem;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.init.ItemRegistry;
-import sad.ami.postalis.items.base.interfaces.IHoldTickItem;
+import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 import sad.ami.postalis.utils.PlayerUtils;
@@ -34,25 +30,25 @@ public class ClientPlayerHandlers {
     private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!event.getEntity().getCommandSenderWorld().isClientSide() || !(event.getEntity() instanceof LocalPlayer player))
+    public static void onClientTicking(ClientTickEvent.Post event) {
+        var player = mc.player;
+
+        if (player == null)
             return;
 
         ClientCastAnimation.clientTick();
 
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
-            PlayerItemInteraction.useTickCount++;
-
-            ((IHoldTickItem) player.getMainHandItem().getItem()).onHeldTickInMainHand(player, player.getCommandSenderWorld(), PlayerItemInteraction.useTickCount);
-
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, true));
+            PlayerInteractionItem.useTickCount++;
+            System.out.println(PlayerInteractionItem.useTickCount);
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerInteractionItem.useTickCount, PlayerInteractionItem.UseStage.TICK));
         } else {
-            if (PlayerItemInteraction.useTickCount == 0)
+            if (PlayerInteractionItem.useTickCount == 0)
                 return;
 
-            PlayerItemInteraction.useTickCount = 0;
+            PlayerInteractionItem.useTickCount = 0;
 
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerItemInteraction.useTickCount, false));
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerInteractionItem.useTickCount, PlayerInteractionItem.UseStage.STOP));
         }
 
         if (!HotkeyRegistry.CHECKLIST_MENU.isDown()) {
@@ -119,8 +115,31 @@ public class ClientPlayerHandlers {
     }
 
     @SubscribeEvent
+    public static void onRenderItem(RendererItemInHandEvent event) {
+        var mc = Minecraft.getInstance();
+
+        var stack = event.getStack();
+        var context = event.getContext();
+
+        if (mc.player == null || !(stack.getItem() instanceof BaseSwordItem baseSwordItem) || context == ItemDisplayContext.GUI
+                || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
+            return;
+
+        for (var player : mc.level.players()) {
+            int chargeTicks = ClientCastAnimation.getChargeTicks(player);
+
+            var time = chargeTicks + mc.getTimer().getGameTimeDeltaPartialTick(false);
+            var amplitude = Math.min(((float) chargeTicks / 20) * 0.04F, 0.5f);
+
+            float frequency = 0.25f;
+
+            event.getPoseStack().translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
+        }
+    }
+
+    @SubscribeEvent
     public static void onKeyPress(InputEvent.InteractionKeyMappingTriggered event) {
-        if (PlayerItemInteraction.useTickCount != 0) {
+        if (PlayerInteractionItem.useTickCount != 0) {
             event.setSwingHand(false);
             event.setCanceled(true);
         }

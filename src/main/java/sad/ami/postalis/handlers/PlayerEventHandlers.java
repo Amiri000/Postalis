@@ -27,16 +27,16 @@ public class PlayerEventHandlers {
             postalisItem.onAttacked(player, target, stack, player.getCommandSenderWorld());
     }
 
-    @SubscribeEvent
-    public static void onInteraction(PlayerItemInteractionEvent event) {
-        var caster = event.getCaster();
-//        for (var target : event.getLevel().players())
-//            NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(event.getCaster().getId(), event.getTickCount()), (ServerPlayer) target);
-
-        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
-            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
-                NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(caster.getId(),  event.getTickCount()), player);
-    }
+//    @SubscribeEvent
+//    public static void onInteraction(PlayerItemInteractionEvent event) {
+//        var caster = event.getCaster();
+////        for (var target : event.getLevel().players())
+////            NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(event.getCaster().getId(), event.getTickCount()), (ServerPlayer) target);
+//
+//        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
+//            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
+//                NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(caster.getId(),  event.getTickCount()), player);
+//    }
 
     @SubscribeEvent
     public static void onPlayerTicking(PlayerTickEvent.Post event) {
@@ -49,8 +49,6 @@ public class PlayerEventHandlers {
             return;
 
         PlayerInteractionItem.useTickCount = 0;
-        //  NeoForge.EVENT_BUS.post(new PlayerItemInteractionEvent(player, player.getCommandSenderWorld(), PlayerInteractionItem.UseStage.STOP, PlayerInteractionItem.useTickCount));
-
     }
 
     @SubscribeEvent

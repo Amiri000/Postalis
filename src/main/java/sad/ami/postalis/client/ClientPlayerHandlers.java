@@ -4,6 +4,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -40,13 +41,17 @@ public class ClientPlayerHandlers {
 
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
             PlayerInteractionItem.useTickCount++;
-            System.out.println(PlayerInteractionItem.useTickCount);
+
+            ClientCastAnimation.putChargeTicks(player, PlayerInteractionItem.useTickCount);
+
             NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerInteractionItem.useTickCount, PlayerInteractionItem.UseStage.TICK));
         } else {
             if (PlayerInteractionItem.useTickCount == 0)
                 return;
 
             PlayerInteractionItem.useTickCount = 0;
+
+            ClientCastAnimation.putChargeTicks(player, PlayerInteractionItem.useTickCount);
 
             NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerInteractionItem.useTickCount, PlayerInteractionItem.UseStage.STOP));
         }
@@ -125,16 +130,18 @@ public class ClientPlayerHandlers {
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
-        for (var player : mc.level.players()) {
-            int chargeTicks = ClientCastAnimation.getChargeTicks(player);
 
-            var time = chargeTicks + mc.getTimer().getGameTimeDeltaPartialTick(false);
-            var amplitude = Math.min(((float) chargeTicks / 20) * 0.04F, 0.5f);
+        var chargeTicks = ClientCastAnimation.getChargeTicks((Player) event.getEntity());
 
-            float frequency = 0.25f;
+        if (chargeTicks == 0)
+            return;
 
-            event.getPoseStack().translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
-        }
+        var time = chargeTicks + mc.getTimer().getGameTimeDeltaPartialTick(false);
+        var amplitude = Math.min(((float) chargeTicks / 20) * 0.04F, 0.5f);
+
+        var frequency = 0.25f;
+
+        event.getPoseStack().translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
     }
 
     @SubscribeEvent

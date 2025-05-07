@@ -1,7 +1,5 @@
 package sad.ami.postalis.handlers;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -9,12 +7,9 @@ import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
-import sad.ami.postalis.api.interaction.PlayerInteractionItem;
+import sad.ami.postalis.api.interaction.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
-import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.sync.animations.BroadcastChargeTicksPacket;
 
 @EventBusSubscriber(modid = Postalis.MODID)
 public class PlayerEventHandlers {
@@ -45,10 +40,10 @@ public class PlayerEventHandlers {
 
         var player = event.getEntity();
 
-        if (player.getMainHandItem().getItem() instanceof BaseSwordItem swordItem || PlayerInteractionItem.useTickCount == 0)
+        if (player.getMainHandItem().getItem() instanceof BaseSwordItem swordItem || ClientCastAnimation.useTickCount == 0)
             return;
 
-        PlayerInteractionItem.useTickCount = 0;
+        ClientCastAnimation.useTickCount = 0;
     }
 
     @SubscribeEvent

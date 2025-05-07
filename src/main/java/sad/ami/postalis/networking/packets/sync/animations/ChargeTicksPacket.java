@@ -9,15 +9,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.ClientCastAnimation;
+import sad.ami.postalis.api.interaction.ClientCastAnimation;
 
-public record BroadcastChargeTicksPacket(int playerId, int tickCount) implements CustomPacketPayload {
-    public static final Type<BroadcastChargeTicksPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "broadcast_charge_ticks"));
+public record ChargeTicksPacket(int playerId, int tickCount) implements CustomPacketPayload {
+    public static final Type<ChargeTicksPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "broadcast_charge_ticks"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, BroadcastChargeTicksPacket> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, BroadcastChargeTicksPacket::playerId,
-            ByteBufCodecs.INT, BroadcastChargeTicksPacket::tickCount,
-            BroadcastChargeTicksPacket::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ChargeTicksPacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, ChargeTicksPacket::playerId,
+            ByteBufCodecs.INT, ChargeTicksPacket::tickCount,
+            ChargeTicksPacket::new);
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {

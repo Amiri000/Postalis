@@ -12,9 +12,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
-import sad.ami.postalis.api.ClientCastAnimation;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
-import sad.ami.postalis.api.interaction.PlayerInteractionItem;
+import sad.ami.postalis.api.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
@@ -40,20 +39,17 @@ public class ClientPlayerHandlers {
         ClientCastAnimation.clientTick();
 
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
-            PlayerInteractionItem.useTickCount++;
+            ClientCastAnimation.useTickCount++;
+            ClientCastAnimation.putChargeTicks(player, ClientCastAnimation.useTickCount);
 
-            ClientCastAnimation.putChargeTicks(player, PlayerInteractionItem.useTickCount);
-
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerInteractionItem.useTickCount, PlayerInteractionItem.UseStage.TICK));
+            NetworkHandler.sendToServer(new SyncTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.TICK));
         } else {
-            if (PlayerInteractionItem.useTickCount == 0)
-                return;
+            if (ClientCastAnimation.useTickCount != 0) {
+                ClientCastAnimation.useTickCount = 0;
+                ClientCastAnimation.putChargeTicks(player, ClientCastAnimation.useTickCount);
 
-            PlayerInteractionItem.useTickCount = 0;
-
-            ClientCastAnimation.putChargeTicks(player, PlayerInteractionItem.useTickCount);
-
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(PlayerInteractionItem.useTickCount, PlayerInteractionItem.UseStage.STOP));
+                NetworkHandler.sendToServer(new SyncTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.STOP));
+            }
         }
 
         if (!HotkeyRegistry.CHECKLIST_MENU.isDown()) {
@@ -130,7 +126,6 @@ public class ClientPlayerHandlers {
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
-
         var chargeTicks = ClientCastAnimation.getChargeTicks((Player) event.getEntity());
 
         if (chargeTicks == 0)
@@ -146,7 +141,7 @@ public class ClientPlayerHandlers {
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.InteractionKeyMappingTriggered event) {
-        if (PlayerInteractionItem.useTickCount != 0) {
+        if (ClientCastAnimation.useTickCount != 0) {
             event.setSwingHand(false);
             event.setCanceled(true);
         }

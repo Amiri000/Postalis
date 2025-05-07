@@ -1,13 +1,18 @@
-package sad.ami.postalis.api;
+package sad.ami.postalis.api.interaction;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ClientCastAnimation {
     private static final Map<Integer, Integer> animationTicks = new HashMap<>();
     private static final Map<Integer, Integer> chargeTicksMap = new HashMap<>();
+    public static int useTickCount = 0;
 
     public static void startAnimation(Player player) {
         animationTicks.put(player.getId(), 100);
@@ -32,5 +37,17 @@ public class ClientCastAnimation {
 
     public static int getChargeTicks(Player player) {
         return chargeTicksMap.getOrDefault(player.getId(), 0);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum UseStage {
+        START("start"),
+        TICK("tick"),
+        STOP("stop");
+
+        private final String id;
+
+        public static final Map<String, ClientCastAnimation.UseStage> BY_ID = Arrays.stream(values()).collect(Collectors.toMap(ClientCastAnimation.UseStage::getId, stage -> stage));
     }
 }

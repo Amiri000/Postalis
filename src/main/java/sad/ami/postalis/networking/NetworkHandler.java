@@ -8,7 +8,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.networking.packets.sync.animations.BroadcastChargeTicksPacket;
+import sad.ami.postalis.networking.packets.sync.animations.ChargeTicksPacket;
 import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
 import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
@@ -23,7 +23,7 @@ public class NetworkHandler {
         registrar.playToServer(SyncPosItemInHandPacket.TYPE, SyncPosItemInHandPacket.STREAM_CODEC, SyncPosItemInHandPacket::handle);
 
         registrar.playToClient(CastAnimationPacket.TYPE, CastAnimationPacket.STREAM_CODEC, CastAnimationPacket::handle);
-        registrar.playToClient(BroadcastChargeTicksPacket.TYPE, BroadcastChargeTicksPacket.STREAM_CODEC, BroadcastChargeTicksPacket::handle);
+        registrar.playToClient(ChargeTicksPacket.TYPE, ChargeTicksPacket.STREAM_CODEC, ChargeTicksPacket::handle);
     }
 
     public static <T extends CustomPacketPayload> void sendToServer(T message) {

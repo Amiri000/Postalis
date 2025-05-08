@@ -4,7 +4,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.Vec3;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 
 import java.util.Locale;
 

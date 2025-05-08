@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 
 public interface IUsageItem {
     void onUsage(Player caster, ClientCastAnimation.UseStage stage, Level level, int tickCount);

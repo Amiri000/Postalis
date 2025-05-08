@@ -10,7 +10,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.StreamCodecs;
 import sad.ami.postalis.networking.packets.sync.animations.ChargeTicksPacket;

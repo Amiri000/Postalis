@@ -1,4 +1,4 @@
-package sad.ami.postalis.api.interaction;
+package sad.ami.postalis.client.interaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

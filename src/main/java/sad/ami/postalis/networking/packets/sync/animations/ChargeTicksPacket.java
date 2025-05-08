@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 
 public record ChargeTicksPacket(int playerId, int tickCount) implements CustomPacketPayload {
     public static final Type<ChargeTicksPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "broadcast_charge_ticks"));

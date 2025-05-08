@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.Event;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

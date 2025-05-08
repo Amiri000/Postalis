@@ -13,12 +13,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.init.ItemRegistry;
-import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
@@ -76,6 +75,10 @@ public class ClientPlayerHandlers {
             }
         }
     }
+    //  if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
+//            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
+//                NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId(), true), player);
+//    }
 
     @SubscribeEvent
     public static void onRenderWorld(RenderLevelStageEvent event) {

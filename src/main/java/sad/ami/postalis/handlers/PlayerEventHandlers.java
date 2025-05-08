@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;

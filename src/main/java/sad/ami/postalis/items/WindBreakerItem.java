@@ -7,15 +7,18 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MinecartItem;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import sad.ami.postalis.api.interaction.ClientCastAnimation;
+import net.neoforged.bus.api.SubscribeEvent;
+import sad.ami.postalis.api.event.RendererItemInHandEvent;
+import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;
 
 public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
+    private static final int limitAnimationActivated = 3 * 20;
+
     @Override
     public void inMainHand(Player player, ItemStack stack, Level level) {
         //        var minecraft = Minecraft.getInstance();
@@ -44,23 +47,33 @@ public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
 
     @Override
     public void onUsage(Player caster, ClientCastAnimation.UseStage stage, Level level, int tickCount) {
-
+        if (tickCount < limitAnimationActivated)
+            return;
+        caster.setItemInHand(caster.getUsedItemHand(), ItemStack.EMPTY);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void onRenderUsage(ItemRenderer itemRenderer, Player player, ItemStack stack, ItemDisplayContext context, PoseStack poseStack, MultiBufferSource buffer, int light) {
         var chargeTicks = ClientCastAnimation.getChargeTicks(player);
+        var mc = Minecraft.getInstance();
 
-        if (chargeTicks == 0)
+        if (chargeTicks == 0 || mc.isPaused())
             return;
 
-        var time = chargeTicks + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        var time = chargeTicks + mc.getTimer().getGameTimeDeltaPartialTick(false);
         var amplitude = Math.min(((float) chargeTicks / 20) * 0.04F, 0.5f);
 
         var frequency = 0.25f;
 
         poseStack.translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
+    }
+
+    @SubscribeEvent
+    public static void onStoreTransforms(RendererItemInHandEvent event) {
+        if (event.getEntity() instanceof Player player) {
+
+        }
     }
 }
 

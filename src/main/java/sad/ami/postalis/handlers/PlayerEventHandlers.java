@@ -7,9 +7,11 @@ import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
 import sad.ami.postalis.api.interaction.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
+import sad.ami.postalis.items.base.interfaces.IUsageItem;
 
 @EventBusSubscriber(modid = Postalis.MODID)
 public class PlayerEventHandlers {
@@ -22,16 +24,13 @@ public class PlayerEventHandlers {
             postalisItem.onAttacked(player, target, stack, player.getCommandSenderWorld());
     }
 
-//    @SubscribeEvent
-//    public static void onInteraction(PlayerItemInteractionEvent event) {
-//        var caster = event.getCaster();
-////        for (var target : event.getLevel().players())
-////            NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(event.getCaster().getId(), event.getTickCount()), (ServerPlayer) target);
-//
-//        if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
-//            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
-//                NetworkHandler.sendToClient(new BroadcastChargeTicksPacket(caster.getId(),  event.getTickCount()), player);
-//    }
+    @SubscribeEvent
+    public static void onInteraction(PlayerItemInteractionEvent event) {
+        var player = event.getCaster();
+
+        if (player.getMainHandItem().getItem() instanceof IUsageItem usageItem)
+            usageItem.onUsage(event.getCaster(), event.getStage(), event.getLevel(), event.getTickCount());
+    }
 
     @SubscribeEvent
     public static void onPlayerTicking(PlayerTickEvent.Post event) {

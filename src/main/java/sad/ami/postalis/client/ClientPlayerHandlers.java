@@ -19,6 +19,7 @@ import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.init.ItemRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
+import sad.ami.postalis.items.base.interfaces.IUsageItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
 import sad.ami.postalis.utils.PlayerUtils;
@@ -122,21 +123,11 @@ public class ClientPlayerHandlers {
         var stack = event.getStack();
         var context = event.getContext();
 
-        if (mc.player == null || !(stack.getItem() instanceof BaseSwordItem baseSwordItem) || context == ItemDisplayContext.GUI
+        if (mc.player == null || !(stack.getItem() instanceof IUsageItem usageItem) || context == ItemDisplayContext.GUI
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
-        var chargeTicks = ClientCastAnimation.getChargeTicks((Player) event.getEntity());
-
-        if (chargeTicks == 0)
-            return;
-
-        var time = chargeTicks + mc.getTimer().getGameTimeDeltaPartialTick(false);
-        var amplitude = Math.min(((float) chargeTicks / 20) * 0.04F, 0.5f);
-
-        var frequency = 0.25f;
-
-        event.getPoseStack().translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
+        usageItem.onRenderUsage(event.getRenderer(), (Player) event.getEntity(), event.getStack(), event.getContext(), event.getPoseStack(), event.getBuffer(), event.getLight());
     }
 
     @SubscribeEvent

@@ -13,14 +13,14 @@ import sad.ami.postalis.networking.StreamCodecs;
 
 import java.util.UUID;
 
-public record SyncPosItemInHandPacket(Vec3 pos, UUID playerUUID, ItemStack stack) implements CustomPacketPayload {
-    public static final Type<SyncPosItemInHandPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "item_in_hand"));
+public record S2CPosItemInHandPacket(Vec3 pos, UUID playerUUID, ItemStack stack) implements CustomPacketPayload {
+    public static final Type<S2CPosItemInHandPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "item_in_hand"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncPosItemInHandPacket> STREAM_CODEC = StreamCodec.composite(
-            StreamCodecs.VEC3_STREAM_CODEC, SyncPosItemInHandPacket::pos,
-            UUIDUtil.STREAM_CODEC, SyncPosItemInHandPacket::playerUUID,
-            ItemStack.STREAM_CODEC, SyncPosItemInHandPacket::stack,
-            SyncPosItemInHandPacket::new
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CPosItemInHandPacket> STREAM_CODEC = StreamCodec.composite(
+            StreamCodecs.VEC3_STREAM_CODEC, S2CPosItemInHandPacket::pos,
+            UUIDUtil.STREAM_CODEC, S2CPosItemInHandPacket::playerUUID,
+            ItemStack.STREAM_CODEC, S2CPosItemInHandPacket::stack,
+            S2CPosItemInHandPacket::new
     );
 
     public void handle(IPayloadContext ctx) {

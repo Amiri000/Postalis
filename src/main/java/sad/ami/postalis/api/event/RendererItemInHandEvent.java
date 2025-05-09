@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
@@ -17,7 +18,7 @@ import net.neoforged.bus.api.ICancellableEvent;
 @AllArgsConstructor
 public class RendererItemInHandEvent extends Event implements ICancellableEvent {
     private final ItemRenderer renderer;
-    private final LivingEntity entity;
+    private final Player player;
     private ItemStack stack;
     private ItemDisplayContext context;
     private PoseStack poseStack;

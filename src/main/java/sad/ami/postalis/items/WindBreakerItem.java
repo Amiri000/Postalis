@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -15,12 +17,19 @@ import sad.ami.postalis.api.event.RendererItemInHandEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;
+import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
 
 public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
     private static final int limitAnimationActivated = 3 * 20;
 
     @Override
     public void inMainHand(Player player, ItemStack stack, Level level) {
+        if (level.isClientSide())
+            return;
+//          if (player.getCommandSenderWorld() instanceof ServerLevel serverLevel)
+//            for (ServerPlayer playerServer : serverLevel.getChunkSource().chunkMap.getPlayers(player.chunkPosition(), false))
+
         //        var minecraft = Minecraft.getInstance();
 //
 //        if (!minecraft.options.keyUse.isDown()
@@ -49,7 +58,12 @@ public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
     public void onUsage(Player caster, ClientCastAnimation.UseStage stage, Level level, int tickCount) {
         if (tickCount < limitAnimationActivated)
             return;
+
+        for (ServerPlayer player : ((ServerLevel) level).getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
+            NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId()), player);
+
         caster.setItemInHand(caster.getUsedItemHand(), ItemStack.EMPTY);
+        ClientCastAnimation.putChargeTicks(caster, 0);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -67,13 +81,6 @@ public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
         var frequency = 0.25f;
 
         poseStack.translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
-    }
-
-    @SubscribeEvent
-    public static void onStoreTransforms(RendererItemInHandEvent event) {
-        if (event.getEntity() instanceof Player player) {
-
-        }
     }
 }
 

@@ -4,7 +4,6 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -20,7 +19,7 @@ import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.init.ItemRegistry;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;
 import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
+import sad.ami.postalis.networking.packets.sync.S2CTickingUsePacket;
 import sad.ami.postalis.utils.PlayerUtils;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -42,13 +41,13 @@ public class ClientPlayerHandlers {
             ClientCastAnimation.useTickCount++;
             ClientCastAnimation.putChargeTicks(player, ClientCastAnimation.useTickCount);
 
-            NetworkHandler.sendToServer(new SyncTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.TICK));
+            NetworkHandler.sendToServer(new S2CTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.TICK));
         } else {
             if (ClientCastAnimation.useTickCount != 0) {
                 ClientCastAnimation.useTickCount = 0;
                 ClientCastAnimation.putChargeTicks(player, ClientCastAnimation.useTickCount);
 
-                NetworkHandler.sendToServer(new SyncTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.STOP));
+                NetworkHandler.sendToServer(new S2CTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.STOP));
             }
         }
 
@@ -75,10 +74,6 @@ public class ClientPlayerHandlers {
             }
         }
     }
-    //  if (caster.getCommandSenderWorld() instanceof ServerLevel serverLevel)
-//            for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
-//                NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId(), true), player);
-//    }
 
     @SubscribeEvent
     public static void onRenderWorld(RenderLevelStageEvent event) {
@@ -93,9 +88,6 @@ public class ClientPlayerHandlers {
         var buffer = mc.renderBuffers().bufferSource();
 
         for (var player : mc.level.players()) {
-            if (player.isInvisible() || !PlayerUtils.inMainHandPostalisSword(player))
-                continue;
-
             int animationTicks = ClientCastAnimation.getAnimationTicks(player);
 
             if (animationTicks < 1)
@@ -130,7 +122,7 @@ public class ClientPlayerHandlers {
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
-        usageItem.onRenderUsage(event.getRenderer(), (Player) event.getEntity(), event.getStack(), event.getContext(), event.getPoseStack(), event.getBuffer(), event.getLight());
+        usageItem.onRenderUsage(event.getRenderer(), event.getPlayer(), event.getStack(), event.getContext(), event.getPoseStack(), event.getBuffer(), event.getLight());
     }
 
     @SubscribeEvent

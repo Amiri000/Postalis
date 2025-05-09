@@ -11,12 +11,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 
-public record CastAnimationPacket(int entityId, boolean start) implements CustomPacketPayload {
+public record CastAnimationPacket(int entityId) implements CustomPacketPayload {
     public static final Type<CastAnimationPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "cast_animations"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CastAnimationPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT, CastAnimationPacket::entityId,
-            ByteBufCodecs.BOOL, CastAnimationPacket::start,
             CastAnimationPacket::new
     );
 

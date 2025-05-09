@@ -15,13 +15,13 @@ import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.StreamCodecs;
 import sad.ami.postalis.networking.packets.sync.animations.ChargeTicksPacket;
 
-public record SyncTickingUsePacket(int tickCount, ClientCastAnimation.UseStage stage) implements CustomPacketPayload {
-    public static final Type<SyncTickingUsePacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "ticking_use"));
+public record S2CTickingUsePacket(int tickCount, ClientCastAnimation.UseStage stage) implements CustomPacketPayload {
+    public static final Type<S2CTickingUsePacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "ticking_use"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncTickingUsePacket> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, SyncTickingUsePacket::tickCount,
-            StreamCodecs.USE_STAGE_STREAM_CODEC, SyncTickingUsePacket::stage,
-            SyncTickingUsePacket::new
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CTickingUsePacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, S2CTickingUsePacket::tickCount,
+            StreamCodecs.USE_STAGE_STREAM_CODEC, S2CTickingUsePacket::stage,
+            S2CTickingUsePacket::new
     );
 
     public void handle(IPayloadContext ctx) {

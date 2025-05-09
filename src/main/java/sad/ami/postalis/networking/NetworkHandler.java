@@ -10,8 +10,8 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.networking.packets.sync.animations.ChargeTicksPacket;
 import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
-import sad.ami.postalis.networking.packets.sync.SyncPosItemInHandPacket;
-import sad.ami.postalis.networking.packets.sync.SyncTickingUsePacket;
+import sad.ami.postalis.networking.packets.sync.S2CPosItemInHandPacket;
+import sad.ami.postalis.networking.packets.sync.S2CTickingUsePacket;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NetworkHandler {
@@ -19,8 +19,8 @@ public class NetworkHandler {
     public static void onRegisterPayloadHandler(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(Postalis.MODID).versioned("1.0").optional();
 
-        registrar.playToServer(SyncTickingUsePacket.TYPE, SyncTickingUsePacket.STREAM_CODEC, SyncTickingUsePacket::handle);
-        registrar.playToServer(SyncPosItemInHandPacket.TYPE, SyncPosItemInHandPacket.STREAM_CODEC, SyncPosItemInHandPacket::handle);
+        registrar.playToServer(S2CTickingUsePacket.TYPE, S2CTickingUsePacket.STREAM_CODEC, S2CTickingUsePacket::handle);
+        registrar.playToServer(S2CPosItemInHandPacket.TYPE, S2CPosItemInHandPacket.STREAM_CODEC, S2CPosItemInHandPacket::handle);
 
         registrar.playToClient(CastAnimationPacket.TYPE, CastAnimationPacket.STREAM_CODEC, CastAnimationPacket::handle);
         registrar.playToClient(ChargeTicksPacket.TYPE, ChargeTicksPacket.STREAM_CODEC, ChargeTicksPacket::handle);

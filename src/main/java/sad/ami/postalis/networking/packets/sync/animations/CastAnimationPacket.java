@@ -6,7 +6,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
@@ -21,12 +21,13 @@ public record CastAnimationPacket(int entityId) implements CustomPacketPayload {
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            var mc = Minecraft.getInstance();
+            var player = Minecraft.getInstance().level.getEntity(entityId);
 
-            if (mc.level == null)
+            if (player == null)
                 return;
-
-            ClientCastAnimation.startAnimation((Player) mc.level.getEntity(entityId()));
+            Vec3 pos = player.position().add(0, player.getEyeHeight() + 0.6, 0);
+            ClientCastAnimation.activeRenders.put(player.getId(), pos);
+            //ClientCastAnimation.activeRenders.put(entityId, new FlyingAnimations(player.position().add(0, player.getEyeHeight() + 0.6, 0)));
         });
     }
 

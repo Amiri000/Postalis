@@ -26,18 +26,4 @@ public class Postalis {
 
         modContainer.registerConfig(ModConfig.Type.COMMON, PostalisConfig.CLIENT_SPEC);
     }
-
-    public static void fgfg(ItemStack stack, ItemDisplayContext context, boolean leftHanded, PoseStack poseStack, MultiBufferSource buffer, CallbackInfo ci) {
-//        var mc = Minecraft.getInstance();
-//
-//        if (mc.player == null || stack.getItem() != ItemRegistry.WIND_BREAKER.get() || context == ItemDisplayContext.GUI || !PlayerUtils.isSameUUID(stack, mc.player.getUUID())
-//                || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
-//            return;
-//
-//        float time = PlayerItemInteraction.useTickCount + mc.getTimer().getGameTimeDeltaPartialTick(false);
-//        float amplitude = Math.min(((float) PlayerItemInteraction.useTickCount / 20) * 0.04F, 0.5f);
-//        float frequency = 0.25f;
-//
-//        poseStack.translate(Math.sin(time * 2 * Math.PI * frequency) * amplitude, Math.cos(time * 2 * Math.PI * frequency * 0.5) * amplitude * 0.5f, 0);
-    }
 }

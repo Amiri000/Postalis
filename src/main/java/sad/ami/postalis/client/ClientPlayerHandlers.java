@@ -3,7 +3,6 @@ package sad.ami.postalis.client;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -11,6 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import org.joml.Matrix4f;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
@@ -34,8 +34,6 @@ public class ClientPlayerHandlers {
 
         if (player == null)
             return;
-
-        ClientCastAnimation.clientTick();
 
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
             ClientCastAnimation.useTickCount++;
@@ -75,40 +73,33 @@ public class ClientPlayerHandlers {
         }
     }
 
+    private static Matrix4f savedRot;
+    public static Vec3 handPos;
+    public static RendererItemInHandEvent ev;
+
     @SubscribeEvent
     public static void onRenderWorld(RenderLevelStageEvent event) {
-        if (mc.level == null || mc.player == null || event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
+        if (mc.level == null || mc.player == null || event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || savedRot == null || handPos == null)
             return;
 
         var poseStack = event.getPoseStack();
-        var itemRenderer = mc.getItemRenderer();
-        var camera = event.getCamera();
-        var camPos = camera.getPosition();
-        var partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        var buffer = mc.renderBuffers().bufferSource();
+        var camPos = event.getCamera().getPosition();
 
-        for (var player : mc.level.players()) {
-            int animationTicks = ClientCastAnimation.getAnimationTicks(player);
+        poseStack.pushPose();
 
-            if (animationTicks < 1)
-                continue;
+        poseStack.translate(handPos.x - camPos.x, handPos.y - camPos.y, handPos.z - camPos.z);
+        poseStack.mulPose(savedRot);
 
-            double x = Mth.lerp(partialTick, player.xOld, player.getX());
-            double y = Mth.lerp(partialTick, player.yOld, player.getY()) + player.getEyeHeight() + 0.6;
-            double z = Mth.lerp(partialTick, player.zOld, player.getZ());
-
-            var progress = Mth.clamp(1.0f - (animationTicks - partialTick) / 20f, 0f, 1f);
-            Vec3 lookVec = player.getLookAngle().normalize().scale(progress * 2.0);
-
-            poseStack.pushPose();
-            poseStack.translate(x + lookVec.x - camPos.x, y + lookVec.y - camPos.y, z + lookVec.z - camPos.z);
-            poseStack.scale(0.5f, 0.5f, 0.5f);
-
-            ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
-            itemRenderer.render(stack, ItemDisplayContext.FIXED, player == mc.player, poseStack, buffer, 15728880, OverlayTexture.NO_OVERLAY, itemRenderer.getModel(stack, mc.level, player, 0));
-
-            poseStack.popPose();
+        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) {
+            poseStack.translate(-0.22F, 0.2F, 0.4F);
+            poseStack.scale(0.5F, 0.5F, 0.5F);
         }
+
+        ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
+
+        mc.getItemRenderer().render(stack, ev.getContext(), false, poseStack, ev.getBuffer(), ev.getLight(), OverlayTexture.NO_OVERLAY, mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0));
+
+        poseStack.popPose();
     }
 
     @SubscribeEvent
@@ -122,7 +113,12 @@ public class ClientPlayerHandlers {
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 
+        ev = event;
+        Matrix4f rot = new Matrix4f(event.getPoseStack().last().pose());
+        rot.setTranslation(0, 0, 0);
+
         usageItem.onRenderUsage(event.getRenderer(), event.getPlayer(), event.getStack(), event.getContext(), event.getPoseStack(), event.getBuffer(), event.getLight());
+        savedRot = rot;
     }
 
     @SubscribeEvent

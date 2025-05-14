@@ -14,8 +14,6 @@ public class ClientCastAnimation {
     public static final Map<Integer, Vec3> activeRenders = new HashMap<>();
     private static final Map<Integer, Integer> chargeTicksMap = new HashMap<>();
 
-    public static int useTickCount = 0;
-
     public static void putChargeTicks(Player player, int ticks) {
         chargeTicksMap.put(player.getId(), ticks);
     }
@@ -27,7 +25,7 @@ public class ClientCastAnimation {
     @Getter
     @AllArgsConstructor
     public enum UseStage {
-        START("start"),
+        COMPLETED("completed"),
         TICK("tick"),
         STOP("stop");
 

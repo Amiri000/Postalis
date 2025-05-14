@@ -4,7 +4,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.interfaces.IPostalis;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;

@@ -17,6 +17,6 @@ public class StreamCodecs {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientCastAnimation.UseStage> USE_STAGE_STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, ClientCastAnimation.UseStage::getId,
-            id -> ClientCastAnimation.UseStage.BY_ID.getOrDefault(id.toLowerCase(Locale.ROOT), ClientCastAnimation.UseStage.START)
+            id -> ClientCastAnimation.UseStage.BY_ID.getOrDefault(id.toLowerCase(Locale.ROOT), ClientCastAnimation.UseStage.COMPLETED)
     );
 }

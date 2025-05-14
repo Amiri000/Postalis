@@ -2,21 +2,20 @@ package sad.ami.postalis.client;
 
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Matrix4f;
+import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
-import sad.ami.postalis.init.ItemRegistry;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.S2CTickingUsePacket;
@@ -35,18 +34,22 @@ public class ClientPlayerHandlers {
         if (player == null)
             return;
 
+        var chargeTicks = ClientCastAnimation.getChargeTicks(player);
+
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
-            ClientCastAnimation.useTickCount++;
-            ClientCastAnimation.putChargeTicks(player, ClientCastAnimation.useTickCount);
+            var e = NeoForge.EVENT_BUS.post(new PlayerItemInteractionEvent(player, player.level(), ClientCastAnimation.UseStage.TICK, chargeTicks));
+            System.out.println(chargeTicks);
+            if (!e.isCanceled())
+                ClientCastAnimation.putChargeTicks(player, chargeTicks + 1);
 
-            NetworkHandler.sendToServer(new S2CTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.TICK));
-        } else {
-            if (ClientCastAnimation.useTickCount != 0) {
-                ClientCastAnimation.useTickCount = 0;
-                ClientCastAnimation.putChargeTicks(player, ClientCastAnimation.useTickCount);
+            NetworkHandler.sendToServer(new S2CTickingUsePacket(chargeTicks, ClientCastAnimation.UseStage.TICK));
+        }
 
-                NetworkHandler.sendToServer(new S2CTickingUsePacket(ClientCastAnimation.useTickCount, ClientCastAnimation.UseStage.STOP));
-            }
+        if (chargeTicks != 0 && (!Minecraft.getInstance().options.keyUse.isDown() || !PlayerUtils.inMainHandPostalisSword(player))) {
+            NeoForge.EVENT_BUS.post(new PlayerItemInteractionEvent(player, player.level(), ClientCastAnimation.UseStage.STOP, chargeTicks));
+            ClientCastAnimation.putChargeTicks(player, 0);
+
+            NetworkHandler.sendToServer(new S2CTickingUsePacket(chargeTicks, ClientCastAnimation.UseStage.STOP));
         }
 
         if (!HotkeyRegistry.CHECKLIST_MENU.isDown()) {
@@ -79,27 +82,27 @@ public class ClientPlayerHandlers {
 
     @SubscribeEvent
     public static void onRenderWorld(RenderLevelStageEvent event) {
-        if (mc.level == null || mc.player == null || event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || savedRot == null || handPos == null)
-            return;
-
-        var poseStack = event.getPoseStack();
-        var camPos = event.getCamera().getPosition();
-
-        poseStack.pushPose();
-
-        poseStack.translate(handPos.x - camPos.x, handPos.y - camPos.y, handPos.z - camPos.z);
-        poseStack.mulPose(savedRot);
-
-        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) {
-            poseStack.translate(-0.22F, 0.2F, 0.4F);
-            poseStack.scale(0.5F, 0.5F, 0.5F);
-        }
-
-        ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
-
-        mc.getItemRenderer().render(stack, ev.getContext(), false, poseStack, ev.getBuffer(), ev.getLight(), OverlayTexture.NO_OVERLAY, mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0));
-
-        poseStack.popPose();
+//        if (mc.level == null || mc.player == null || event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || savedRot == null || handPos == null)
+//            return;
+//
+//        var poseStack = event.getPoseStack();
+//        var camPos = event.getCamera().getPosition();
+//
+//        poseStack.pushPose();
+//
+//        poseStack.translate(handPos.x - camPos.x, handPos.y - camPos.y, handPos.z - camPos.z);
+//        poseStack.mulPose(savedRot);
+//
+//        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) {
+//            poseStack.translate(-0.22F, 0.2F, 0.4F);
+//            poseStack.scale(0.5F, 0.5F, 0.5F);
+//        }
+//
+//        ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
+//
+//        mc.getItemRenderer().render(stack, ev.getContext(), false, poseStack, ev.getBuffer(), ev.getLight(), OverlayTexture.NO_OVERLAY, mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0));
+//
+//        poseStack.popPose();
     }
 
     @SubscribeEvent
@@ -123,7 +126,7 @@ public class ClientPlayerHandlers {
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.InteractionKeyMappingTriggered event) {
-        if (ClientCastAnimation.useTickCount != 0) {
+        if (Minecraft.getInstance().player != null && ClientCastAnimation.getChargeTicks(Minecraft.getInstance().player) != 0) {
             event.setSwingHand(false);
             event.setCanceled(true);
         }

@@ -6,63 +6,69 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
-import sad.ami.postalis.api.event.RendererItemInHandEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
+import sad.ami.postalis.entities.EmbeddedSwordEntity;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IUsageItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
 
+@EventBusSubscriber
 public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
     private static final int limitAnimationActivated = 3 * 20;
 
-    @Override
-    public void inMainHand(Player player, ItemStack stack, Level level) {
+    @SubscribeEvent
+    public static void onInteraction(PlayerItemInteractionEvent event) {
+        var level = event.getLevel();
+
         if (level.isClientSide())
             return;
-//          if (player.getCommandSenderWorld() instanceof ServerLevel serverLevel)
-//            for (ServerPlayer playerServer : serverLevel.getChunkSource().chunkMap.getPlayers(player.chunkPosition(), false))
 
-        //        var minecraft = Minecraft.getInstance();
-//
-//        if (!minecraft.options.keyUse.isDown()
-//                || !(player.pick(player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), 0.0F, false) instanceof BlockHitResult blockHitResult))
-//            return;
-//
-//        var pos = blockHitResult.getBlockPos();
-//        var state = level.getBlockState(pos);
-//        var block = state.getBlock();
-//
-//        var shape = state.getCollisionShape(level, pos);
-//
-//        if (shape.isEmpty())
-//            return;
-//
-//        var aabb = shape.bounds();
-//
-//        double widthX = aabb.maxX - aabb.minX;
-//        double widthZ = aabb.maxZ - aabb.minZ;
-//
-//        if (state.isAir() || Math.max(widthX, widthZ) < 0.5F)
-//            return;
-    }
-
-    @Override
-    public void onUsage(Player caster, ClientCastAnimation.UseStage stage, Level level, int tickCount) {
-        if (tickCount < limitAnimationActivated)
-            return;
+        var caster = event.getCaster();
+        var tickCount = event.getTickCount();
+        var stage = event.getStage();
 
         for (ServerPlayer player : ((ServerLevel) level).getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
             NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId()), player);
 
+        if (!(caster.pick(caster.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), 0.0F, false) instanceof BlockHitResult blockHitResult))
+            return;
+
+        var pos = blockHitResult.getBlockPos();
+        var state = level.getBlockState(pos);
+        var block = state.getBlock();
+
+        var shape = state.getCollisionShape(level, pos);
+
+        if (shape.isEmpty())
+            return;
+
+        var aabb = shape.bounds();
+
+        double widthX = aabb.maxX - aabb.minX;
+        double widthZ = aabb.maxZ - aabb.minZ;
+
+        if (state.isAir() || Math.max(widthX, widthZ) < 0.5F || tickCount < limitAnimationActivated)
+            return;
+
+        var entity = new EmbeddedSwordEntity(level);
+
+        entity.setPos(pos.above().getCenter());
+
+        level.addFreshEntity(entity);
+
         caster.setItemInHand(caster.getUsedItemHand(), ItemStack.EMPTY);
+
         ClientCastAnimation.putChargeTicks(caster, 0);
     }
 
@@ -72,7 +78,7 @@ public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
         var chargeTicks = ClientCastAnimation.getChargeTicks(player);
         var mc = Minecraft.getInstance();
 
-        if (chargeTicks == 0 || mc.isPaused())
+        if (chargeTicks == 1 || mc.isPaused())
             return;
 
         var time = chargeTicks + mc.getTimer().getGameTimeDeltaPartialTick(false);

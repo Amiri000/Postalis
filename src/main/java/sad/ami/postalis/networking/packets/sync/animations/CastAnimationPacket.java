@@ -25,9 +25,8 @@ public record CastAnimationPacket(int entityId) implements CustomPacketPayload {
 
             if (player == null)
                 return;
-            Vec3 pos = player.position().add(0, player.getEyeHeight() + 0.6, 0);
-            ClientCastAnimation.activeRenders.put(player.getId(), pos);
-            //ClientCastAnimation.activeRenders.put(entityId, new FlyingAnimations(player.position().add(0, player.getEyeHeight() + 0.6, 0)));
+
+            ClientCastAnimation.activeRenders.put(player.getId(), player.position().add(0, player.getEyeHeight() + 0.6, 0));
         });
     }
 

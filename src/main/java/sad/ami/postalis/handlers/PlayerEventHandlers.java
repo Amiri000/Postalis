@@ -25,27 +25,6 @@ public class PlayerEventHandlers {
     }
 
     @SubscribeEvent
-    public static void onInteraction(PlayerItemInteractionEvent event) {
-        var player = event.getCaster();
-
-        if (player.getMainHandItem().getItem() instanceof IUsageItem usageItem)
-            usageItem.onUsage(event.getCaster(), event.getStage(), event.getLevel(), event.getTickCount());
-    }
-
-    @SubscribeEvent
-    public static void onPlayerTicking(PlayerTickEvent.Post event) {
-        if (event.getEntity().getCommandSenderWorld().isClientSide())
-            return;
-
-        var player = event.getEntity();
-
-        if (player.getMainHandItem().getItem() instanceof BaseSwordItem swordItem || ClientCastAnimation.useTickCount == 0)
-            return;
-
-        ClientCastAnimation.useTickCount = 0;
-    }
-
-    @SubscribeEvent
     public static void onPlayerToss(ItemTossEvent event) {
         var player = event.getPlayer();
         var itemEntity = event.getEntity();

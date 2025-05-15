@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,32 +27,34 @@ import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
 @EventBusSubscriber
 public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
     private static final int limitAnimationActivated = 3 * 20;
+    private static BlockPos startCastPos;
 
     @SubscribeEvent
     public static void onInteraction(PlayerItemInteractionEvent event) {
         var level = event.getLevel();
 
-        if (level.isClientSide())
-            return;
-
         var caster = event.getCaster();
         var tickCount = event.getTickCount();
         var stage = event.getStage();
-
-        for (ServerPlayer player : ((ServerLevel) level).getChunkSource().chunkMap.getPlayers(caster.chunkPosition(), false))
-            NetworkHandler.sendToClient(new CastAnimationPacket(caster.getId()), player);
 
         if (!(caster.pick(caster.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), 0.0F, false) instanceof BlockHitResult blockHitResult))
             return;
 
         var pos = blockHitResult.getBlockPos();
+
+        if (tickCount == 1)
+            startCastPos = pos;
+
         var state = level.getBlockState(pos);
         var block = state.getBlock();
 
         var shape = state.getCollisionShape(level, pos);
 
-        if (shape.isEmpty())
+        if (shape.isEmpty() || stage == ClientCastAnimation.UseStage.TICK && startCastPos != null && !startCastPos.equals(pos)) {
+            event.setCanceled(true);
+
             return;
+        }
 
         var aabb = shape.bounds();
 
@@ -70,6 +73,9 @@ public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
         caster.setItemInHand(caster.getUsedItemHand(), ItemStack.EMPTY);
 
         ClientCastAnimation.putChargeTicks(caster, 0);
+
+        if (stage == ClientCastAnimation.UseStage.STOP)
+            startCastPos = null;
     }
 
     @OnlyIn(Dist.CLIENT)

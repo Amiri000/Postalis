@@ -38,11 +38,11 @@ public class ClientPlayerHandlers {
 
         if (Minecraft.getInstance().options.keyUse.isDown() && PlayerUtils.inMainHandPostalisSword(player)) {
             var e = NeoForge.EVENT_BUS.post(new PlayerItemInteractionEvent(player, player.level(), ClientCastAnimation.UseStage.TICK, chargeTicks));
-            System.out.println(chargeTicks);
+
             if (!e.isCanceled())
                 ClientCastAnimation.putChargeTicks(player, chargeTicks + 1);
 
-            NetworkHandler.sendToServer(new S2CTickingUsePacket(chargeTicks, ClientCastAnimation.UseStage.TICK));
+            NetworkHandler.sendToServer(new S2CTickingUsePacket(chargeTicks, e.isCanceled() ? ClientCastAnimation.UseStage.STOP : ClientCastAnimation.UseStage.TICK));
         }
 
         if (chargeTicks != 0 && (!Minecraft.getInstance().options.keyUse.isDown() || !PlayerUtils.inMainHandPostalisSword(player))) {

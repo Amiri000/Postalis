@@ -26,7 +26,7 @@ public record ChargeTicksPacket(int playerId, int tickCount) implements CustomPa
             if (level == null)
                 return;
 
-            ClientCastAnimation.putChargeTicks((Player) level.getEntity(playerId), tickCount);
+            ClientCastAnimation.putChargeTicks(playerId(), tickCount());
         });
     }
 

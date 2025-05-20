@@ -32,7 +32,7 @@ public class HeavensForgeRenderer implements BlockEntityRenderer<HeavensForgeBlo
 
         pose.mulPose(Axis.ZP.rotationDegrees((Util.getMillis() / 20f) % 360));
 
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, light, overlay, pose, buf, null, 0);
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 15728880, overlay, pose, buf, null, 0);
 
         pose.popPose();
     }

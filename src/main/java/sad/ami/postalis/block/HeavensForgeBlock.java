@@ -2,6 +2,7 @@ package sad.ami.postalis.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
@@ -47,6 +49,21 @@ public class HeavensForgeBlock extends BaseEntityBlock implements IPostalis {
         }
 
         return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity be = level.getBlockEntity(pos);
+
+            if (be instanceof HeavensForgeBlockEntity forge && !forge.getItem().isEmpty()) {
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), forge.getItem());
+
+                forge.setItem(ItemStack.EMPTY);
+            }
+        }
+
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override

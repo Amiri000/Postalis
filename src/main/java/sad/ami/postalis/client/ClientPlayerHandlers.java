@@ -17,7 +17,7 @@ import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
-import sad.ami.postalis.items.base.interfaces.IUsageItem;
+import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.sync.C2SBeginCastPacket;
 import sad.ami.postalis.utils.PlayerUtils;
@@ -136,7 +136,7 @@ public class ClientPlayerHandlers {
         var stack = event.getStack();
         var context = event.getContext();
 
-        if (!(stack.getItem() instanceof IUsageItem usageItem) || context == ItemDisplayContext.GUI
+        if (!(stack.getItem() instanceof IBranchableItem usageItem) || context == ItemDisplayContext.GUI
                 || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
             return;
 

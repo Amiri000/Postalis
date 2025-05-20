@@ -15,10 +15,10 @@ import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.entities.EmbeddedSwordEntity;
 import sad.ami.postalis.items.base.BaseSwordItem;
-import sad.ami.postalis.items.base.interfaces.IUsageItem;
+import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 
 @EventBusSubscriber
-public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
+public class WindBreakerItem extends BaseSwordItem implements IBranchableItem {
     private static float smoothCharge = 0;
 
     @SubscribeEvent
@@ -43,10 +43,10 @@ public class WindBreakerItem extends BaseSwordItem implements IUsageItem {
 
         var level = mc.level;
         var chargeTicks = ClientCastAnimation.getChargeTicks(player);
-//        System.out.println(chargeTicks + " " + player.getName());
 
         if (level == null || chargeTicks < 1)
             return;
+
         smoothCharge += (chargeTicks - smoothCharge) * 0.2F;
 
         var time = (level.getGameTime() + mc.getTimer().getGameTimeDeltaPartialTick(false)) * 0.25f;

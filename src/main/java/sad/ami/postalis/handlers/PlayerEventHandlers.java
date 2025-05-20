@@ -5,13 +5,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
-import sad.ami.postalis.client.interaction.ClientCastAnimation;
-import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
-import sad.ami.postalis.items.base.interfaces.IUsageItem;
 
 @EventBusSubscriber(modid = Postalis.MODID)
 public class PlayerEventHandlers {

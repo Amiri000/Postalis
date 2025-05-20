@@ -5,6 +5,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
 
@@ -14,5 +15,7 @@ public class RemoteRegistry {
     public static void entityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityRegistry.DESTRUCTIVE_TORNADO.get(), EmptyRenderer::new);
         event.registerEntityRenderer(EntityRegistry.EMBEDDED_SWORD.get(), EmbeddedSwordRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), HeavensForgeRenderer::new);
     }
 }

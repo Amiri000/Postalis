@@ -20,7 +20,7 @@ public class HeavensForgeRenderer implements BlockEntityRenderer<HeavensForgeBlo
 
     @Override
     public void render(HeavensForgeBlockEntity be, float pt, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
-        var stack = be.getItem();
+        var stack = be.getPedestalItem();
 
         if (stack.isEmpty())
             return;

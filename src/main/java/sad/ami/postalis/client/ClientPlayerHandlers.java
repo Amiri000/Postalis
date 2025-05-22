@@ -15,6 +15,7 @@ import org.joml.Matrix4f;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
+import sad.ami.postalis.client.screen.UpgradeAbilityScreen;
 import sad.ami.postalis.config.PostalisConfig;
 import sad.ami.postalis.init.HotkeyRegistry;
 import sad.ami.postalis.items.base.interfaces.IBranchableItem;
@@ -170,5 +171,9 @@ public class ClientPlayerHandlers {
             return;
 
         event.setCanceled(true);
+    }
+
+    public static void openAbilityScreen(BlockPos blockPos){
+        Minecraft.getInstance().setScreen(new UpgradeAbilityScreen(blockPos));
     }
 }

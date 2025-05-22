@@ -2,6 +2,7 @@ package sad.ami.postalis.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
@@ -23,6 +23,8 @@ import sad.ami.postalis.block.block_entity.ITickableBlockEntity;
 import sad.ami.postalis.init.BlockEntitiesRegistry;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.interfaces.IPostalis;
+import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.OpenScreenPacket;
 
 public class HeavensForgeBlock extends BaseEntityBlock implements IPostalis {
     public HeavensForgeBlock(BlockBehaviour.Properties properties) {
@@ -34,17 +36,22 @@ public class HeavensForgeBlock extends BaseEntityBlock implements IPostalis {
         if (hand != InteractionHand.MAIN_HAND || !(level.getBlockEntity(pos) instanceof HeavensForgeBlockEntity forgeBlockEntity))
             return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 
-        if (forgeBlockEntity.getItem().isEmpty()) {
-            if (!stack.isEmpty() && stack.has(PDataComponentRegistry.SELECTED_BRANCH)) {
+        if (forgeBlockEntity.hasItem()) {
+            if (stack.isEmpty() && player.isShiftKeyDown()) {
+                player.setItemInHand(hand, forgeBlockEntity.getPedestalItem());
+
+                forgeBlockEntity.setItem(ItemStack.EMPTY);
+
+                return ItemInteractionResult.SUCCESS;
+            }
+
+            if (!level.isClientSide())
+                NetworkHandler.sendToClient(new OpenScreenPacket(pos), (ServerPlayer) player);
+        } else {
+            if (stack.has(PDataComponentRegistry.SELECTED_BRANCH)) {
                 forgeBlockEntity.setItem(stack.copyWithCount(1));
 
                 stack.shrink(1);
-            }
-        } else {
-            if (stack.isEmpty()) {
-                player.setItemInHand(hand, forgeBlockEntity.getItem());
-
-                forgeBlockEntity.setItem(ItemStack.EMPTY);
             }
         }
 
@@ -56,8 +63,8 @@ public class HeavensForgeBlock extends BaseEntityBlock implements IPostalis {
         if (!state.is(newState.getBlock())) {
             BlockEntity be = level.getBlockEntity(pos);
 
-            if (be instanceof HeavensForgeBlockEntity forge && !forge.getItem().isEmpty()) {
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), forge.getItem());
+            if (be instanceof HeavensForgeBlockEntity forge && !forge.getPedestalItem().isEmpty()) {
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), forge.getPedestalItem());
 
                 forge.setItem(ItemStack.EMPTY);
             }

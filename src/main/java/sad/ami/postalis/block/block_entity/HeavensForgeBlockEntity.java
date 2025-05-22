@@ -1,5 +1,6 @@
 package sad.ami.postalis.block.block_entity;
 
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -14,8 +15,9 @@ import sad.ami.postalis.init.BlockEntitiesRegistry;
 
 import javax.annotation.Nullable;
 
+@Getter
 public class HeavensForgeBlockEntity extends BlockEntity implements ITickableBlockEntity {
-    private ItemStack display = ItemStack.EMPTY;
+    private ItemStack pedestalItem = ItemStack.EMPTY;
 
     public HeavensForgeBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntitiesRegistry.HEAVENS_FORGE.get(), pos, state);
@@ -25,12 +27,8 @@ public class HeavensForgeBlockEntity extends BlockEntity implements ITickableBlo
     public void tick(Level level, BlockPos pos, BlockState state) {
     }
 
-    public ItemStack getItem() {
-        return display;
-    }
-
     public void setItem(ItemStack stack) {
-        this.display = stack;
+        this.pedestalItem = stack;
 
         if (level != null && !level.isClientSide)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -38,12 +36,16 @@ public class HeavensForgeBlockEntity extends BlockEntity implements ITickableBlo
         setChanged();
     }
 
+    public boolean hasItem() {
+        return !getPedestalItem().isEmpty();
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
 
-        if (!display.isEmpty())
-            tag.put("Item", display.save(registries));
+        if (!pedestalItem.isEmpty())
+            tag.put("Item", pedestalItem.save(registries));
     }
 
     @Override
@@ -51,15 +53,15 @@ public class HeavensForgeBlockEntity extends BlockEntity implements ITickableBlo
         super.loadAdditional(tag, registries);
 
         if (tag.contains("Item"))
-            ItemStack.parse(registries, tag.getCompound("Item")).ifPresent(stack -> display = stack);
+            ItemStack.parse(registries, tag.getCompound("Item")).ifPresent(stack -> pedestalItem = stack);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
 
-        if (!display.isEmpty())
-            tag.put("Item", display.save(registries));
+        if (!pedestalItem.isEmpty())
+            tag.put("Item", pedestalItem.save(registries));
 
         return tag;
     }

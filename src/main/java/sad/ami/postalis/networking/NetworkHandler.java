@@ -8,11 +8,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.networking.packets.sync.C2STickingUsePacket;
-import sad.ami.postalis.networking.packets.sync.animations.ChargeTicksPacket;
-import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
-import sad.ami.postalis.networking.packets.sync.S2CPosItemInHandPacket;
+import sad.ami.postalis.networking.packets.OpenScreenPacket;
 import sad.ami.postalis.networking.packets.sync.C2SBeginCastPacket;
+import sad.ami.postalis.networking.packets.sync.C2STickingUsePacket;
+import sad.ami.postalis.networking.packets.sync.S2CPosItemInHandPacket;
+import sad.ami.postalis.networking.packets.sync.animations.CastAnimationPacket;
+import sad.ami.postalis.networking.packets.sync.animations.ChargeTicksPacket;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NetworkHandler {
@@ -26,6 +27,7 @@ public class NetworkHandler {
 
         registrar.playToClient(CastAnimationPacket.TYPE, CastAnimationPacket.STREAM_CODEC, CastAnimationPacket::handle);
         registrar.playToClient(ChargeTicksPacket.TYPE, ChargeTicksPacket.STREAM_CODEC, ChargeTicksPacket::handle);
+        registrar.playToClient(OpenScreenPacket.TYPE, OpenScreenPacket.STREAM_CODEC, OpenScreenPacket::handle);
     }
 
     public static <T extends CustomPacketPayload> void sendToServer(T message) {

@@ -1,3 +1,18 @@
 {
-  "parent": "minecraft:item/diamond_sword"
+  "parent": "neoforge:item/default",
+  "loader": "neoforge:separate_transforms",
+  "base": {
+    "parent": "postalis:item/wind_breaker_3d"
+  },
+  "perspectives": {
+    "ground": {
+      "parent": "postalis:item/wind_breaker_3d"
+    },
+    "gui": {
+      "parent": "postalis:item/wind_breaker_2d"
+    },
+    "fixed": {
+      "parent": "postalis:item/wind_breaker_2d"
+    }
+  }
 }

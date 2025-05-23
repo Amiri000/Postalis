@@ -15,15 +15,19 @@ import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.entities.EmbeddedSwordEntity;
 import sad.ami.postalis.items.base.BaseSwordItem;
+import sad.ami.postalis.items.base.BranchType;
 import sad.ami.postalis.items.base.SelectedBranchOptions;
+
+import java.util.Set;
 
 @EventBusSubscriber
 public class WindBreakerItem extends BaseSwordItem {
     private static float smoothCharge = 0;
 
-    @Override
-    public SelectedBranchOptions branchOptions() {
-        return SelectedBranchOptions.builder().build();
+    public WindBreakerItem() {
+        super(SelectedBranchOptions.builder()
+                .branchTypes(Set.of(BranchType.WIND, BranchType.STORM))
+                .build());
     }
 
     @SubscribeEvent

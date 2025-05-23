@@ -2,6 +2,8 @@ package sad.ami.postalis.items.base;
 
 import lombok.Builder;
 
+import java.util.Set;
+
 @Builder(toBuilder = true)
-public class SelectedBranchOptions {
+public record SelectedBranchOptions(Set<BranchType> branchTypes) {
 }

@@ -8,11 +8,19 @@ import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public abstract class BaseSwordItem extends SwordItem implements ISwordItem, IBranchableItem {
     public BaseSwordItem() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE).stacksTo(1));
+    }
+
+
+    public BaseSwordItem(SelectedBranchOptions branchOptions) {
+        this();
+
+        System.out.println(branchOptions.branchTypes() + " GGGGGGGG");
     }
 
     @Override

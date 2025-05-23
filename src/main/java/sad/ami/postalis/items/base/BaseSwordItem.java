@@ -5,12 +5,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import sad.ami.postalis.init.PDataComponentRegistry;
-import sad.ami.postalis.items.base.interfaces.IPostalis;
+import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;
 
 import java.util.UUID;
 
-public class BaseSwordItem extends SwordItem implements ISwordItem, IPostalis {
+public abstract class BaseSwordItem extends SwordItem implements ISwordItem, IBranchableItem {
     public BaseSwordItem() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE).stacksTo(1));
     }

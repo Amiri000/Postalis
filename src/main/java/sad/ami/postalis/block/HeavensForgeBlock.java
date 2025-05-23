@@ -22,11 +22,10 @@ import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.block.block_entity.ITickableBlockEntity;
 import sad.ami.postalis.init.BlockEntitiesRegistry;
 import sad.ami.postalis.init.PDataComponentRegistry;
-import sad.ami.postalis.items.base.interfaces.IPostalis;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.OpenScreenPacket;
 
-public class HeavensForgeBlock extends BaseEntityBlock implements IPostalis {
+public class HeavensForgeBlock extends BaseEntityBlock {
     public HeavensForgeBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }

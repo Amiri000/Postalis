@@ -12,7 +12,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.data.SelectedBranchData;
 import sad.ami.postalis.items.base.interfaces.IBranchableItem;
-import sad.ami.postalis.items.base.interfaces.IPostalis;
 
 import java.util.UUID;
 

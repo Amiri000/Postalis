@@ -2,15 +2,16 @@ package sad.ami.postalis.client.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
 import sad.ami.postalis.block.HeavensForgeBlock;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
-import sad.ami.postalis.client.screen.base.IPostalisScreen;
+import sad.ami.postalis.client.screen.base.BaseScreen;
+import sad.ami.postalis.items.base.BaseSwordItem;
+import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 
-public class UpgradeAbilityScreen extends Screen implements IPostalisScreen {
+public class UpgradeAbilityScreen extends BaseScreen {
     private final BlockPos pedestalPos;
     private final BlockState pedestalState;
 
@@ -25,8 +26,9 @@ public class UpgradeAbilityScreen extends Screen implements IPostalisScreen {
     public void tick() {
         var level = Minecraft.getInstance().level;
 
-        if (level == null || !(pedestalState.getBlock() instanceof HeavensForgeBlock heavensForgeBlock) || pedestalPos == null
-                || !(level.getBlockEntity(pedestalPos) instanceof HeavensForgeBlockEntity heavensForgeBlockEntity)) {
+        if (level == null || !(pedestalState.getBlock() instanceof HeavensForgeBlock heavensForgeBlock)
+                || !(level.getBlockEntity(pedestalPos) instanceof HeavensForgeBlockEntity heavensForgeBlockEntity)
+                || !(heavensForgeBlockEntity.getPedestalItem().getItem() instanceof BaseSwordItem item)) {
             this.onClose();
 
             return;
@@ -41,9 +43,4 @@ public class UpgradeAbilityScreen extends Screen implements IPostalisScreen {
 
     }
 
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
 }

@@ -8,11 +8,13 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import sad.ami.postalis.data.SelectedBranchData;
+import sad.ami.postalis.items.base.SelectedBranchOptions;
 
 public interface IBranchableItem {
+    SelectedBranchOptions branchOptions();
 
     @OnlyIn(Dist.CLIENT)
     default void onRenderUsage(ItemRenderer itemRenderer, Player player, ItemStack stack, ItemDisplayContext context, PoseStack poseStack, MultiBufferSource buffer, int light) {
-
     }
 }

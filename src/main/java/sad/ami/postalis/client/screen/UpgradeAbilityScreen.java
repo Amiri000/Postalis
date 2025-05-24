@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import sad.ami.postalis.block.HeavensForgeBlock;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.client.screen.base.BaseScreen;
+import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 
@@ -34,6 +35,7 @@ public class UpgradeAbilityScreen extends BaseScreen {
             return;
         }
 
+        System.out.println(heavensForgeBlockEntity.getPedestalItem().get(PDataComponentRegistry.SELECTED_BRANCH));
     }
 
     @Override

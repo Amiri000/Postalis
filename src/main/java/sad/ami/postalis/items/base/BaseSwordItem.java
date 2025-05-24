@@ -11,11 +11,8 @@ import sad.ami.postalis.items.base.interfaces.ISwordItem;
 import java.util.UUID;
 
 public abstract class BaseSwordItem extends SwordItem implements ISwordItem, IBranchableItem {
-    private final SelectedBranchOptions branchOptions;
-
-    public BaseSwordItem(SelectedBranchOptions branchOptions) {
+    public BaseSwordItem(BranchesData branchOptions) {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE).stacksTo(1).component(PDataComponentRegistry.SELECTED_BRANCH, branchOptions));
-        this.branchOptions = branchOptions;
     }
 
     @Override

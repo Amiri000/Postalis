@@ -8,9 +8,11 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BranchType;
+import sad.ami.postalis.items.base.BranchesData;
 
-import java.util.Arrays;
+import java.util.Set;
 
 public interface IBranchableItem {
     @OnlyIn(Dist.CLIENT)

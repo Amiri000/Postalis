@@ -4,8 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import sad.ami.postalis.block.HeavensForgeBlock;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.client.screen.base.BaseScreen;
 import sad.ami.postalis.init.PDataComponentRegistry;
@@ -15,27 +15,35 @@ import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 public class UpgradeAbilityScreen extends BaseScreen {
     private final BlockPos pedestalPos;
     private final BlockState pedestalState;
+    private final ItemStack pedestalItem;
 
     public UpgradeAbilityScreen(BlockPos pos) {
         super(Component.literal("upgrade_screen"));
 
+        var level = Minecraft.getInstance().level;
+
         this.pedestalPos = pos;
-        this.pedestalState = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getBlockState(pos) : null;
+
+        if (level != null) {
+            this.pedestalState = level.getBlockState(pos);
+            this.pedestalItem = level.getBlockEntity(pos) instanceof HeavensForgeBlockEntity forge && forge.getPedestalItem().getItem() instanceof BaseSwordItem
+                    ? forge.getPedestalItem() : ItemStack.EMPTY;
+
+        } else {
+            this.pedestalState = null;
+            this.pedestalItem = ItemStack.EMPTY;
+        }
     }
 
     @Override
     public void tick() {
         var level = Minecraft.getInstance().level;
 
-        if (level == null || !(pedestalState.getBlock() instanceof HeavensForgeBlock heavensForgeBlock)
-                || !(level.getBlockEntity(pedestalPos) instanceof HeavensForgeBlockEntity heavensForgeBlockEntity)
-                || !(heavensForgeBlockEntity.getPedestalItem().getItem() instanceof BaseSwordItem item)) {
+        if (level == null || pedestalItem == null || pedestalItem.isEmpty()) {
             this.onClose();
 
             return;
         }
-
-        System.out.println(heavensForgeBlockEntity.getPedestalItem().get(PDataComponentRegistry.SELECTED_BRANCH));
     }
 
     @Override
@@ -43,6 +51,16 @@ public class UpgradeAbilityScreen extends BaseScreen {
         this.renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
 
+        if (!(pedestalItem.getItem() instanceof IBranchableItem branchableItem))
+            return;
+
+        var text =pedestalItem.get(PDataComponentRegistry.SELECTED_BRANCH).getBranchTypes().toString();
+
+        int x = this.width / 2 - font.width(text) / 2;
+        int y = 20;
+
+        graphics.drawString(font, text, x, y, 0xFFFFFF, false);
+        graphics.drawString(font, pedestalItem.get(PDataComponentRegistry.SELECTED_BRANCH).getBranchSelected().getDisplayName(), x, y + 20, 0xFFFFFF, false);
     }
 
 }

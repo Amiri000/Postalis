@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,9 +15,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.entities.EmbeddedSwordEntity;
+import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.BranchType;
-import sad.ami.postalis.items.base.SelectedBranchOptions;
+import sad.ami.postalis.items.base.BranchesData;
 
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class WindBreakerItem extends BaseSwordItem {
     private static float smoothCharge = 0;
 
     public WindBreakerItem() {
-        super(SelectedBranchOptions.builder()
+        super(BranchesData.builder()
                 .branchTypes(Set.of(BranchType.WIND, BranchType.STORM))
                 .build());
     }

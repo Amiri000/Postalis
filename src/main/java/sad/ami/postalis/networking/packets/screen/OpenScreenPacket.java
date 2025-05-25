@@ -1,4 +1,4 @@
-package sad.ami.postalis.networking.packets;
+package sad.ami.postalis.networking.packets.screen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;

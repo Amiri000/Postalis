@@ -4,13 +4,10 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.items.base.BranchesData;
-import sad.ami.postalis.items.base.interfaces.IBranchableItem;
+import sad.ami.postalis.data.BranchesData;
 
 import java.util.UUID;
 

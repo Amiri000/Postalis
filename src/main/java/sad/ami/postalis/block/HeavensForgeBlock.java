@@ -23,7 +23,7 @@ import sad.ami.postalis.block.block_entity.ITickableBlockEntity;
 import sad.ami.postalis.init.BlockEntitiesRegistry;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.OpenScreenPacket;
+import sad.ami.postalis.networking.packets.screen.OpenScreenPacket;
 
 public class HeavensForgeBlock extends BaseEntityBlock {
     public HeavensForgeBlock(BlockBehaviour.Properties properties) {
@@ -79,7 +79,9 @@ public class HeavensForgeBlock extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, BlockEntitiesRegistry.HEAVENS_FORGE.get(), ITickableBlockEntity::tick);
+        return type == BlockEntitiesRegistry.HEAVENS_FORGE.get()
+                ? (lvl, pos, st, be) -> ((HeavensForgeBlockEntity) be).tick(lvl, pos, st)
+                : null;
     }
 
     @Override

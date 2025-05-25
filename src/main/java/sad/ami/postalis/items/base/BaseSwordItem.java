@@ -4,6 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import sad.ami.postalis.data.BranchesData;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 import sad.ami.postalis.items.base.interfaces.ISwordItem;

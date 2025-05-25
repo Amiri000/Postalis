@@ -23,8 +23,11 @@ public class HeavensForgeBlockEntity extends BlockEntity implements ITickableBlo
         super(BlockEntitiesRegistry.HEAVENS_FORGE.get(), pos, state);
     }
 
-    @Override
     public void tick(Level level, BlockPos pos, BlockState state) {
+//        if(!pedestalItem.isEmpty() && level.isClientSide)
+//            NetworkHandler.sendToServer(new ChangeBranchPacket(this.getBlockPos().getCenter(), BranchType.STORM));
+
+        // System.out.println(pedestalItem.get(PDataComponentRegistry.SELECTED_BRANCH));
     }
 
     public void setItem(ItemStack stack) {

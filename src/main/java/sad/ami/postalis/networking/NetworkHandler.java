@@ -8,7 +8,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.networking.packets.OpenScreenPacket;
+import sad.ami.postalis.networking.packets.screen.ChangeBranchPacket;
+import sad.ami.postalis.networking.packets.screen.OpenScreenPacket;
 import sad.ami.postalis.networking.packets.sync.C2SBeginCastPacket;
 import sad.ami.postalis.networking.packets.sync.C2STickingUsePacket;
 import sad.ami.postalis.networking.packets.sync.S2CPosItemInHandPacket;
@@ -24,6 +25,7 @@ public class NetworkHandler {
         registrar.playToServer(C2STickingUsePacket.TYPE, C2STickingUsePacket.STREAM_CODEC, C2STickingUsePacket::handle);
         registrar.playToServer(C2SBeginCastPacket.TYPE, C2SBeginCastPacket.STREAM_CODEC, C2SBeginCastPacket::handle);
         registrar.playToServer(S2CPosItemInHandPacket.TYPE, S2CPosItemInHandPacket.STREAM_CODEC, S2CPosItemInHandPacket::handle);
+        registrar.playToServer(ChangeBranchPacket.TYPE, ChangeBranchPacket.STREAM_CODEC, ChangeBranchPacket::handle);
 
         registrar.playToClient(CastAnimationPacket.TYPE, CastAnimationPacket.STREAM_CODEC, CastAnimationPacket::handle);
         registrar.playToClient(ChargeTicksPacket.TYPE, ChargeTicksPacket.STREAM_CODEC, ChargeTicksPacket::handle);

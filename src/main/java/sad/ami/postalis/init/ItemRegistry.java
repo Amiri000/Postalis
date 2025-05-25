@@ -17,7 +17,7 @@ public class ItemRegistry {
 
     public static void register(IEventBus bus) {
         for (var block : BlockRegistry.BLOCKS.getEntries())
-            ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
+            ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
 
         ITEMS.register(bus);
     }

@@ -5,7 +5,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.Vec3;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
-import sad.ami.postalis.networking.packets.OpenScreenPacket;
 
 import java.util.Locale;
 

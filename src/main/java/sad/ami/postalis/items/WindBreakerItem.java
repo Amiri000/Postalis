@@ -18,7 +18,9 @@ import sad.ami.postalis.entities.EmbeddedSwordEntity;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.BranchType;
-import sad.ami.postalis.items.base.BranchesData;
+import sad.ami.postalis.data.BranchesData;
+import sad.ami.postalis.networking.NetworkHandler;
+import sad.ami.postalis.networking.packets.screen.ChangeBranchPacket;
 
 import java.util.Set;
 
@@ -30,6 +32,11 @@ public class WindBreakerItem extends BaseSwordItem {
         super(BranchesData.builder()
                 .branchTypes(Set.of(BranchType.WIND, BranchType.STORM))
                 .build());
+    }
+
+    @Override
+    public void inMainHand(Player player, ItemStack stack, Level level) {
+
     }
 
     @SubscribeEvent

@@ -5,45 +5,32 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.client.screen.base.BaseScreen;
-import sad.ami.postalis.init.PDataComponentRegistry;
-import sad.ami.postalis.items.base.BaseSwordItem;
+import sad.ami.postalis.client.screen.widgets.BranchButton;
 import sad.ami.postalis.items.base.interfaces.IBranchableItem;
 
 public class UpgradeAbilityScreen extends BaseScreen {
     private final BlockPos pedestalPos;
     private final BlockState pedestalState;
-    private final ItemStack pedestalItem;
 
     public UpgradeAbilityScreen(BlockPos pos) {
         super(Component.literal("upgrade_screen"));
-
         var level = Minecraft.getInstance().level;
-
         this.pedestalPos = pos;
-
-        if (level != null) {
-            this.pedestalState = level.getBlockState(pos);
-            this.pedestalItem = level.getBlockEntity(pos) instanceof HeavensForgeBlockEntity forge && forge.getPedestalItem().getItem() instanceof BaseSwordItem
-                    ? forge.getPedestalItem() : ItemStack.EMPTY;
-
-        } else {
-            this.pedestalState = null;
-            this.pedestalItem = ItemStack.EMPTY;
-        }
+        this.pedestalState = level != null ? level.getBlockState(pos) : null;
     }
 
     @Override
-    public void tick() {
-        var level = Minecraft.getInstance().level;
+    protected void init() {
+        super.init();
 
-        if (level == null || pedestalItem == null || pedestalItem.isEmpty()) {
-            this.onClose();
+        int x = this.width / 2 - 40;
+        int y = this.height / 2;
 
-            return;
-        }
+        this.addRenderableWidget(new BranchButton(x, y, 80, 20, Component.literal("Выбрать ветвь"), pedestalPos));
     }
 
     @Override
@@ -51,16 +38,19 @@ public class UpgradeAbilityScreen extends BaseScreen {
         this.renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
 
-        if (!(pedestalItem.getItem() instanceof IBranchableItem branchableItem))
-            return;
+        var level = Minecraft.getInstance().level;
+        if (level == null) return;
 
-        var text =pedestalItem.get(PDataComponentRegistry.SELECTED_BRANCH).getBranchTypes().toString();
+        BlockEntity be = level.getBlockEntity(pedestalPos);
+        if (!(be instanceof HeavensForgeBlockEntity forge)) return;
 
-        int x = this.width / 2 - font.width(text) / 2;
+        ItemStack pedestalItem = forge.getPedestalItem();
+        if (!(pedestalItem.getItem() instanceof IBranchableItem branchableItem)) return;
+
+        int x = this.width / 2 - 50 / 2;
         int y = 20;
 
-        graphics.drawString(font, text, x, y, 0xFFFFFF, false);
-        graphics.drawString(font, pedestalItem.get(PDataComponentRegistry.SELECTED_BRANCH).getBranchSelected().getDisplayName(), x, y + 20, 0xFFFFFF, false);
+        graphics.drawString(font, branchableItem.getBranchTypes(pedestalItem).toString(), x, y, 0xFFFFFF, false);
+        graphics.drawString(font, branchableItem.getBranchSelected(pedestalItem).getDisplayName(), x, y + 20, 0xFFFFFF, false);
     }
-
 }

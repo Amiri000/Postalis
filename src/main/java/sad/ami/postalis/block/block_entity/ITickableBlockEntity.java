@@ -9,5 +9,4 @@ public interface ITickableBlockEntity {
         be.tick(level, pos, state);
     }
 
-    void tick(Level level, BlockPos pos, BlockState state);
 }

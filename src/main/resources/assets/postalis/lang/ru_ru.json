@@ -3,9 +3,11 @@
   "warning.postalis.screen": "Удерживай клавишу [%1$s]",
   "key.postalis.checklist_menu": "Открыть меню характеристик",
 
-  "branch_type.postalis.wind": "Ветер",
-  "branch_type.postalis.storm": "Шторм",
   "branch_type.postalis.none": "Ветвь не выбрана",
+
+  "branch_type.postalis.pippi": "Пипи",
+  "branch_type.postalis.ronni": "Ронни",
+  "branch_type.postalis.dismore": "Дисмор",
 
   "entity.postalis.destructive_tornado": "Разрушительное торнадо",
 

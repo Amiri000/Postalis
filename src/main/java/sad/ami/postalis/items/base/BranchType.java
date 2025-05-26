@@ -17,20 +17,17 @@ import java.util.Arrays;
 public enum BranchType {
     NONE("none", Component.translatable("branch_type.postalis.none")),
 
-    WIND("wind", Component.translatable("branch_type.postalis.wind")),
-    STORM("storm", Component.translatable("branch_type.postalis.storm"));
+    PIPPI("wind", Component.translatable("branch_type.postalis.pippi")),
+    RONNI("storm", Component.translatable("branch_type.postalis.ronni")),
+    DISMORE("dismore", Component.translatable("branch_type.postalis.dismore"));
 
     private final String id;
     private final MutableComponent displayName;
 
     public static final Codec<BranchType> CODEC = Codec.STRING.flatXmap(id -> Arrays.stream(values())
-            .filter(type -> type.id.equals(id))
-            .findFirst()
-            .map(DataResult::success)
+            .filter(type -> type.id.equals(id)).findFirst().map(DataResult::success)
             .orElseGet(() -> DataResult.error(() -> "Unknown BranchType id: " + id)), type -> DataResult.success(type.getId()));
 
     public static final StreamCodec<ByteBuf, BranchType> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(id -> Arrays.stream(values())
-            .filter(t -> t.id.equals(id))
-            .findFirst()
-            .orElse(BranchType.NONE), BranchType::getId);
+            .filter(t -> t.id.equals(id)).findFirst().orElse(BranchType.NONE), BranchType::getId);
 }

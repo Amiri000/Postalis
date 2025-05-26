@@ -12,7 +12,7 @@ import net.neoforged.bus.api.ICancellableEvent;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-public class PlayerItemInteractionEvent extends Event implements ICancellableEvent {
+public class FinishItemInteractionEvent extends Event implements ICancellableEvent {
     private final Player caster;
     private final Level level;
     private final BlockPos targetBlockPos;

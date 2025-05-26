@@ -3,9 +3,11 @@
   "warning.postalis.screen": "Hold the key [%1$s]",
   "key.postalis.checklist_menu": "Open characteristics menu",
 
-  "branch_type.postalis.wind": "Wind",
-  "branch_type.postalis.storm": "Storm",
   "branch_type.postalis.none": "None",
+
+  "branch_type.postalis.pippi": "Wind",
+  "branch_type.postalis.ronni": "Storm",
+  "branch_type.postalis.dismore": "Dismore",
 
   "entity.postalis.destructive_tornado": "Destructive Tornado",
 

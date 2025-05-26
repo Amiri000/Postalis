@@ -25,7 +25,6 @@ public interface IBranchableItem {
 
     default void setBranchesData(ItemStack stack, BranchesData branchesData) {
         stack.set(PDataComponentRegistry.SELECTED_BRANCH, branchesData);
-        System.out.println(stack.get(PDataComponentRegistry.SELECTED_BRANCH));
     }
 
     default BranchType getBranchSelected(ItemStack stack) {

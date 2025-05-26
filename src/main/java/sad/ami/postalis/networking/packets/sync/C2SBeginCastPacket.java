@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
+import sad.ami.postalis.api.event.FinishItemInteractionEvent;
 
 public record C2SBeginCastPacket(int tickCount, BlockPos blockPos) implements CustomPacketPayload {
     public static final Type<C2SBeginCastPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "begin_cast"));
@@ -24,7 +24,7 @@ public record C2SBeginCastPacket(int tickCount, BlockPos blockPos) implements Cu
         ctx.enqueueWork(() -> {
             var player = ctx.player();
 
-            NeoForge.EVENT_BUS.post(new PlayerItemInteractionEvent(player, player.getCommandSenderWorld(), blockPos));
+            NeoForge.EVENT_BUS.post(new FinishItemInteractionEvent(player, player.getCommandSenderWorld(), blockPos));
         });
     }
 

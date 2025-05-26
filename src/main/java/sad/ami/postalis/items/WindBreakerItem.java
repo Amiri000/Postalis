@@ -12,15 +12,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import sad.ami.postalis.api.event.PlayerItemInteractionEvent;
+import sad.ami.postalis.api.event.FinishItemInteractionEvent;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.entities.EmbeddedSwordEntity;
-import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
 import sad.ami.postalis.items.base.BranchType;
 import sad.ami.postalis.data.BranchesData;
-import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.screen.ChangeBranchPacket;
 
 import java.util.Set;
 
@@ -30,7 +27,7 @@ public class WindBreakerItem extends BaseSwordItem {
 
     public WindBreakerItem() {
         super(BranchesData.builder()
-                .branchTypes(Set.of(BranchType.WIND, BranchType.STORM))
+                .branchTypes(Set.of(BranchType.PIPPI, BranchType.RONNI))
                 .build());
     }
 
@@ -40,7 +37,7 @@ public class WindBreakerItem extends BaseSwordItem {
     }
 
     @SubscribeEvent
-    public static void onInteraction(PlayerItemInteractionEvent event) {
+    public static void onInteraction(FinishItemInteractionEvent event) {
         var level = event.getLevel();
         var caster = event.getCaster();
         var blockPos = event.getTargetBlockPos();

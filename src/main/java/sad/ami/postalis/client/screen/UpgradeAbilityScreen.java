@@ -4,10 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import sad.ami.postalis.Postalis;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
+import sad.ami.postalis.client.screen.base.AnimatedSprite;
 import sad.ami.postalis.client.screen.base.BaseScreen;
 import sad.ami.postalis.client.screen.widgets.BranchButton;
 import sad.ami.postalis.items.base.BranchType;
@@ -17,11 +20,17 @@ public class UpgradeAbilityScreen extends BaseScreen {
     private final BlockPos pedestalPos;
     private final BlockState pedestalState;
 
+    private final AnimatedSprite animation = new AnimatedSprite(
+            ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/gui/test.png"),
+            20, 20,
+            5,
+            5
+    );
+
     public UpgradeAbilityScreen(BlockPos pos) {
         super(Component.literal("upgrade_screen"));
 
         var level = Minecraft.getInstance().level;
-
         this.pedestalPos = pos;
         this.pedestalState = level != null ? level.getBlockState(pos) : null;
     }
@@ -30,7 +39,7 @@ public class UpgradeAbilityScreen extends BaseScreen {
     protected void init() {
         super.init();
 
-        int x = this.width / 2 - 40;
+        int x = this.width / 2 - 50;
         int y = this.height / 2;
 
         this.addRenderableWidget(new BranchButton(x, y, 100, 20, Component.literal("Выбрать ветвь 1"), pedestalPos, BranchType.PIPPI));
@@ -43,7 +52,9 @@ public class UpgradeAbilityScreen extends BaseScreen {
         super.render(graphics, mouseX, mouseY, partialTick);
 
         var level = Minecraft.getInstance().level;
-        if (level == null) return;
+
+        if (level == null)
+            return;
 
         if (!(level.getBlockEntity(pedestalPos) instanceof HeavensForgeBlockEntity forge))
             return;
@@ -58,5 +69,7 @@ public class UpgradeAbilityScreen extends BaseScreen {
 
         graphics.drawString(font, branchableItem.getBranchTypes(pedestalItemStack).toString(), x, y, 0xFFFFFF, false);
         graphics.drawString(font, branchableItem.getBranchSelected(pedestalItemStack).getDisplayName(), x, y + 20, 0xFFFFFF, false);
+
+        //   animation.render(graphics, 50, 50);
     }
 }

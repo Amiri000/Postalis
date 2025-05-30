@@ -14,5 +14,7 @@
   "item.postalis.wind_breaker": "Ветролом",
   "item.postalis.ornament_glove": "Перчатка орнамента",
 
-  "block.postalis.heavens_forge": "Кузня небес"
+  "block.postalis.heavens_forge": "Кузня небес",
+
+  "tooltip.postalis.ornament_glove": "Изящная перчатка, способная вычерчивать уникальные орнаменты для орудий, подвластных стихиям."
 }

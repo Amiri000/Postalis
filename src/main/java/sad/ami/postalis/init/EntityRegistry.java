@@ -18,5 +18,5 @@ public class EntityRegistry {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EmbeddedSwordEntity>> EMBEDDED_SWORD = ENTITIES.register("embedded_sword",
             () -> EntityType.Builder.<EmbeddedSwordEntity>of((spawnEntityType, level) -> new EmbeddedSwordEntity(level), MobCategory.MISC)
-                    .sized(0.25F, 0.4F).build("embedded_sword"));
+                    .sized(0.4F, 1.2F).build("embedded_sword"));
 }

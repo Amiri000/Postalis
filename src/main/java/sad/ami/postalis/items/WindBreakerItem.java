@@ -27,7 +27,7 @@ public class WindBreakerItem extends BaseSwordItem {
 
     public WindBreakerItem() {
         super(BranchesData.builder()
-                .branchTypes(Set.of(BranchType.PIPPI, BranchType.RONNI))
+                .branchTypes(Set.of(BranchType.PIPPI, BranchType.RONNI, BranchType.DISMORE))
                 .build());
     }
 
@@ -44,7 +44,7 @@ public class WindBreakerItem extends BaseSwordItem {
 
         var entity = new EmbeddedSwordEntity(level);
 
-        entity.setPos(blockPos.above().getCenter());
+        entity.setPos(blockPos.above().getCenter().add(0, -0.5, 0));
 
         level.addFreshEntity(entity);
 

@@ -5,8 +5,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
@@ -20,12 +18,8 @@ public class UpgradeAbilityScreen extends BaseScreen {
     private final BlockPos pedestalPos;
     private final BlockState pedestalState;
 
-    private final AnimatedSprite animation = new AnimatedSprite(
-            ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/gui/test.png"),
-            20, 20,
-            5,
-            5
-    );
+    private final AnimatedSprite animation = new AnimatedSprite(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/gui/test.png"),
+            20, 20, 5, 5);
 
     public UpgradeAbilityScreen(BlockPos pos) {
         super(Component.literal("upgrade_screen"));

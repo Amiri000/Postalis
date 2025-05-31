@@ -3,7 +3,7 @@
 uniform sampler2D Sampler0;
 uniform vec4 ColorModulator;
 uniform float Opacity;
-uniform float Time; // добавляем время
+uniform float Time;
 
 in vec2 texCoord0;
 out vec4 fragColor;
@@ -15,7 +15,6 @@ void main() {
         discard;
     }
 
-    // Вычисляем фазу волны по координатам и времени
     float wave = sin((texCoord0.y + texCoord0.x) * 10.0 - Time * 3.0) * 0.5 + 0.5;
 
     float dynamicAlpha = Opacity * wave;

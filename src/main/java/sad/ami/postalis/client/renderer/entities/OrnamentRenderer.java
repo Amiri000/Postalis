@@ -1,16 +1,15 @@
 package sad.ami.postalis.client.renderer.entities;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import org.joml.Matrix4f;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.init.ShaderRegistry;
 
 public class OrnamentRenderer<T extends Entity> extends EntityRenderer<T> {
     public OrnamentRenderer(EntityRendererProvider.Context context) {
@@ -21,36 +20,36 @@ public class OrnamentRenderer<T extends Entity> extends EntityRenderer<T> {
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
+        RenderSystem.enableBlend();
+
         poseStack.pushPose();
 
         poseStack.translate(0, 0.25, 0);
         poseStack.scale(2f, 2f, 2f);
 
-        var texture = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png");
-        var renderType = RenderType.entityTranslucent(texture);
-        var consumer = bufferSource.getBuffer(renderType);
+        RenderSystem.setShader(() -> ShaderRegistry.ORNAMENT_SHADER);
+        RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
 
-        var pose = poseStack.last();
-        float size = 0.5f;
+        ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Opacity").set((float) (Math.sin(System.currentTimeMillis() / 300.0) * 0.25 + 0.75));
+        ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1000.0f);
 
-        var overlayU = OverlayTexture.NO_OVERLAY >> 16;
-        var overlayV = OverlayTexture.NO_OVERLAY & 0xFFFF;
-        var lightU = packedLight >> 16;
-        var lightV = packedLight & 0xFFFF;
+        RenderSystem.defaultBlendFunc();
 
-        consumer.addVertex(pose.pose(), -size, -size, 0).setColor(255, 255, 255, 255)
-                .setUv(0, 1).setUv1(overlayU, overlayV).setUv2(lightU, lightV).setNormal(0, 1, 0);
+        var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-        consumer.addVertex(pose.pose(),  size, -size, 0).setColor(255, 255, 255, 255)
-                .setUv(1, 1).setUv1(overlayU, overlayV).setUv2(lightU, lightV).setNormal(0, 1, 0);
+        var size = 0.5f;
+        var mat = poseStack.last().pose();
 
-        consumer.addVertex(pose.pose(),  size,  size, 0).setColor(255, 255, 255, 255)
-                .setUv(1, 0).setUv1(overlayU, overlayV).setUv2(lightU, lightV).setNormal(0, 1, 0);
-
-        consumer.addVertex(pose.pose(), -size,  size, 0).setColor(255, 255, 255, 255)
-                .setUv(0, 0).setUv1(overlayU, overlayV).setUv2(lightU, lightV).setNormal(0, 1, 0);
+        consumer.addVertex(mat, -size, -size, 0).setUv(0, 1);
+        consumer.addVertex(mat, size, -size, 0).setUv(1, 1);
+        consumer.addVertex(mat, size, size, 0).setUv(1, 0);
+        consumer.addVertex(mat, -size, size, 0).setUv(0, 0);
 
         poseStack.popPose();
+
+        BufferUploader.drawWithShader(consumer.buildOrThrow());
+
+        RenderSystem.disableBlend();
     }
 
     @Override

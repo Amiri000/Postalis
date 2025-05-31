@@ -3,6 +3,7 @@ package sad.ami.postalis.client;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -10,9 +11,11 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import org.joml.Matrix4f;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
+import sad.ami.postalis.api.system.geo.GeoModelManager;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.client.screen.UpgradeAbilityScreen;
@@ -173,7 +176,7 @@ public class ClientPlayerHandlers {
         event.setCanceled(true);
     }
 
-    public static void openAbilityScreen(BlockPos blockPos){
+    public static void openAbilityScreen(BlockPos blockPos) {
         Minecraft.getInstance().setScreen(new UpgradeAbilityScreen(blockPos));
     }
 }

@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-
 public class GeoModel {
     @SerializedName("minecraft:geometry")
     public List<Geometry> minecraft_geometry;
@@ -16,26 +15,33 @@ public class GeoModel {
 
     public static class Description {
         public String identifier;
-        public int texture_width;
-        public int texture_height;
-        public float visible_bounds_width;
-        public float visible_bounds_height;
-        public List<Float> visible_bounds_offset;
+        @SerializedName("texture_width") public int texture_width;
+        @SerializedName("texture_height") public int texture_height;
+        @SerializedName("visible_bounds_width") public float visible_bounds_width;
+        @SerializedName("visible_bounds_height") public float visible_bounds_height;
+        @SerializedName("visible_bounds_offset") public List<Float> visible_bounds_offset;
     }
 
     public static class Bone {
         public String name;
         public List<Float> pivot;
+        public List<Float> rotation; // <- Новое: поддержка rotation
         public List<Cube> cubes;
+        public Boolean mirror; // <- Иногда бывает на уровне bone
     }
 
     public static class Cube {
         public List<Float> origin;
         public List<Float> size;
+        public Float inflate;           // <- Новое
+        public Boolean mirror;          // <- Новое
+        public List<Float> rotation;    // <- Новое
 
-        // Новое: поддержка UV в виде объекта с гранями
         @SerializedName("uv")
-        public FaceUV uvFaces;
+        public Object uv; // может быть List<Float> или Object с гранями
+
+        @SerializedName("uv_faces")
+        public FaceUV uv_faces;
     }
 
     public static class FaceUV {
@@ -48,8 +54,7 @@ public class GeoModel {
     }
 
     public static class Face {
-        public List<Integer> uv;
-        @SerializedName("uv_size")
-        public List<Integer> uv_size;
+        public List<Float> uv;
+        @SerializedName("uv_size") public List<Float> uv_size;
     }
 }

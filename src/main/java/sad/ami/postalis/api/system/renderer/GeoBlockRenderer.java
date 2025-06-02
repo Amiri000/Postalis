@@ -2,11 +2,13 @@ package sad.ami.postalis.api.system.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -16,7 +18,7 @@ import sad.ami.postalis.api.system.geo.GeoModelManager;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 
 public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEntity> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("postalis", "textures/block/test_texture.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("postalis", "textures/block/texture.png");
     private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath("postalis", "geo/test.geo.json");
 
     public GeoBlockRenderer(BlockEntityRendererProvider.Context context) {
@@ -27,19 +29,20 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
     public void render(HeavensForgeBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         GeoModel model = GeoModelManager.CACHE.get(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json"));
 
-        if (model == null || model.minecraft_geometry == null || model.minecraft_geometry.isEmpty()) {
-            System.err.println(model ==null);
+        if (model == null || model.minecraft_geometry == null || model.minecraft_geometry.isEmpty())
             return;
-        }
 
-        GeoModel.Geometry geo = model.minecraft_geometry.get(0);
+
+        GeoModel.Geometry geo = model.minecraft_geometry.getFirst();
 
         var buffer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
         poseStack.pushPose();
+        poseStack.translate(0.5, 0, 0.5);
+        poseStack.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
         for (var bone : geo.bones) {
             for (var cube : bone.cubes) {
-                drawCube(poseStack, buffer, cube, packedLight, packedOverlay);
+                drawCube(poseStack, buffer, cube, LightTexture.FULL_BRIGHT, packedOverlay);
             }
         }
 
@@ -62,35 +65,34 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
         int color = 0xFFFFFFFF;
 
         Matrix4f pose = poseStack.last().pose();
-        Matrix3f normal = poseStack.last().normal();
 
-        // Helper
         final float[][] normals = {
                 {0, 0, -1}, // front
-                {0, 0, 1}, // back
+                {0, 0, 1},  // back
                 {-1, 0, 0}, // left
-                {1, 0, 0}, // right
-                {0, 1, 0}, // top
-                {0, -1, 0}, // bottom
+                {1, 0, 0},  // right
+                {0, 1, 0},  // top
+                {0, -1, 0}  // bottom
         };
 
         float[][][] faces = {
                 // FRONT
-                {{x1, y1, z1}, {0, 1}}, {{x2, y1, z1}, {1, 1}}, {{x2, y2, z1}, {1, 0}}, {{x1, y2, z1}, {0, 0}},
+                {{x1, y2, z1}, {0, 0}}, {{x2, y2, z1}, {1, 0}}, {{x2, y1, z1}, {1, 1}}, {{x1, y1, z1}, {0, 1}},
                 // BACK
-                {{x2, y1, z2}, {0, 1}}, {{x1, y1, z2}, {1, 1}}, {{x1, y2, z2}, {1, 0}}, {{x2, y2, z2}, {0, 0}},
+                {{x2, y2, z2}, {0, 0}}, {{x1, y2, z2}, {1, 0}}, {{x1, y1, z2}, {1, 1}}, {{x2, y1, z2}, {0, 1}},
                 // LEFT
-                {{x1, y1, z2}, {0, 1}}, {{x1, y1, z1}, {1, 1}}, {{x1, y2, z1}, {1, 0}}, {{x1, y2, z2}, {0, 0}},
+                {{x1, y2, z2}, {0, 0}}, {{x1, y2, z1}, {1, 0}}, {{x1, y1, z1}, {1, 1}}, {{x1, y1, z2}, {0, 1}},
                 // RIGHT
-                {{x2, y1, z1}, {0, 1}}, {{x2, y1, z2}, {1, 1}}, {{x2, y2, z2}, {1, 0}}, {{x2, y2, z1}, {0, 0}},
+                {{x2, y2, z1}, {0, 0}}, {{x2, y2, z2}, {1, 0}}, {{x2, y1, z2}, {1, 1}}, {{x2, y1, z1}, {0, 1}},
                 // TOP
-                {{x1, y2, z1}, {0, 1}}, {{x2, y2, z1}, {1, 1}}, {{x2, y2, z2}, {1, 0}}, {{x1, y2, z2}, {0, 0}},
+                {{x1, y2, z2}, {0, 0}}, {{x2, y2, z2}, {1, 0}}, {{x2, y2, z1}, {1, 1}}, {{x1, y2, z1}, {0, 1}},
                 // BOTTOM
-                {{x1, y1, z2}, {0, 1}}, {{x2, y1, z2}, {1, 1}}, {{x2, y1, z1}, {1, 0}}, {{x1, y1, z1}, {0, 0}},
+                {{x1, y1, z1}, {0, 0}}, {{x2, y1, z1}, {1, 0}}, {{x2, y1, z2}, {1, 1}}, {{x1, y1, z2}, {0, 1}},
         };
 
         for (int face = 0; face < 6; face++) {
             float[] normalVec = normals[face];
+
             for (int i = 0; i < 4; i++) {
                 float[] vertex = faces[face * 4 + i][0];
                 float[] uv = faces[face * 4 + i][1];

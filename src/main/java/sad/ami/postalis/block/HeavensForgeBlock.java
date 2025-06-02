@@ -74,14 +74,12 @@ public class HeavensForgeBlock extends BaseEntityBlock {
 
     @Override
     protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return type == BlockEntitiesRegistry.HEAVENS_FORGE.get()
-                ? (lvl, pos, st, be) -> ((HeavensForgeBlockEntity) be).tick(lvl, pos, st)
-                : null;
+        return type == BlockEntitiesRegistry.HEAVENS_FORGE.get() ? (lvl, pos, st, be) -> ((HeavensForgeBlockEntity) be).tick(lvl, pos, st) : null;
     }
 
     @Override

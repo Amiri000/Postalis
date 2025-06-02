@@ -15,32 +15,39 @@ public class GeoModel {
 
     public static class Description {
         public String identifier;
-        @SerializedName("texture_width") public int texture_width;
-        @SerializedName("texture_height") public int texture_height;
-        @SerializedName("visible_bounds_width") public float visible_bounds_width;
-        @SerializedName("visible_bounds_height") public float visible_bounds_height;
-        @SerializedName("visible_bounds_offset") public List<Float> visible_bounds_offset;
+
+        @SerializedName("texture_width")
+        public int texture_width;
+
+        @SerializedName("texture_height")
+        public int texture_height;
+
+        @SerializedName("visible_bounds_width")
+        public float visible_bounds_width;
+
+        @SerializedName("visible_bounds_height")
+        public float visible_bounds_height;
+
+        @SerializedName("visible_bounds_offset")
+        public List<Float> visible_bounds_offset;
     }
 
     public static class Bone {
         public String name;
         public List<Float> pivot;
-        public List<Float> rotation; // <- Новое: поддержка rotation
+        public List<Float> rotation;
         public List<Cube> cubes;
-        public Boolean mirror; // <- Иногда бывает на уровне bone
+        public Boolean mirror;
     }
 
     public static class Cube {
         public List<Float> origin;
         public List<Float> size;
-        public Float inflate;           // <- Новое
-        public Boolean mirror;          // <- Новое
-        public List<Float> rotation;    // <- Новое
+        public Float inflate;
+        public Boolean mirror;
+        public List<Float> rotation;
 
         @SerializedName("uv")
-        public Object uv; // может быть List<Float> или Object с гранями
-
-        @SerializedName("uv_faces")
         public FaceUV uv_faces;
     }
 
@@ -55,6 +62,7 @@ public class GeoModel {
 
     public static class Face {
         public List<Float> uv;
-        @SerializedName("uv_size") public List<Float> uv_size;
+        @SerializedName("uv_size")
+        public List<Float> uv_size;
     }
 }

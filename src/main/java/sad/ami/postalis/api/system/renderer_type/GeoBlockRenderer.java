@@ -1,32 +1,28 @@
-package sad.ami.postalis.api.system.renderer;
+package sad.ami.postalis.api.system.renderer_type;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoModel;
 import sad.ami.postalis.api.system.geo.GeoModelManager;
-import sad.ami.postalis.api.system.geo.modeldata.FaceNormal;
-import sad.ami.postalis.api.system.geo.modeldata.VertexPos;
-import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
+import sad.ami.postalis.api.system.geo.model_data.FaceNormal;
+import sad.ami.postalis.api.system.geo.model_data.VertexPos;
 
 import java.util.List;
 
-public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEntity> {
+public abstract class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json");
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("postalis", "textures/block/texture.png");
 
-    public GeoBlockRenderer(BlockEntityRendererProvider.Context context) {
-    }
-
     @Override
-    public void render(HeavensForgeBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public final void render(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         GeoModel model = GeoModelManager.CACHE.get(MODEL);
 
         if (model == null || model.minecraft_geometry.isEmpty())
@@ -36,6 +32,8 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
 
         poseStack.pushPose();
 
+        applyPreTransform(be, partialTicks, poseStack, bufferSource, packedLight, packedOverlay);
+
         poseStack.translate(0.5, 0, 0.5);
         poseStack.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
@@ -43,7 +41,17 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
             for (var cube : bone.cubes)
                 drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.texture_width, geo.description.texture_height, packedOverlay, packedLight);
 
+
         poseStack.popPose();
+
+        renderExtras(be, partialTicks, poseStack, bufferSource, packedLight, packedOverlay);
+
+    }
+
+    protected void applyPreTransform(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    }
+
+    protected void renderExtras(T be, float partialTicks, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
     }
 
     private void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, int texWidth, int texHeight, int overlay, int packedLight) {

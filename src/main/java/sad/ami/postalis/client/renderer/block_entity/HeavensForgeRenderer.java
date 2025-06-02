@@ -10,16 +10,16 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import sad.ami.postalis.api.system.renderer_type.GeoBlockRenderer;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 
-@OnlyIn(Dist.CLIENT)
-public class HeavensForgeRenderer implements BlockEntityRenderer<HeavensForgeBlockEntity> {
+public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity>  {
     public HeavensForgeRenderer(BlockEntityRendererProvider.Context context) {
 
     }
 
     @Override
-    public void render(HeavensForgeBlockEntity be, float pt, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
+    protected void renderExtras(HeavensForgeBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
         var stack = be.getPedestalItem();
 
         if (stack.isEmpty())

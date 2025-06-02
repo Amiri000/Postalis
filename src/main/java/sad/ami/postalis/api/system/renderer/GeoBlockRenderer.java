@@ -2,7 +2,6 @@ package sad.ami.postalis.api.system.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -42,12 +41,12 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
 
         for (var bone : geo.bones)
             for (var cube : bone.cubes)
-                drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.texture_width, geo.description.texture_height, packedOverlay);
+                drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.texture_width, geo.description.texture_height, packedOverlay, packedLight);
 
         poseStack.popPose();
     }
 
-    private void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, int texWidth, int texHeight, int overlay) {
+    private void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, int texWidth, int texHeight, int overlay, int packedLight) {
         float ox = cube.origin.get(0);
         float oy = cube.origin.get(1);
         float oz = cube.origin.get(2);
@@ -57,10 +56,10 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
         float sz = cube.size.get(2);
 
         for (int face = 0; face < 6; face++)
-            drawFace(buffer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face, FaceNormal.values()[face].vec(), cube.uv_faces, texWidth, texHeight, overlay);
+            drawFace(buffer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face, FaceNormal.values()[face].vec(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
     }
 
-    private void drawFace(VertexConsumer buffer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay) {
+    private void drawFace(VertexConsumer buffer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay, int packedLight) {
         int vertexStart = faceIndex * 4;
 
         float[] uv = getUV(faces, faceIndex);
@@ -78,7 +77,7 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
             float[] tex = uvCords[j];
             Vector4f v = pos.toVec4f().mul(pose);
 
-            buffer.addVertex(v.x(), v.y(), v.z(), 0xFFFFFFFF, tex[0], tex[1], overlay, LightTexture.FULL_BRIGHT, normal[0], normal[1], normal[2]);
+            buffer.addVertex(v.x(), v.y(), v.z(), 0xFFFFFFFF, tex[0], tex[1], overlay, packedLight, normal[0], normal[1], normal[2]);
         }
     }
 

@@ -10,11 +10,11 @@ public class GeoModelManager {
 
     public static void preload(ResourceLocation location) {
         if (!CACHE.containsKey(location)) {
-            GeoModel model = GeoModelLoader.load(location);
-            if (model != null) {
-                System.out.println("PUT!!");
+
+            var model = GeoModelLoader.load(location);
+
+            if (model != null)
                 CACHE.put(location, model);
-            }
         }
     }
 

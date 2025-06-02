@@ -8,17 +8,19 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoModel;
 import sad.ami.postalis.api.system.geo.GeoModelManager;
+import sad.ami.postalis.api.system.geo.modeldata.FaceNormal;
+import sad.ami.postalis.api.system.geo.modeldata.VertexPos;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 
 import java.util.List;
 
 public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEntity> {
+    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json");
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("postalis", "textures/block/texture.png");
 
     public GeoBlockRenderer(BlockEntityRendererProvider.Context context) {
@@ -26,27 +28,26 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
 
     @Override
     public void render(HeavensForgeBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        GeoModel model = GeoModelManager.CACHE.get(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json"));
+        GeoModel model = GeoModelManager.CACHE.get(MODEL);
 
-        if (model == null || model.minecraft_geometry == null || model.minecraft_geometry.isEmpty()) return;
+        if (model == null || model.minecraft_geometry.isEmpty())
+            return;
 
-        GeoModel.Geometry geo = model.minecraft_geometry.getFirst();
-        var buffer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
+        var geo = model.minecraft_geometry.getFirst();
 
         poseStack.pushPose();
+
         poseStack.translate(0.5, 0, 0.5);
         poseStack.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        for (var bone : geo.bones) {
-            for (var cube : bone.cubes) {
-                drawCube(poseStack, buffer, cube, geo.description.texture_width, geo.description.texture_height, LightTexture.FULL_BRIGHT, packedOverlay);
-            }
-        }
+        for (var bone : geo.bones)
+            for (var cube : bone.cubes)
+                drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.texture_width, geo.description.texture_height, packedOverlay);
 
         poseStack.popPose();
     }
 
-    private void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, int texWidth, int texHeight, int light, int overlay) {
+    private void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, int texWidth, int texHeight, int overlay) {
         float ox = cube.origin.get(0);
         float oy = cube.origin.get(1);
         float oz = cube.origin.get(2);
@@ -55,76 +56,57 @@ public class GeoBlockRenderer implements BlockEntityRenderer<HeavensForgeBlockEn
         float sy = cube.size.get(1);
         float sz = cube.size.get(2);
 
-        float x1 = ox, x2 = ox + sx;
-        float y1 = oy, y2 = oy + sy;
-        float z1 = oz, z2 = oz + sz;
+        for (int face = 0; face < 6; face++)
+            drawFace(buffer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face, FaceNormal.values()[face].vec(), cube.uv_faces, texWidth, texHeight, overlay);
+    }
 
-        int color = 0xFFFFFFFF;
-        Matrix4f pose = poseStack.last().pose();
-        Matrix3f normal = poseStack.last().normal();
+    private void drawFace(VertexConsumer buffer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay) {
+        int vertexStart = faceIndex * 4;
 
-        float[][] positions = {
-                {x1, y2, z1}, {x2, y2, z1}, {x2, y1, z1}, {x1, y1, z1}, // front
-                {x2, y2, z2}, {x1, y2, z2}, {x1, y1, z2}, {x2, y1, z2}, // back
-                {x1, y2, z2}, {x1, y2, z1}, {x1, y1, z1}, {x1, y1, z2}, // left
-                {x2, y2, z1}, {x2, y2, z2}, {x2, y1, z2}, {x2, y1, z1}, // right
-                {x1, y2, z2}, {x2, y2, z2}, {x2, y2, z1}, {x1, y2, z1}, // top
-                {x1, y1, z1}, {x2, y1, z1}, {x2, y1, z2}, {x1, y1, z2}, // bottom
-        };
+        float[] uv = getUV(faces, faceIndex);
+        float[] size = getUVSize(faces, faceIndex);
 
-        float[][] normals = {
-                {0, 0, -1}, {0, 0, 1}, {-1, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, -1, 0}
-        };
+        float u0 = uv[0] / texWidth;
+        float v0 = uv[1] / texHeight;
+        float u1 = (uv[0] + size[0]) / texWidth;
+        float v1 = (uv[1] + size[1]) / texHeight;
 
-        GeoModel.FaceUV faces = cube.uv_faces;
-        List<List<Float>> uvs = List.of(
-                faces.north.uv,
-                faces.south.uv,
-                faces.west.uv,
-                faces.east.uv,
-                faces.up.uv,
-                faces.down.uv
-        );
+        float[][] uvCords = {{u1, v0}, {u0, v0}, {u0, v1}, {u1, v1}};
 
-        List<List<Float>> sizes = List.of(
-                faces.north.uv_size,
-                faces.south.uv_size,
-                faces.west.uv_size,
-                faces.east.uv_size,
-                faces.up.uv_size,
-                faces.down.uv_size
-        );
-        for (int face = 0; face < 6; face++) {
-            float[] norm = normals[face];
-            int i = face * 4;
+        for (int j = 0; j < 4; j++) {
+            VertexPos pos = positions.get(vertexStart + j);
+            float[] tex = uvCords[j];
+            Vector4f v = pos.toVec4f().mul(pose);
 
-            List<Float> uv = uvs.get(face);
-            List<Float> uvSize = sizes.get(face);
-            float u0 = uv.get(0) / texWidth;
-            float v0 = uv.get(1) / texHeight;
-            float u1 = (uv.get(0) + uvSize.get(0)) / texWidth;
-            float v1 = (uv.get(1) + uvSize.get(1)) / texHeight;
-
-            float[][] uvCoords = {
-                    {u0, v0}, {u1, v0}, {u1, v1}, {u0, v1}
-            };
-
-            for (int j = 0; j < 4; j++) {
-                float[] pos = positions[i + j];
-                float[] tex = uvCoords[j];
-
-                Vector4f v = new Vector4f(pos[0], pos[1], pos[2], 1.0f);
-                v.mul(pose);
-
-                buffer.addVertex(
-                        v.x(), v.y(), v.z(),
-                        color,
-                        tex[0], tex[1],
-                        overlay,
-                        light,
-                        norm[0], norm[1], norm[2]
-                );
-            }
+            buffer.addVertex(v.x(), v.y(), v.z(), 0xFFFFFFFF, tex[0], tex[1], overlay, LightTexture.FULL_BRIGHT, normal[0], normal[1], normal[2]);
         }
+    }
+
+    private float[] getUV(GeoModel.FaceUV faces, int face) {
+        return switch (face) {
+            case 0 -> toArray(faces.north.uv);
+            case 1 -> toArray(faces.south.uv);
+            case 2 -> toArray(faces.west.uv);
+            case 3 -> toArray(faces.east.uv);
+            case 4 -> toArray(faces.up.uv);
+            case 5 -> toArray(faces.down.uv);
+            default -> throw new IllegalArgumentException("Invalid face index: " + face);
+        };
+    }
+
+    private float[] getUVSize(GeoModel.FaceUV faces, int face) {
+        return switch (face) {
+            case 0 -> toArray(faces.north.uv_size);
+            case 1 -> toArray(faces.south.uv_size);
+            case 2 -> toArray(faces.west.uv_size);
+            case 3 -> toArray(faces.east.uv_size);
+            case 4 -> toArray(faces.up.uv_size);
+            case 5 -> toArray(faces.down.uv_size);
+            default -> throw new IllegalArgumentException("Invalid face index: " + face);
+        };
+    }
+
+    private float[] toArray(List<Float> list) {
+        return new float[]{list.get(0), list.get(1)};
     }
 }

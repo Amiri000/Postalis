@@ -5,12 +5,9 @@ import com.mojang.math.Axis;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import sad.ami.postalis.api.system.renderer_type.GeoBlockRenderer;
+import sad.ami.postalis.api.system.geo.renderer_type.GeoBlockRenderer;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 
 public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity>  {

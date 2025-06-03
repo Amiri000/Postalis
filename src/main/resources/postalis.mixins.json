@@ -9,6 +9,7 @@
   ],
   "client": [
     "CameraMixin",
+    "MixinBlockStateModelLoader",
     "item.ItemInHandRendererMixin"
   ],
   "injectors": {

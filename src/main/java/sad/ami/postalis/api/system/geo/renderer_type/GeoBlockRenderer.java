@@ -1,4 +1,4 @@
-package sad.ami.postalis.api.system.renderer_type;
+package sad.ami.postalis.api.system.geo.renderer_type;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -41,11 +41,9 @@ public abstract class GeoBlockRenderer<T extends BlockEntity> implements BlockEn
             for (var cube : bone.cubes)
                 drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.texture_width, geo.description.texture_height, packedOverlay, packedLight);
 
-
         poseStack.popPose();
 
         renderExtras(be, partialTicks, poseStack, bufferSource, packedLight, packedOverlay);
-
     }
 
     protected void applyPreTransform(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {

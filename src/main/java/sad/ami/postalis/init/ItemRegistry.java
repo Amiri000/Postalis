@@ -17,11 +17,12 @@ public class ItemRegistry {
 
     public static final DeferredHolder<Item, Item> ORNAMENT_GLOVE = ITEMS.register("ornament_glove", OrnamentGlove::new);
 
-    public static final DeferredHolder<Item, Item> GEO_BLOCK_ITEM = ITEMS.register("heavens_forge", () -> new GeoBlockItem(BlockRegistry.HEAVENS_FORGE.get(), new Item.Properties()));
-
     public static final DeferredHolder<Item, BaseSwordItem> WIND_BREAKER = ITEMS.register("wind_breaker", WindBreakerItem::new);
 
     public static void register(IEventBus bus) {
+        for (var block : BlockRegistry.BLOCKS.getEntries())
+            ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
+
         ITEMS.register(bus);
     }
 }

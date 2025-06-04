@@ -2,6 +2,7 @@ package sad.ami.postalis.api.system.geo.renderer_type;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,15 +28,51 @@ public class GeoItemRenderer extends BlockEntityWithoutLevelRenderer implements 
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
         GeoModel geo = GeoModelManager.CACHE.get(model);
-        if (geo == null || geo.minecraft_geometry.isEmpty()) return;
+
+        if (geo == null || geo.minecraft_geometry.isEmpty())
+            return;
 
         pose.pushPose();
-        pose.translate(0.5, 0.5, 0.5);
-        pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
+
+        var modifier = 0F;
+
+        switch (context) {
+            case GUI, FIXED -> {
+                modifier = 1f / 26f;
+
+                pose.scale(modifier, modifier, modifier);
+                pose.translate(13.5, 5, 0);
+                pose.mulPose(Axis.XP.rotationDegrees(25));
+                pose.mulPose(Axis.YP.rotationDegrees(45));
+            }
+            case THIRD_PERSON_LEFT_HAND, THIRD_PERSON_RIGHT_HAND -> {
+                modifier = 1f / 40f;
+
+                pose.translate(0.5, 0.6, 0.3);
+                pose.scale(modifier, modifier, modifier);
+                pose.mulPose(Axis.XP.rotationDegrees(75));
+                pose.mulPose(Axis.YP.rotationDegrees(-132));
+            }
+            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> {
+                modifier = 1f / 29f;
+
+                pose.translate(0.65, 0.1, 0.3);
+                pose.scale(modifier, modifier, modifier);
+                pose.mulPose(Axis.XP.rotationDegrees(5));
+                pose.mulPose(Axis.YP.rotationDegrees(-132));
+            }
+            case GROUND -> {
+                modifier = 1f / 60;
+
+                pose.scale(modifier, modifier, modifier);
+                pose.translate(30, 23, 30);
+            }
+        }
 
         VertexConsumer buffer = buf.getBuffer(RenderType.entityCutout(texture));
 
         var first = geo.minecraft_geometry.getFirst();
+
         for (var bone : first.bones)
             for (var cube : bone.cubes)
                 drawCube(pose, buffer, cube, first.description.texture_width, first.description.texture_height, overlay, light);

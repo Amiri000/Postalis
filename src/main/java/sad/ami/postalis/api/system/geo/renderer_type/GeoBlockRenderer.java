@@ -16,28 +16,24 @@ public abstract class GeoBlockRenderer<T extends BlockEntity> implements BlockEn
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/block/texture.png");
 
     @Override
-    public final void render(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        GeoModel model = GeoModelManager.CACHE.get(MODEL);
+    public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        GeoModel geo = GeoModelManager.CACHE.get(MODEL);
 
-        if (model == null || model.minecraft_geometry.isEmpty())
+        if (geo == null || geo.minecraft_geometry.isEmpty())
             return;
 
-        var geo = model.minecraft_geometry.getFirst();
+        pose.pushPose();
 
-        poseStack.pushPose();
+        applyPreTransform(be, partialTicks, pose, bufferSource, packedLight, packedOverlay);
 
-        applyPreTransform(be, partialTicks, poseStack, bufferSource, packedLight, packedOverlay);
+        pose.translate(0.5, 0, 0.5);
+        pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        poseStack.translate(0.5, 0, 0.5);
-        poseStack.scale(1f / 16f, 1f / 16f, 1f / 16f);
+        drawModel(pose, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), geo, packedOverlay, packedLight);
 
-        for (var bone : geo.bones)
-            for (var cube : bone.cubes)
-                drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.visible_bounds_offset, geo.description.texture_width, geo.description.texture_height, packedOverlay, packedLight);
+        pose.popPose();
 
-        poseStack.popPose();
-
-        renderExtras(be, partialTicks, poseStack, bufferSource, packedLight, packedOverlay);
+        renderExtras(be, partialTicks, pose, bufferSource, packedLight, packedOverlay);
     }
 
     protected void applyPreTransform(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {

@@ -6,17 +6,18 @@
 				"identifier": "geometry.unknown",
 				"texture_width": 64,
 				"texture_height": 64,
-				"visible_bounds_width": 2,
+				"visible_bounds_width": 4,
 				"visible_bounds_height": 2,
 				"visible_bounds_offset": [0, 1, 0]
 			},
 			"bones": [
 				{
 					"name": "Artem",
-					"pivot": [0, 0, 0],
+					"pivot": [0, 4, 0],
+					"rotation": [-125.93461, -48.42583, 134.09381],
 					"cubes": [
 						{
-							"origin": [-8, 0, -8],
+							"origin": [-8, 4, -8],
 							"size": [16, 2, 16],
 							"uv": {
 								"north": {"uv": [0, 32], "uv_size": [16, 2]},
@@ -28,7 +29,7 @@
 							}
 						},
 						{
-							"origin": [-3, 2, -1],
+							"origin": [-3, 6, -1],
 							"size": [6, 4, 6],
 							"uv": {
 								"north": {"uv": [32, 6], "uv_size": [2, 12]},
@@ -40,7 +41,7 @@
 							}
 						},
 						{
-							"origin": [-8, 14, -8],
+							"origin": [-8, 18, -8],
 							"size": [16, 2, 16],
 							"uv": {
 								"north": {"uv": [22, 32], "uv_size": [16, 2]},
@@ -52,9 +53,9 @@
 							}
 						},
 						{
-							"origin": [-8, 9, -1],
+							"origin": [-8, 13, -1],
 							"size": [16, 2, 16],
-							"pivot": [0, -5, 7],
+							"pivot": [0, -1, 7],
 							"rotation": [35, 0, 0],
 							"uv": {
 								"north": {"uv": [22, 32], "uv_size": [16, 2]},

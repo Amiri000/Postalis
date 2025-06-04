@@ -9,6 +9,48 @@ import sad.ami.postalis.api.system.geo.GeoModel;
 import java.util.List;
 
 public interface GeoRenderer {
+    default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, int overlay, int packedLight) {
+        GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
+
+        int texWidth = geometry.description.texture_width;
+        int texHeight = geometry.description.texture_height;
+
+        for (GeoModel.Bone bone : geometry.bones)
+            drawBone(poseStack, buffer, bone, texWidth, texHeight, overlay, packedLight);
+    }
+
+    default void drawBone(PoseStack poseStack, VertexConsumer buffer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight) {
+        poseStack.pushPose();
+
+        if (bone.pivot != null && bone.pivot.size() == 3) {
+            float pivotX = -bone.pivot.get(0);
+            float pivotY = bone.pivot.get(1);
+            float pivotZ = bone.pivot.get(2);
+
+            poseStack.translate(pivotX, pivotY, pivotZ);
+
+            if (bone.rotation != null && bone.rotation.size() == 3) {
+                float rx = bone.rotation.get(0);
+                float ry = bone.rotation.get(1);
+                float rz = bone.rotation.get(2);
+
+                if (rz != 0) poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rz));
+                if (ry != 0) poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-ry));
+                if (rx != 0) poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-rx));
+            }
+
+            poseStack.translate(-pivotX, -pivotY, -pivotZ);
+        }
+
+        if (bone.cubes != null) {
+            for (GeoModel.Cube cube : bone.cubes) {
+                drawCube(poseStack, buffer, cube, List.of(0f, 0f, 0f), texWidth, texHeight, overlay, packedLight);
+            }
+        }
+
+        poseStack.popPose();
+    }
+
     default void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, List<Float> visibleOffset, int texWidth, int texHeight, int overlay, int packedLight) {
         float ox = cube.origin.get(0);
         float oy = cube.origin.get(1);
@@ -21,7 +63,6 @@ public interface GeoRenderer {
         float inflate = cube.inflate != null ? cube.inflate : 0f;
         boolean mirror = cube.mirror != null && cube.mirror;
 
-        // Apply inflate
         ox -= inflate;
         oy -= inflate;
         oz -= inflate;
@@ -29,10 +70,9 @@ public interface GeoRenderer {
         sy += inflate * 2;
         sz += inflate * 2;
 
-        // Flip X to match Minecraft's expected behavior
+        // Flip X to match Minecraft's coordinate system
         ox = -ox - sx;
 
-        // Mirror cube by flipping size and origin on X
         if (mirror) {
             ox = ox + sx;
             sx = -sx;
@@ -40,7 +80,6 @@ public interface GeoRenderer {
 
         poseStack.pushPose();
 
-        // Apply rotation if present
         if (cube.rotation != null && cube.rotation.size() == 3 && cube.pivot != null && cube.pivot.size() == 3) {
             float pivotX = -cube.pivot.get(0);
             float pivotY = cube.pivot.get(1);
@@ -52,22 +91,16 @@ public interface GeoRenderer {
             float ry = cube.rotation.get(1);
             float rz = cube.rotation.get(2);
 
-            // Применяем поворот ZYX (как в Bedrock)
             if (rz != 0) poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rz));
-            if (ry != 0) poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-ry)); // инверсия Y
-            if (rx != 0) poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-rx)); // инверсия X
+            if (ry != 0) poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-ry));
+            if (rx != 0) poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-rx));
 
             poseStack.translate(-pivotX, -pivotY, -pivotZ);
         }
 
-        for (int face = 0; face < 6; face++) {
-            drawFace(buffer, poseStack.last().pose(),
-                    VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz),
-                    face,
-                    FaceNormal.values()[face].vec(),
-                    cube.uv_faces,
-                    texWidth, texHeight, overlay, packedLight);
-        }
+        for (int face = 0; face < 6; face++)
+            drawFace(buffer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face,
+                    FaceNormal.values()[face].vec(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
 
         poseStack.popPose();
     }

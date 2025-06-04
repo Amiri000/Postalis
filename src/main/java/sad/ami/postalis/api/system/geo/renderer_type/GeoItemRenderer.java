@@ -69,13 +69,7 @@ public class GeoItemRenderer extends BlockEntityWithoutLevelRenderer implements 
             }
         }
 
-        VertexConsumer buffer = buf.getBuffer(RenderType.entityCutout(texture));
-
-        var first = geo.minecraft_geometry.getFirst();
-
-        for (var bone : first.bones)
-            for (var cube : bone.cubes)
-                drawCube(pose, buffer, cube, first.description.visible_bounds_offset, first.description.texture_width, first.description.texture_height, overlay, light);
+        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light);
 
         pose.popPose();
     }

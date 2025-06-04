@@ -46,6 +46,7 @@ public class GeoModel {
         public Float inflate;
         public Boolean mirror;
         public List<Float> rotation;
+        public List<Float> pivot;
 
         @SerializedName("uv")
         public FaceUV uv_faces;

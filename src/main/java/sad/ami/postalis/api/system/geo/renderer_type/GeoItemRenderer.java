@@ -75,7 +75,7 @@ public class GeoItemRenderer extends BlockEntityWithoutLevelRenderer implements 
 
         for (var bone : first.bones)
             for (var cube : bone.cubes)
-                drawCube(pose, buffer, cube, first.description.texture_width, first.description.texture_height, overlay, light);
+                drawCube(pose, buffer, cube, first.description.visible_bounds_offset, first.description.texture_width, first.description.texture_height, overlay, light);
 
         pose.popPose();
     }

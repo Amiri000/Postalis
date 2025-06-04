@@ -33,7 +33,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity> implements BlockEn
 
         for (var bone : geo.bones)
             for (var cube : bone.cubes)
-                drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.texture_width, geo.description.texture_height, packedOverlay, packedLight);
+                drawCube(poseStack, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), cube, geo.description.visible_bounds_offset, geo.description.texture_width, geo.description.texture_height, packedOverlay, packedLight);
 
         poseStack.popPose();
 

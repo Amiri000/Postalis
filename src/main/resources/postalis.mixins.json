@@ -9,7 +9,8 @@
   ],
   "client": [
     "CameraMixin",
-    "MixinBlockStateModelLoader",
+    "geo.BlockStateModelLoaderMixin",
+    "geo.ModelBakeryMixin",
     "item.ItemInHandRendererMixin"
   ],
   "injectors": {

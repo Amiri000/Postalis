@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import sad.ami.postalis.api.system.geo.renderer_type.GeoBlockRenderer;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 
-public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity>  {
+public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity> {
     public HeavensForgeRenderer(BlockEntityRendererProvider.Context context) {
 
     }

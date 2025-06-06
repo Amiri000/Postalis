@@ -1,7 +1,6 @@
-package sad.ami.postalis.api.system.geo.renderer_type;
+package sad.ami.postalis.api.system.geo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -10,24 +9,22 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import sad.ami.postalis.api.system.geo.GeoModel;
-import sad.ami.postalis.api.system.geo.GeoModelManager;
-import sad.ami.postalis.api.system.geo.model_data.GeoRenderer;
+import sad.ami.postalis.Postalis;
+import sad.ami.postalis.api.system.geo.manage.GeoModel;
+import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.manage.GeoRenderer;
 
 public class GeoItemRenderer extends BlockEntityWithoutLevelRenderer implements GeoRenderer {
-    private final ResourceLocation model;
-    private final ResourceLocation texture;
+    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/block/texture.png");
 
-    public GeoItemRenderer(ResourceLocation model, ResourceLocation texture) {
+    public GeoItemRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-
-        this.model = model;
-        this.texture = texture;
     }
 
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
-        GeoModel geo = GeoModelManager.CACHE.get(model);
+        GeoModel geo = GeoModelManager.CACHE.get(MODEL);
 
         if (geo == null || geo.minecraft_geometry.isEmpty())
             return;
@@ -69,7 +66,7 @@ public class GeoItemRenderer extends BlockEntityWithoutLevelRenderer implements 
             }
         }
 
-        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light);
+        drawModel(pose, buf.getBuffer(RenderType.entityCutout(TEXTURE)), geo, overlay, light);
 
         pose.popPose();
     }

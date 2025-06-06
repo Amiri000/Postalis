@@ -1,4 +1,4 @@
-package sad.ami.postalis.api.system.geo;
+package sad.ami.postalis.api.system.geo.manage;
 
 import com.google.gson.annotations.SerializedName;
 

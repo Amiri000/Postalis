@@ -1,4 +1,4 @@
-package sad.ami.postalis.api.system.geo.model_data;
+package sad.ami.postalis.api.system.geo.util;
 
 public enum FaceNormal {
     NORTH(0, 0, -1),

@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import sad.ami.postalis.Postalis;
 
 import java.util.List;
 import java.util.Map;
@@ -23,22 +24,20 @@ import java.util.Map;
 public class ModelBakeryMixin {
     @Inject(method = "loadItemModelAndDependencies", at = @At("HEAD"), cancellable = true)
     private void injectFakeModelForBlockItem(ResourceLocation modelLocation, CallbackInfo ci) {
-        if (!modelLocation.getNamespace().equals("postalis"))
+        if (!modelLocation.getNamespace().equals(Postalis.MODID) || !modelLocation.getPath().equals("heavens_forge"))
             return;
 
-        if (modelLocation.getPath().equals("heavens_forge")) {
-            var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle",
-                    Either.right("postalis:block/texture")), null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
+        var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle",
+                Either.right("postalis:block/texture")), null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
 
-            registerModel(ModelResourceLocation.inventory(modelLocation), fakeModel);
+        registerModel(ModelResourceLocation.inventory(modelLocation), fakeModel);
 
-            ci.cancel();
-        }
+        ci.cancel();
     }
 
     @Inject(method = "loadBlockModel", at = @At("HEAD"), cancellable = true)
     private void postalis$injectBlockModel(ResourceLocation location, CallbackInfoReturnable<BlockModel> cir) {
-        if (!location.getNamespace().equals("postalis") || !location.getPath().equals("block/heavens_forge"))
+        if (!location.getNamespace().equals(Postalis.MODID) || !location.getPath().equals("block/heavens_forge"))
             return;
 
         Map<String, Either<Material, String>> textureMap = Map.of("particle", Either.left(new Material(TextureAtlas.LOCATION_BLOCKS,

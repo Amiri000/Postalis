@@ -1,4 +1,4 @@
-package sad.ami.postalis.api.system.geo.model_data;
+package sad.ami.postalis.api.system.geo.util;
 
 import org.joml.Vector4f;
 

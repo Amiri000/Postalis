@@ -9,8 +9,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.system.geo.GeoModelManager;
-import sad.ami.postalis.api.system.geo.renderer_type.GeoItemRenderer;
+import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.GeoItemRenderer;
 import sad.ami.postalis.init.BlockRegistry;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -25,8 +25,7 @@ public class ClientSetup {
         event.registerItem(new IClientItemExtensions() {
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return new GeoItemRenderer(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json"),
-                        ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/block/texture.png"));
+                return new GeoItemRenderer();
             }
         }, BlockRegistry.HEAVENS_FORGE.get().asItem());
     }

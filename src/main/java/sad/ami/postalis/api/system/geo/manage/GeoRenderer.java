@@ -1,10 +1,12 @@
-package sad.ami.postalis.api.system.geo.model_data;
+package sad.ami.postalis.api.system.geo.manage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import sad.ami.postalis.api.system.geo.GeoModel;
+import sad.ami.postalis.api.system.geo.util.FaceNormal;
+import sad.ami.postalis.api.system.geo.util.VertexPos;
 
 import java.util.List;
 
@@ -34,19 +36,20 @@ public interface GeoRenderer {
                 float ry = bone.rotation.get(1);
                 float rz = bone.rotation.get(2);
 
-                if (rz != 0) poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rz));
-                if (ry != 0) poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-ry));
-                if (rx != 0) poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-rx));
+                if (rz != 0)
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(rz));
+                else if (ry != 0)
+                    poseStack.mulPose(Axis.YP.rotationDegrees(-ry));
+                else if (rx != 0)
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-rx));
             }
 
             poseStack.translate(-pivotX, -pivotY, -pivotZ);
         }
 
-        if (bone.cubes != null) {
-            for (GeoModel.Cube cube : bone.cubes) {
+        if (bone.cubes != null)
+            for (GeoModel.Cube cube : bone.cubes)
                 drawCube(poseStack, buffer, cube, List.of(0f, 0f, 0f), texWidth, texHeight, overlay, packedLight);
-            }
-        }
 
         poseStack.popPose();
     }

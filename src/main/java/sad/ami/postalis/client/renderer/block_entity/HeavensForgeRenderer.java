@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
-import sad.ami.postalis.api.system.geo.renderer_type.GeoBlockRenderer;
+import sad.ami.postalis.api.system.geo.GeoBlockRenderer;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 
 public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity> {

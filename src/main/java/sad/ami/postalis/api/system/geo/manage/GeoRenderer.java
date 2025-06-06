@@ -83,6 +83,9 @@ public interface GeoRenderer {
 
         poseStack.pushPose();
 
+        if (visibleOffset != null && visibleOffset.size() == 3)
+            poseStack.translate(visibleOffset.get(0), visibleOffset.get(1), visibleOffset.get(2));
+
         if (cube.rotation != null && cube.rotation.size() == 3 && cube.pivot != null && cube.pivot.size() == 3) {
             float pivotX = -cube.pivot.get(0);
             float pivotY = cube.pivot.get(1);
@@ -94,9 +97,12 @@ public interface GeoRenderer {
             float ry = cube.rotation.get(1);
             float rz = cube.rotation.get(2);
 
-            if (rz != 0) poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rz));
-            if (ry != 0) poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-ry));
-            if (rx != 0) poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-rx));
+            if (rz != 0)
+                poseStack.mulPose(Axis.ZP.rotationDegrees(rz));
+            else if (ry != 0)
+                poseStack.mulPose(Axis.YP.rotationDegrees(-ry));
+            else if (rx != 0)
+                poseStack.mulPose(Axis.XP.rotationDegrees(-rx));
 
             poseStack.translate(-pivotX, -pivotY, -pivotZ);
         }

@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GeoModelManager {
-    public static final Map<ResourceLocation, GeoModel> CACHE = new HashMap<>();
+    private static final Map<ResourceLocation, GeoModel> CACHE = new HashMap<>();
+    private static final Gson GSON = new Gson();
 
     public static void preload(ResourceLocation location) {
         if (!CACHE.containsKey(location)) {
@@ -23,7 +24,7 @@ public class GeoModelManager {
         }
     }
 
-    public static GeoModel load(ResourceLocation location) {
+    private static GeoModel load(ResourceLocation location) {
         try {
             var optional = Minecraft.getInstance().getResourceManager().getResource(location);
 
@@ -34,7 +35,7 @@ public class GeoModelManager {
             }
 
             try (InputStream stream = optional.get().open()) {
-                var model = new Gson().fromJson(new InputStreamReader(stream), GeoModel.class);
+                var model = GSON.fromJson(new InputStreamReader(stream), GeoModel.class);
 
                 if (model == null)
                     System.err.println("GeoModel loaded but parsed as null: " + location);

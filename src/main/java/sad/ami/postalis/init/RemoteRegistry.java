@@ -18,6 +18,6 @@ public class RemoteRegistry {
         event.registerEntityRenderer(EntityRegistry.EMBEDDED_SWORD.get(), EmbeddedSwordRenderer::new);
         event.registerEntityRenderer(EntityRegistry.ORNAMENT.get(), OrnamentRenderer::new);
 
-        event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), HeavensForgeRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), _ -> new HeavensForgeRenderer());
     }
 }

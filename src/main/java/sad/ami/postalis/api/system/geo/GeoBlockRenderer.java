@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import sad.ami.postalis.Postalis;
@@ -11,13 +12,17 @@ import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.manage.GeoRenderer;
 
-public abstract class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, GeoRenderer {
+public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, GeoRenderer {
     private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json");
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/block/texture.png");
 
+    public GeoBlockRenderer() {
+
+    }
+
     @Override
     public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        GeoModel geo = GeoModelManager.CACHE.get(MODEL);
+        GeoModel geo = GeoModelManager.get(MODEL);
 
         if (geo == null || geo.minecraft_geometry.isEmpty())
             return;

@@ -8,8 +8,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import sad.ami.postalis.api.system.geo.GeoBlockRenderer;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
+import sad.ami.postalis.init.BlockRegistry;
 
 public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity> {
+    public HeavensForgeRenderer() {
+        super(BlockRegistry.HEAVENS_FORGE.get());
+    }
 
     @Override
     protected void renderExtras(HeavensForgeBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buf, int light, int overlay) {

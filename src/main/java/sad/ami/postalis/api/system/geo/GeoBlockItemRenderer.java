@@ -6,26 +6,32 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import sad.ami.postalis.Postalis;
-import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
-import sad.ami.postalis.api.system.geo.manage.GeoRenderer;
+import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
+import sad.ami.postalis.api.system.geo.util.RenderObjects;
 
-public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implements GeoRenderer, IClientItemExtensions {
-    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json");
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/block/texture.png");
+public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implements IGeoRendererManager, IClientItemExtensions {
+    private final ResourceLocation model;
+    private final ResourceLocation texture;
 
-    public GeoBlockItemRenderer() {
+    public GeoBlockItemRenderer(Block block) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+
+        var name = BuiltInRegistries.BLOCK.getKey(block).getPath();
+
+        this.model = getModelPath(RenderObjects.BLOCK, name);
+        this.texture = getTexturePath(RenderObjects.BLOCK, name);
     }
 
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
-        GeoModel geo = GeoModelManager.get(MODEL);
+        var geo = GeoModelManager.get(model);
 
         if (geo == null || geo.minecraft_geometry.isEmpty())
             return;
@@ -67,7 +73,7 @@ public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implem
             }
         }
 
-        drawModel(pose, buf.getBuffer(RenderType.entityCutout(TEXTURE)), geo, overlay, light);
+        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light);
 
         pose.popPose();
     }

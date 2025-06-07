@@ -3,14 +3,17 @@ package sad.ami.postalis.api.system.geo.manage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.util.FaceNormal;
+import sad.ami.postalis.api.system.geo.util.RenderObjects;
 import sad.ami.postalis.api.system.geo.util.VertexPos;
 
 import java.util.List;
 
-public interface GeoRenderer {
+public interface IGeoRenderer {
     default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, int overlay, int packedLight) {
         GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
 

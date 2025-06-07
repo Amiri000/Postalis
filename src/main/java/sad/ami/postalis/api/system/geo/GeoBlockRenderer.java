@@ -4,26 +4,27 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
-import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
-import sad.ami.postalis.api.system.geo.manage.GeoRenderer;
+import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
+import sad.ami.postalis.api.system.geo.util.RenderObjects;
 
-public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, GeoRenderer {
-    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/test_model.geo.json");
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/block/texture.png");
+public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, IGeoRendererManager {
+    private final GeoModel geo;
+    private final ResourceLocation texture;
 
-    public GeoBlockRenderer() {
+    public GeoBlockRenderer(Block block) {
+        var name = BuiltInRegistries.BLOCK.getKey(block).getPath();
 
+        this.geo = getGeoModel(RenderObjects.BLOCK, name);
+        this.texture = getTexturePath(RenderObjects.BLOCK, name);
     }
 
     @Override
     public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        GeoModel geo = GeoModelManager.get(MODEL);
-
         if (geo == null || geo.minecraft_geometry.isEmpty())
             return;
 
@@ -34,7 +35,7 @@ public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRende
         pose.translate(0.5, 0, 0.5);
         pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        drawModel(pose, bufferSource.getBuffer(RenderType.entityCutout(TEXTURE)), geo, packedOverlay, packedLight);
+        drawModel(pose, bufferSource.getBuffer(RenderType.entityCutout(texture)), geo, packedOverlay, packedLight);
 
         pose.popPose();
 

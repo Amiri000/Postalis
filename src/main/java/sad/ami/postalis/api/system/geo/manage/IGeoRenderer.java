@@ -112,7 +112,7 @@ public interface IGeoRenderer {
 
         for (int face = 0; face < 6; face++)
             drawFace(buffer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face,
-                    FaceNormal.values()[face].vec(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
+                    FaceNormal.values()[face].getVector(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
 
         poseStack.popPose();
     }

@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import sad.ami.postalis.Postalis;
 
 import java.util.List;
 import java.util.Map;
@@ -25,15 +26,12 @@ import java.util.function.BiConsumer;
 
 @Mixin(BlockStateModelLoader.class)
 public class BlockStateModelLoaderMixin {
-
     @Inject(method = "loadBlockStateDefinitions", at = @At("HEAD"), cancellable = true)
     private void postalis$injectVariantJson(ResourceLocation id, StateDefinition<Block, BlockState> definition, CallbackInfo ci) {
-        if (!id.getNamespace().equals("postalis") || !id.getPath().equals("heavens_forge"))
+        if (!id.getNamespace().equals(Postalis.MODID))
             return;
 
-        context.setDefinition(definition);
-
-        var model = new BlockModel(ResourceLocation.fromNamespaceAndPath("postalis", "block/heavens_forge"), List.of(), Map.of(), true, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
+        var model = new BlockModel(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "block/" + id.getPath()), List.of(), Map.of(), true, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
         var loadedModel = new BlockStateModelLoader.LoadedModel(model, () -> new BlockStateModelLoader.ModelGroupKey(List.of(model), List.of()));
 
         for (BlockState state : definition.getPossibleStates()) {
@@ -44,10 +42,6 @@ public class BlockStateModelLoaderMixin {
 
         ci.cancel();
     }
-
-    @Final
-    @Shadow
-    private BlockModelDefinition.Context context;
 
     @Final
     @Shadow

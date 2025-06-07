@@ -1,14 +1,11 @@
 package sad.ami.postalis.init;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
-
-import java.util.function.Supplier;
 
 public class BlockEntitiesRegistry {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Postalis.MODID);

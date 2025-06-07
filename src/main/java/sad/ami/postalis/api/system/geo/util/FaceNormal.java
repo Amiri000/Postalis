@@ -1,5 +1,8 @@
 package sad.ami.postalis.api.system.geo.util;
 
+import lombok.Getter;
+
+@Getter
 public enum FaceNormal {
     NORTH(0, 0, -1),
     SOUTH(0, 0, 1),
@@ -12,9 +15,5 @@ public enum FaceNormal {
 
     FaceNormal(float x, float y, float z) {
         this.vector = new float[]{x, y, z};
-    }
-
-    public float[] vec() {
-        return vector;
     }
 }

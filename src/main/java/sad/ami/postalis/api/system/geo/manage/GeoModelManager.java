@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GeoModelManager {
-    private static final Map<ResourceLocation, GeoModel> CACHE = new HashMap<>();
+    public static final Map<ResourceLocation, GeoModel> CACHE = new HashMap<>();
     private static final Gson GSON = new Gson();
 
     public static void preload(ResourceLocation location) {

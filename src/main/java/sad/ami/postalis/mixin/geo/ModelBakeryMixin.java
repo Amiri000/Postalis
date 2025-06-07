@@ -35,7 +35,7 @@ public class ModelBakeryMixin {
 
         var parts = blockName.split("\\.");
         var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle",
-                Either.right(parts[1] + ":block/" + parts[2])), null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
+                Either.right(parts[1] + ":models/block/" + parts[2])), null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
 
         registerModel(ModelResourceLocation.inventory(location), fakeModel);
 

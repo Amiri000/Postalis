@@ -14,6 +14,6 @@ public interface IGeoRendererManager extends IGeoRenderer {
     }
 
     default ResourceLocation getModelPath(RenderObjects type, String fileName) {
-        return ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/" + type.getType() + "/" + fileName + ".geo.json");
+        return ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/models/" + type.getType() + "/" + fileName + ".geo.json");
     }
 }

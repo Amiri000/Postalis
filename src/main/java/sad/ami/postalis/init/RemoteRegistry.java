@@ -37,7 +37,7 @@ public class RemoteRegistry {
     public static void onClientSetup(FMLClientSetupEvent event) {
         var resourceManager = Minecraft.getInstance().getResourceManager();
 
-        for (var loc : resourceManager.listResources("geo/block", path -> path.getPath().endsWith(".geo.json")).keySet())
+        for (var loc : resourceManager.listResources("geo/models/block", path -> path.getPath().endsWith(".geo.json")).keySet())
             event.enqueueWork(() -> GeoModelManager.preload(loc));
     }
 }

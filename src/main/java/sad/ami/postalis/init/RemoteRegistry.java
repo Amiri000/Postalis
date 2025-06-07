@@ -1,6 +1,7 @@
 package sad.ami.postalis.init;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -9,6 +10,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoBlockItemRenderer;
+import sad.ami.postalis.api.system.geo.animations.GeoAnimationManager;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
@@ -36,6 +38,9 @@ public class RemoteRegistry {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         var resourceManager = Minecraft.getInstance().getResourceManager();
+
+        var animationPath = ResourceLocation.fromNamespaceAndPath("postalis", "geo/animations/heavens_forge/unknown.animation.json");
+        GeoAnimationManager.preload(animationPath);
 
         for (var loc : resourceManager.listResources("geo/models/block", path -> path.getPath().endsWith(".geo.json")).keySet())
             event.enqueueWork(() -> GeoModelManager.preload(loc));

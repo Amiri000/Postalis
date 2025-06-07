@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import sad.ami.postalis.api.system.geo.animations.GeoAnimationManager;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
 import sad.ami.postalis.api.system.geo.util.RenderObjects;
@@ -35,7 +36,9 @@ public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRende
         pose.translate(0.5, 0, 0.5);
         pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        drawModel(pose, bufferSource.getBuffer(RenderType.entityCutout(texture)), geo, packedOverlay, packedLight);
+        var animationPath = ResourceLocation.fromNamespaceAndPath("postalis", "geo/animations/heavens_forge/unknown.animation.json");
+
+        drawModel(pose, bufferSource.getBuffer(RenderType.entityCutout(texture)), geo, GeoAnimationManager.get(animationPath), (System.currentTimeMillis() % 10000L) / 1000f, packedOverlay, packedLight);
 
         pose.popPose();
 

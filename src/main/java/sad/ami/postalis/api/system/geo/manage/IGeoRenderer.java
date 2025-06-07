@@ -5,49 +5,53 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import sad.ami.postalis.api.system.geo.animations.AnimationUtils;
+import sad.ami.postalis.api.system.geo.animations.GeoAnimationContainer;
 import sad.ami.postalis.api.system.geo.util.FaceNormal;
 import sad.ami.postalis.api.system.geo.util.VertexPos;
 
 import java.util.List;
 
 public interface IGeoRenderer {
-    default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, int overlay, int packedLight) {
+    default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, GeoAnimationContainer animation, float timeSeconds, int overlay, int packedLight) {
         GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
 
         int texWidth = geometry.description.texture_width;
         int texHeight = geometry.description.texture_height;
 
         for (GeoModel.Bone bone : geometry.bones)
-            drawBone(poseStack, buffer, bone, texWidth, texHeight, overlay, packedLight);
+            drawBone(poseStack, buffer, bone, texWidth, texHeight, overlay, packedLight, animation, timeSeconds);
     }
 
-    default void drawBone(PoseStack poseStack, VertexConsumer buffer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight) {
+    default void drawBone(PoseStack poseStack, VertexConsumer buffer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight, GeoAnimationContainer animation, float timeSeconds) {
         poseStack.pushPose();
 
+        float pivotX = 0, pivotY = 0, pivotZ = 0;
         if (bone.pivot != null && bone.pivot.size() == 3) {
-            float pivotX = -bone.pivot.get(0);
-            float pivotY = bone.pivot.get(1);
-            float pivotZ = bone.pivot.get(2);
-
+            pivotX = -bone.pivot.get(0);
+            pivotY = bone.pivot.get(1);
+            pivotZ = bone.pivot.get(2);
             poseStack.translate(pivotX, pivotY, pivotZ);
-
-            if (bone.rotation != null && bone.rotation.size() == 3) {
-                float rx = bone.rotation.get(0);
-                float ry = bone.rotation.get(1);
-                float rz = bone.rotation.get(2);
-
-                if (rz != 0)
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(rz));
-
-                if (ry != 0)
-                    poseStack.mulPose(Axis.YP.rotationDegrees(-ry));
-
-                if (rx != 0)
-                    poseStack.mulPose(Axis.XP.rotationDegrees(-rx));
-            }
-
-            poseStack.translate(-pivotX, -pivotY, -pivotZ);
         }
+
+        float rx = 0, ry = 0, rz = 0;
+        if (bone.rotation != null && bone.rotation.size() == 3) {
+            rx = bone.rotation.get(0);
+            ry = bone.rotation.get(1);
+            rz = bone.rotation.get(2);
+        }
+
+        float[] rotOut = new float[]{rx, ry, rz};
+        applyBoneAnimation(poseStack, bone, animation, timeSeconds, rotOut);
+
+        if (rotOut[2] != 0)
+            poseStack.mulPose(Axis.ZP.rotationDegrees(rotOut[2]));
+        if (rotOut[1] != 0)
+            poseStack.mulPose(Axis.YP.rotationDegrees(-rotOut[1]));
+        if (rotOut[0] != 0)
+            poseStack.mulPose(Axis.XP.rotationDegrees(-rotOut[0]));
+
+        poseStack.translate(-pivotX, -pivotY, -pivotZ);
 
         if (bone.cubes != null)
             for (GeoModel.Cube cube : bone.cubes)
@@ -116,6 +120,31 @@ public interface IGeoRenderer {
                     FaceNormal.values()[face].getVector(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
 
         poseStack.popPose();
+    }
+
+    default void applyBoneAnimation(PoseStack poseStack, GeoModel.Bone bone, GeoAnimationContainer animation, float timeSeconds, float[] rotOut) {
+        if (animation == null) return;
+
+        var clip = animation.animations.get("idle_rotation");
+        if (clip == null || !clip.bones.containsKey(bone.name)) return;
+
+        var animBone = clip.bones.get(bone.name);
+
+        float[] rot = AnimationUtils.interpolate(animBone.rotation, timeSeconds, clip.animationLength, clip.loop);
+        float[] pos = AnimationUtils.interpolate(animBone.position, timeSeconds, clip.animationLength, clip.loop);
+        float[] scl = AnimationUtils.interpolate(animBone.scale, timeSeconds, clip.animationLength, clip.loop);
+
+        if (rot != null) {
+            rotOut[0] += rot[0];
+            rotOut[1] += rot[1];
+            rotOut[2] += rot[2];
+        }
+        if (pos != null) {
+            poseStack.translate(pos[0], pos[1], pos[2]);
+        }
+        if (scl != null) {
+            poseStack.scale(scl[0], scl[1], scl[2]);
+        }
     }
 
     private void drawFace(VertexConsumer buffer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay, int packedLight) {

@@ -73,7 +73,7 @@ public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implem
             }
         }
 
-        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light);
+        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, null, 0, overlay, light);
 
         pose.popPose();
     }

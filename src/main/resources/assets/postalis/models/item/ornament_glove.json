@@ -1,3 +1,18 @@
 {
-  "parent": "minecraft:item/flower_pot"
+  "parent": "neoforge:item/default",
+  "loader": "neoforge:separate_transforms",
+  "base": {
+    "parent": "builtin/entity"
+  },
+  "perspectives": {
+    "ground": {
+      "parent": "builtin/entity"
+    },
+    "gui": {
+      "parent": "postalis:item/ornament_glove_2d"
+    },
+    "fixed": {
+      "parent": "builtin/entity"
+    }
+  }
 }

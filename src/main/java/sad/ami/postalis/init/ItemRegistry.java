@@ -10,6 +10,7 @@ import sad.ami.postalis.Postalis;
 import sad.ami.postalis.items.GeoBlockItem;
 import sad.ami.postalis.items.OrnamentGlove;
 import sad.ami.postalis.items.WindBreakerItem;
+import sad.ami.postalis.items.base.BaseBlockItem;
 import sad.ami.postalis.items.base.BaseSwordItem;
 
 public class ItemRegistry {
@@ -21,7 +22,7 @@ public class ItemRegistry {
 
     public static void register(IEventBus bus) {
         for (var block : BlockRegistry.BLOCKS.getEntries())
-            ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
+            ITEMS.register(block.getId().getPath(), () -> new BaseBlockItem(block.get(), new Item.Properties().stacksTo(1)));
 
         ITEMS.register(bus);
     }

@@ -12,6 +12,8 @@ import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoBlockItemRenderer;
 import sad.ami.postalis.api.system.geo.animations.GeoAnimationManager;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.samples.ItemAssetsSample;
+import sad.ami.postalis.api.system.geo.util.IGeoObject;
 import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
@@ -30,9 +32,17 @@ public class RemoteRegistry {
 
     @SubscribeEvent
     public static void registerClientItemExtensions(RegisterClientExtensionsEvent event) {
-        var block = BlockRegistry.HEAVENS_FORGE.get();
+        for (var holder : ItemRegistry.ITEMS.getEntries()) {
+            var item = holder.get();
 
-        event.registerItem(new GeoBlockItemRenderer(block), block.asItem());
+            if (!(item instanceof IGeoObject geoObject))
+                continue;
+
+            if (geoObject.getBlock() == null)
+                event.registerItem(new GeoBlockItemRenderer(new ItemAssetsSample(item)), item);
+            else
+                event.registerItem(new GeoBlockItemRenderer(new ItemAssetsSample(geoObject.getBlock())), item);
+        }
     }
 
     @SubscribeEvent
@@ -43,6 +53,9 @@ public class RemoteRegistry {
         GeoAnimationManager.preload(animationPath);
 
         for (var loc : resourceManager.listResources("geo/models/block", path -> path.getPath().endsWith(".geo.json")).keySet())
+            event.enqueueWork(() -> GeoModelManager.preload(loc));
+
+        for (var loc : resourceManager.listResources("geo/models/item", path -> path.getPath().endsWith(".geo.json")).keySet())
             event.enqueueWork(() -> GeoModelManager.preload(loc));
     }
 }

@@ -6,27 +6,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
-import sad.ami.postalis.api.system.geo.util.RenderObjects;
+import sad.ami.postalis.api.system.geo.samples.ItemAssetsSample;
 
 public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implements IGeoRendererManager, IClientItemExtensions {
     private final ResourceLocation model;
     private final ResourceLocation texture;
 
-    public GeoBlockItemRenderer(Block block) {
+    public GeoBlockItemRenderer(ItemAssetsSample sample) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
 
-        var name = BuiltInRegistries.BLOCK.getKey(block).getPath();
-
-        this.model = getModelPath(RenderObjects.BLOCK, name);
-        this.texture = getTexturePath(RenderObjects.BLOCK, name);
+        this.model = sample.getModel();
+        this.texture = sample.getTexture();
     }
 
     @Override
@@ -73,7 +69,7 @@ public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implem
             }
         }
 
-        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, null, 0, overlay, light);
+        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light);
 
         pose.popPose();
     }

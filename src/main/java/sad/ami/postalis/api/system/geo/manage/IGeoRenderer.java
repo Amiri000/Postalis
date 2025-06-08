@@ -13,6 +13,10 @@ import sad.ami.postalis.api.system.geo.util.VertexPos;
 import java.util.List;
 
 public interface IGeoRenderer {
+    default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, int overlay, int packedLight) {
+        this.drawModel(poseStack, buffer, model, null, 0, overlay, packedLight);
+    }
+
     default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, GeoAnimationContainer animation, float timeSeconds, int overlay, int packedLight) {
         GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
 

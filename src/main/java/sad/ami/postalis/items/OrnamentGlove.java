@@ -5,10 +5,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import sad.ami.postalis.api.system.geo.util.IGeoObject;
 
 import java.util.List;
 
-public class OrnamentGlove extends Item {
+public class OrnamentGlove extends Item implements IGeoObject {
     public OrnamentGlove() {
         super(new Properties().stacksTo(1));
     }

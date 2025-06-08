@@ -23,6 +23,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import org.jetbrains.annotations.Nullable;
+import sad.ami.postalis.api.system.geo.util.IGeoObject;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.block.block_entity.ITickableBlockEntity;
 import sad.ami.postalis.init.BlockEntitiesRegistry;

@@ -19,6 +19,8 @@ import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
 import sad.ami.postalis.client.renderer.entities.OrnamentRenderer;
 
+import java.util.List;
+
 @EventBusSubscriber(modid = Postalis.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class RemoteRegistry {
     @SubscribeEvent
@@ -52,10 +54,8 @@ public class RemoteRegistry {
         var animationPath = ResourceLocation.fromNamespaceAndPath("postalis", "geo/animations/heavens_forge/unknown.animation.json");
         GeoAnimationManager.preload(animationPath);
 
-        for (var loc : resourceManager.listResources("geo/models/block", path -> path.getPath().endsWith(".geo.json")).keySet())
-            event.enqueueWork(() -> GeoModelManager.preload(loc));
-
-        for (var loc : resourceManager.listResources("geo/models/item", path -> path.getPath().endsWith(".geo.json")).keySet())
-            event.enqueueWork(() -> GeoModelManager.preload(loc));
+        for (var folder : List.of("geo/models/block", "geo/models/item"))
+            for (var loc : resourceManager.listResources(folder, path -> path.getPath().endsWith(".geo.json")).keySet())
+                event.enqueueWork(() -> GeoModelManager.preload(loc));
     }
 }

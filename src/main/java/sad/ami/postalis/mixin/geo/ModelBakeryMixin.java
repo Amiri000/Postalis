@@ -10,6 +10,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,14 +29,14 @@ public class ModelBakeryMixin {
         if (!location.getNamespace().equals(Postalis.MODID))
             return;
 
-        var blockName = BuiltInRegistries.BLOCK.get(location).getName().getString();
+        var block = BuiltInRegistries.BLOCK.get(location);
 
-        if (blockName.equalsIgnoreCase("air"))
+        if (block == Blocks.AIR)
             return;
 
-        var parts = blockName.split("\\.");
-        var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle",
-                Either.right(parts[1] + ":models/block/" + parts[2])), null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
+        var parts = block.getName().getString().split("\\.");
+        var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle", Either.right(parts[1] + ":models/block/" + parts[2])),
+                null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
 
         registerModel(ModelResourceLocation.inventory(location), fakeModel);
 

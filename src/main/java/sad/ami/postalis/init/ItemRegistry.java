@@ -22,7 +22,7 @@ public class ItemRegistry {
 
     public static void register(IEventBus bus) {
         for (var block : BlockRegistry.BLOCKS.getEntries())
-            ITEMS.register(block.getId().getPath(), () -> new BaseBlockItem(block.get(), new Item.Properties().stacksTo(1)));
+            ITEMS.register(block.getId().getPath(), () -> new BaseBlockItem(block.get()));
 
         ITEMS.register(bus);
     }

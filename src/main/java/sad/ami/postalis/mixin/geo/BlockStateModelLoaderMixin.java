@@ -35,8 +35,7 @@ public class BlockStateModelLoaderMixin {
         var loadedModel = new BlockStateModelLoader.LoadedModel(model, () -> new BlockStateModelLoader.ModelGroupKey(List.of(model), List.of()));
 
         for (BlockState state : definition.getPossibleStates()) {
-            ModelResourceLocation mrl = BlockModelShaper.stateToModelLocation(id, state);
-            discoveredModelOutput.accept(mrl, loadedModel.model());
+            discoveredModelOutput.accept( BlockModelShaper.stateToModelLocation(id, state), loadedModel.model());
             modelGroups.put(state, 1);
         }
 

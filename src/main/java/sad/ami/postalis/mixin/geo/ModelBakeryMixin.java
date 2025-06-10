@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ModelBakery.class)
-public class ModelBakeryMixin {
+public abstract class ModelBakeryMixin {
+    @Shadow
+    abstract UnbakedModel getModel(ResourceLocation modelLocation);
+
     @Inject(method = "loadItemModelAndDependencies", at = @At("HEAD"), cancellable = true)
     private void injectFakeModelForBlockItem(ResourceLocation location, CallbackInfo ci) {
         if (!location.getNamespace().equals(Postalis.MODID))
@@ -34,8 +37,8 @@ public class ModelBakeryMixin {
         if (block == Blocks.AIR)
             return;
 
-        var parts = block.getName().getString().split("\\.");
-        var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle", Either.right(parts[1] + ":models/block/" + parts[2])),
+        var fakeModel = new BlockModel(ResourceLocation.withDefaultNamespace("builtin/entity"), List.of(), Map.of("particle",
+                Either.right("postalis:models/block/" + block.getName().getString().split("\\.")[2])),
                 null, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of());
 
         registerModel(ModelResourceLocation.inventory(location), fakeModel);
@@ -48,10 +51,16 @@ public class ModelBakeryMixin {
         if (!location.getNamespace().equals(Postalis.MODID) || !location.getPath().contains("block"))
             return;
 
-        Map<String, Either<Material, String>> textureMap = Map.of("particle", Either.left(new Material(TextureAtlas.LOCATION_BLOCKS,
-                ResourceLocation.fromNamespaceAndPath(Postalis.MODID, location.getPath()))));
+        var model = new BlockModel(
+                null,
+                List.of(),
+                Map.of("particle", Either.left(new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, location.getPath())))),
+                true,
+                BlockModel.GuiLight.SIDE,
+                ItemTransforms.NO_TRANSFORMS,
+                List.of());
 
-        cir.setReturnValue(new BlockModel(null, List.of(), textureMap, true, BlockModel.GuiLight.SIDE, ItemTransforms.NO_TRANSFORMS, List.of()));
+        cir.setReturnValue(model);
     }
 
     @Shadow

@@ -25,7 +25,8 @@ public record VertexPos(float x, float y, float z) {
     }
 
     private static List<VertexPos> makeVertices(float... cors) {
-        if (cors.length % 3 != 0) throw new IllegalArgumentException("Coordinates must be multiple of 3");
+        if (cors.length % 3 != 0)
+            throw new IllegalArgumentException("Coordinates must be multiple of 3");
 
         var list = new ArrayList<VertexPos>(cors.length / 3);
 

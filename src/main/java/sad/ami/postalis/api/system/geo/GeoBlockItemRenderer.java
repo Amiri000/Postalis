@@ -11,13 +11,13 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.manage.IGeoRenderer;
-import sad.ami.postalis.api.system.geo.samples.ItemAssetsSample;
+import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 
 public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implements IGeoRenderer {
     private final ResourceLocation model;
     private final ResourceLocation texture;
 
-    public GeoBlockItemRenderer(ItemAssetsSample sample) {
+    public GeoBlockItemRenderer(ResourceAssetsSample sample) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
 
         this.model = sample.getModel();

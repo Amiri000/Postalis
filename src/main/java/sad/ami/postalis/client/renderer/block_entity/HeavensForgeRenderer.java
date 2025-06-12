@@ -7,12 +7,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import sad.ami.postalis.api.system.geo.GeoBlockRenderer;
+import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.init.BlockRegistry;
 
 public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity> {
     public HeavensForgeRenderer() {
-        super(BlockRegistry.HEAVENS_FORGE.get());
+        super(new ResourceAssetsSample(BlockRegistry.HEAVENS_FORGE.get()));
     }
 
     @Override
@@ -26,10 +27,9 @@ public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEnti
 
         pose.translate(0.5, 1.1, 0.5);
         pose.mulPose(Axis.XP.rotationDegrees(90));
-
         pose.mulPose(Axis.ZP.rotationDegrees((Util.getMillis() / 20f) % 360));
 
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, 15728880, overlay, pose, buf, null, 0);
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, light, overlay, pose, buf, null, 0);
 
         pose.popPose();
     }

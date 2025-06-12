@@ -12,8 +12,8 @@ import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoBlockItemRenderer;
 import sad.ami.postalis.api.system.geo.animations.GeoAnimationManager;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
-import sad.ami.postalis.api.system.geo.samples.ItemAssetsSample;
 import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
+import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
@@ -40,14 +40,11 @@ public class RemoteRegistry {
             if (!(item instanceof IGeoRendererManager geoObject))
                 continue;
 
-            if (geoObject.getCustomRender() != null) {
+            if (geoObject.getCustomRender() != null)
                 event.registerItem(geoObject.getCustomRender(), item);
-            } else {
-                if (geoObject.getBlock() == null)
-                    event.registerItem(new GeoBlockItemRenderer(new ItemAssetsSample(item)), item); // change to GeoItemRenderer or deleted
-                else
-                    event.registerItem(new GeoBlockItemRenderer(new ItemAssetsSample(geoObject.getBlock())), item);
-            }
+
+            if (geoObject.getBlock() != null)
+                event.registerItem(new GeoBlockItemRenderer(new ResourceAssetsSample(geoObject.getBlock())), item);
         }
     }
 

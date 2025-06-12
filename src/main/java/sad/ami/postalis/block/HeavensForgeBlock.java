@@ -11,27 +11,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import org.jetbrains.annotations.Nullable;
-import sad.ami.postalis.api.system.geo.util.IGeoObject;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
-import sad.ami.postalis.block.block_entity.ITickableBlockEntity;
 import sad.ami.postalis.init.BlockEntitiesRegistry;
 import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.networking.NetworkHandler;
 import sad.ami.postalis.networking.packets.screen.OpenScreenPacket;
-
-import java.util.function.Consumer;
 
 public class HeavensForgeBlock extends BaseEntityBlock {
     public HeavensForgeBlock(BlockBehaviour.Properties properties) {

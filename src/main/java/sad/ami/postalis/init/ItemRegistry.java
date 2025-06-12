@@ -1,13 +1,11 @@
 package sad.ami.postalis.init;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import sad.ami.postalis.Postalis;
-import sad.ami.postalis.items.GeoBlockItem;
 import sad.ami.postalis.items.OrnamentGlove;
 import sad.ami.postalis.items.WindBreakerItem;
 import sad.ami.postalis.items.base.BaseBlockItem;

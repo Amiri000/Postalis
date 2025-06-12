@@ -8,19 +8,22 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
-import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
+import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.manage.IGeoRenderer;
 import sad.ami.postalis.api.system.geo.util.RenderObjects;
 
-public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, IGeoRendererManager {
+public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, IGeoRenderer {
     private final GeoModel geo;
     private final ResourceLocation texture;
 
     public GeoBlockRenderer(Block block) {
         var name = BuiltInRegistries.BLOCK.getKey(block).getPath();
+        var type = RenderObjects.BLOCK.getType();
 
-        this.geo = getGeoModel(RenderObjects.BLOCK, name);
-        this.texture = getTexturePath(RenderObjects.BLOCK, name);
+        this.geo = GeoModelManager.get(ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "geo/models/" + type + "/" + name + ".geo.json"));
+        this.texture = ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/" + type + "/" + name + ".png");
     }
 
     @Override

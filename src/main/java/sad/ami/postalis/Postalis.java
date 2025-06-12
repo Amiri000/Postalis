@@ -1,6 +1,5 @@
 package sad.ami.postalis;
 
-import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

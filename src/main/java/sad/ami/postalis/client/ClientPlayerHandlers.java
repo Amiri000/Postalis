@@ -13,7 +13,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.joml.Matrix4f;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
-import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.client.interaction.ClientCastAnimation;
 import sad.ami.postalis.client.screen.ChecklistAbilityScreen;
 import sad.ami.postalis.client.screen.UpgradeAbilityScreen;

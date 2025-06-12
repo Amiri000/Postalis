@@ -5,13 +5,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import sad.ami.postalis.api.system.geo.util.IGeoObject;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
+import sad.ami.postalis.client.renderer.item.OrnamentGloveRenderer;
 
 import java.util.List;
 
-public class OrnamentGlove extends Item implements IGeoObject {
+public class OrnamentGlove extends Item implements IGeoRendererManager {
     public OrnamentGlove() {
         super(new Properties().stacksTo(1));
+    }
+
+    @Override
+    public IClientItemExtensions getCustomRender() {
+        return OrnamentGloveRenderer.INSTANCE;
     }
 
     @Override

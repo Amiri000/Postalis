@@ -3,6 +3,8 @@ package sad.ami.postalis.api.system.geo.manage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import sad.ami.postalis.api.system.geo.animations.AnimationUtils;
@@ -12,7 +14,7 @@ import sad.ami.postalis.api.system.geo.util.VertexPos;
 
 import java.util.List;
 
-public interface IGeoRenderer {
+public interface IGeoRenderer extends IClientItemExtensions {
     default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, int overlay, int packedLight) {
         this.drawModel(poseStack, buffer, model, null, 0, overlay, packedLight);
     }
@@ -50,8 +52,10 @@ public interface IGeoRenderer {
 
         if (rotOut[2] != 0)
             poseStack.mulPose(Axis.ZP.rotationDegrees(rotOut[2]));
+
         if (rotOut[1] != 0)
             poseStack.mulPose(Axis.YP.rotationDegrees(-rotOut[1]));
+
         if (rotOut[0] != 0)
             poseStack.mulPose(Axis.XP.rotationDegrees(-rotOut[0]));
 
@@ -195,6 +199,11 @@ public interface IGeoRenderer {
             case 5 -> toArray(faces.down.uv_size);
             default -> throw new IllegalArgumentException("Invalid face index: " + face);
         };
+    }
+
+    @Override
+    default BlockEntityWithoutLevelRenderer getCustomRenderer() {
+        return (BlockEntityWithoutLevelRenderer) this;
     }
 
     private float[] toArray(List<Float> list) {

@@ -2,24 +2,19 @@ package sad.ami.postalis.api.system.geo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
-import sad.ami.postalis.api.system.geo.manage.IGeoRenderer;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
+import sad.ami.postalis.api.system.geo.util.ItemEntityRenderer;
 
-public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implements IGeoRenderer {
+public class GeoBlockItemRenderer extends ItemEntityRenderer {
     private final ResourceLocation model;
     private final ResourceLocation texture;
 
     public GeoBlockItemRenderer(ResourceAssetsSample sample) {
-        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-
         this.model = sample.getModel();
         this.texture = sample.getTexture();
     }
@@ -60,15 +55,9 @@ public class GeoBlockItemRenderer extends BlockEntityWithoutLevelRenderer implem
                 pose.mulPose(Axis.XP.rotationDegrees(5));
                 pose.mulPose(Axis.YP.rotationDegrees(-132));
             }
-            case GROUND -> {
-                modifier = 1f / 60;
-
-                pose.scale(modifier, modifier, modifier);
-                pose.translate(30, 23, 30);
-            }
         }
 
-        drawModel(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light);
+        GeoRenderer.INSTANCE.drawModel(pose, buf, texture, geo, context, overlay, light);
 
         pose.popPose();
     }

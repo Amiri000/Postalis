@@ -2,18 +2,13 @@ package sad.ami.postalis.api.system.geo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
-import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
-import sad.ami.postalis.api.system.geo.manage.IGeoRenderer;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 
-public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, IGeoRenderer {
+public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     private final GeoModel geo;
     private final ResourceLocation texture;
 
@@ -23,22 +18,22 @@ public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRende
     }
 
     @Override
-    public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (geo == null || geo.minecraft_geometry.isEmpty())
             return;
 
         pose.pushPose();
 
-        applyPreTransform(be, partialTicks, pose, bufferSource, packedLight, packedOverlay);
+        applyPreTransform(be, partialTicks, pose, buffer, packedLight, packedOverlay);
 
         pose.translate(0.5, 0, 0.5);
         pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        drawModel(pose, bufferSource.getBuffer(RenderType.entityCutout(texture)), geo, packedOverlay, packedLight);
+        GeoRenderer.INSTANCE.drawModel(pose, buffer, texture, geo, packedOverlay, packedLight);
 
         pose.popPose();
 
-        renderExtras(be, partialTicks, pose, bufferSource, packedLight, packedOverlay);
+        renderExtras(be, partialTicks, pose, buffer, packedLight, packedOverlay);
     }
 
     protected void applyPreTransform(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {

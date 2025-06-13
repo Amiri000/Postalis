@@ -49,39 +49,10 @@ public class ItemInHandRendererMixin {
         event.getRenderer().renderStatic(event.getPlayer(), event.getStack(), event.getContext(), leftHand, event.getPoseStack(), event.getBuffer(), event.getPlayer().level(), event.getLight(), seed, OverlayTexture.NO_OVERLAY);
     }
 
-    @Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 0, shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 0, shift = At.Shift.AFTER))
     private void postalis$afterIsEmptyCheck(AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equippedProgress, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
-        if (Minecraft.getInstance().player.getMainHandItem().getItem() != ItemRegistry.ORNAMENT_GLOVE.get() || hand != InteractionHand.MAIN_HAND)
-            return;
-
-        poseStack.pushPose();
-
-        var swingRoot = Mth.sqrt(swingProgress);
-
-        var translateX = -0.3F * Mth.sin((float) (swingRoot * Math.PI)) + 0.64000005F;
-        var translateY = 0.4F * Mth.sin((float) (swingRoot * Math.PI * 2.0)) - 0.6F + equippedProgress * -0.6F;
-        var translateZ = -0.4F * Mth.sin((float) (swingProgress * Math.PI)) - 0.71999997F;
-
-        poseStack.translate(translateX, translateY, translateZ);
-        poseStack.mulPose(Axis.YP.rotationDegrees(45.0F));
-
-        var swingSinSq = Mth.sin((float) (swingProgress * swingProgress * Math.PI));
-        var swingSin = Mth.sin((float) (swingRoot * Math.PI));
-
-        poseStack.mulPose(Axis.YP.rotationDegrees(swingSin * 70.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(swingSinSq * -20.0F));
-
-        poseStack.translate(-1.0F, 3.6F, 3.5F);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(120.0F));
-        poseStack.mulPose(Axis.XP.rotationDegrees(200.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(-135.0F));
-        poseStack.translate(5.6F, 0.0F, 0.0F);
-
-        var renderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
-
-        renderer.renderRightHand(poseStack, buffer, combinedLight, player);
-
-        poseStack.popPose();    }
+        Postalis.sssa(player, partialTicks, pitch, hand, swingProgress, stack, equippedProgress, poseStack, buffer, combinedLight, ci);
+    }
 
     @Inject(method = "renderItem", at = @At("RETURN"))
     private void onRenderItemPost(LivingEntity entity, ItemStack stack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed, CallbackInfo ci) {

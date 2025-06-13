@@ -1,38 +1,60 @@
-package sad.ami.postalis.api.system.geo.manage;
+package sad.ami.postalis.api.system.geo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import sad.ami.postalis.api.system.geo.animations.AnimationUtils;
 import sad.ami.postalis.api.system.geo.animations.GeoAnimationContainer;
+import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.util.FaceNormal;
 import sad.ami.postalis.api.system.geo.util.VertexPos;
 
 import java.util.List;
 
-public interface IGeoRenderer extends IClientItemExtensions {
-    default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, int overlay, int packedLight) {
-        this.drawModel(poseStack, buffer, model, null, 0, overlay, packedLight);
+public class GeoRenderer implements IClientItemExtensions {
+    public static final GeoRenderer INSTANCE = new GeoRenderer();
+
+    public void drawModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, int overlay, int packedLight) {
+        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, null, 0, overlay, packedLight);
     }
 
-    default void drawModel(PoseStack poseStack, VertexConsumer buffer, GeoModel model, GeoAnimationContainer animation, float timeSeconds, int overlay, int packedLight) {
+    public void drawModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, ItemDisplayContext context, int overlay, int packedLight) {
+        poseStack.pushPose();
+
+        if (context == ItemDisplayContext.GROUND) {
+            var modifier = 1f / 60;
+
+            poseStack.scale(modifier, modifier, modifier);
+            poseStack.translate(30, 23, 30);
+        }
+
+        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, null, 0, overlay, packedLight);
+
+        poseStack.popPose();
+    }
+
+    public void drawModel(PoseStack poseStack, VertexConsumer consumer, GeoModel model, GeoAnimationContainer animation, float timeSeconds, int overlay, int packedLight) {
         GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
 
         int texWidth = geometry.description.texture_width;
         int texHeight = geometry.description.texture_height;
 
         for (GeoModel.Bone bone : geometry.bones)
-            drawBone(poseStack, buffer, bone, texWidth, texHeight, overlay, packedLight, animation, timeSeconds);
+            drawBone(poseStack, consumer, bone, texWidth, texHeight, overlay, packedLight, animation, timeSeconds);
     }
 
-    default void drawBone(PoseStack poseStack, VertexConsumer buffer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight, GeoAnimationContainer animation, float timeSeconds) {
+    private void drawBone(PoseStack poseStack, VertexConsumer consumer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight, GeoAnimationContainer animation, float timeSeconds) {
         poseStack.pushPose();
 
         float pivotX = 0, pivotY = 0, pivotZ = 0;
+
         if (bone.pivot != null && bone.pivot.size() == 3) {
             pivotX = -bone.pivot.get(0);
             pivotY = bone.pivot.get(1);
@@ -63,12 +85,12 @@ public interface IGeoRenderer extends IClientItemExtensions {
 
         if (bone.cubes != null)
             for (GeoModel.Cube cube : bone.cubes)
-                drawCube(poseStack, buffer, cube, List.of(0f, 0f, 0f), texWidth, texHeight, overlay, packedLight);
+                drawCube(poseStack, consumer, cube, List.of(0f, 0f, 0f), texWidth, texHeight, overlay, packedLight);
 
         poseStack.popPose();
     }
 
-    default void drawCube(PoseStack poseStack, VertexConsumer buffer, GeoModel.Cube cube, List<Float> visibleOffset, int texWidth, int texHeight, int overlay, int packedLight) {
+    private void drawCube(PoseStack poseStack, VertexConsumer consumer, GeoModel.Cube cube, List<Float> visibleOffset, int texWidth, int texHeight, int overlay, int packedLight) {
         float ox = cube.origin.get(0);
         float oy = cube.origin.get(1);
         float oz = cube.origin.get(2);
@@ -124,17 +146,19 @@ public interface IGeoRenderer extends IClientItemExtensions {
         }
 
         for (int face = 0; face < 6; face++)
-            drawFace(buffer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face,
+            drawFace(consumer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face,
                     FaceNormal.values()[face].getVector(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
 
         poseStack.popPose();
     }
 
-    default void applyBoneAnimation(PoseStack poseStack, GeoModel.Bone bone, GeoAnimationContainer animation, float timeSeconds, float[] rotOut) {
+    private void applyBoneAnimation(PoseStack poseStack, GeoModel.Bone bone, GeoAnimationContainer animation, float timeSeconds, float[] rotOut) {
         if (animation == null) return;
 
         var clip = animation.animations.get("idle_rotation");
-        if (clip == null || !clip.bones.containsKey(bone.name)) return;
+
+        if (clip == null || !clip.bones.containsKey(bone.name))
+            return;
 
         var animBone = clip.bones.get(bone.name);
 
@@ -147,15 +171,15 @@ public interface IGeoRenderer extends IClientItemExtensions {
             rotOut[1] += rot[1];
             rotOut[2] += rot[2];
         }
-        if (pos != null) {
+
+        if (pos != null)
             poseStack.translate(pos[0], pos[1], pos[2]);
-        }
-        if (scl != null) {
+
+        if (scl != null)
             poseStack.scale(scl[0], scl[1], scl[2]);
-        }
     }
 
-    private void drawFace(VertexConsumer buffer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay, int packedLight) {
+    private void drawFace(VertexConsumer consumer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay, int packedLight) {
         int vertexStart = faceIndex * 4;
 
         float[] uv = getUV(faces, faceIndex);
@@ -169,11 +193,11 @@ public interface IGeoRenderer extends IClientItemExtensions {
         float[][] uvCords = {{u1, v0}, {u0, v0}, {u0, v1}, {u1, v1}};
 
         for (int j = 0; j < 4; j++) {
-            VertexPos pos = positions.get(vertexStart + j);
             float[] tex = uvCords[j];
-            Vector4f v = pos.toVec4f().mul(pose);
 
-            buffer.addVertex(v.x(), v.y(), v.z(), 0xFFFFFFFF, tex[0], tex[1], overlay, packedLight, normal[0], normal[1], normal[2]);
+            Vector4f v = positions.get(vertexStart + j).toVec4f().mul(pose);
+
+            consumer.addVertex(v.x(), v.y(), v.z(), 0xFFFFFFFF, tex[0], tex[1], overlay, packedLight, normal[0], normal[1], normal[2]);
         }
     }
 
@@ -199,11 +223,6 @@ public interface IGeoRenderer extends IClientItemExtensions {
             case 5 -> toArray(faces.down.uv_size);
             default -> throw new IllegalArgumentException("Invalid face index: " + face);
         };
-    }
-
-    @Override
-    default BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return (BlockEntityWithoutLevelRenderer) this;
     }
 
     private float[] toArray(List<Float> list) {

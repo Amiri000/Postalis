@@ -19,8 +19,8 @@ public class OrnamentGlove extends Item implements IGeoRendererManager {
         super(new Properties().stacksTo(1));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
+    @OnlyIn(Dist.CLIENT)
     public IClientItemExtensions getCustomRender() {
         return new OrnamentGloveRenderer(new ResourceAssetsSample(this));
     }

@@ -1,6 +1,8 @@
 package sad.ami.postalis.init;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,6 +20,7 @@ import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
 import sad.ami.postalis.client.renderer.entities.OrnamentRenderer;
+import sad.ami.postalis.client.renderer.laeyrs.GloveLayer;
 
 import java.util.List;
 
@@ -30,6 +33,19 @@ public class RemoteRegistry {
         event.registerEntityRenderer(EntityRegistry.ORNAMENT.get(), OrnamentRenderer::new);
 
         event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), _ -> new HeavensForgeRenderer());
+    }
+
+    @SubscribeEvent
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        PlayerRenderer defaultRenderer = event.getSkin(PlayerSkin.Model.WIDE);
+        if (defaultRenderer != null) {
+            defaultRenderer.addLayer(new GloveLayer(defaultRenderer));
+        }
+
+        PlayerRenderer slimRenderer = event.getSkin(PlayerSkin.Model.SLIM);
+        if (slimRenderer != null) {
+            slimRenderer.addLayer(new GloveLayer(slimRenderer));
+        }
     }
 
     @SubscribeEvent

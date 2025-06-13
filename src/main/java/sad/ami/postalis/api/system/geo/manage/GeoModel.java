@@ -63,6 +63,7 @@ public class GeoModel {
 
     public static class Face {
         public List<Float> uv;
+
         @SerializedName("uv_size")
         public List<Float> uv_size;
     }

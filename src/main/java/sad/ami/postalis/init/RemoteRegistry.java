@@ -32,17 +32,19 @@ public class RemoteRegistry {
         event.registerEntityRenderer(EntityRegistry.EMBEDDED_SWORD.get(), EmbeddedSwordRenderer::new);
         event.registerEntityRenderer(EntityRegistry.ORNAMENT.get(), OrnamentRenderer::new);
 
-        event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), _ -> new HeavensForgeRenderer());
+        event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), c -> new HeavensForgeRenderer());
     }
 
     @SubscribeEvent
     public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
         PlayerRenderer defaultRenderer = event.getSkin(PlayerSkin.Model.WIDE);
+
         if (defaultRenderer != null) {
             defaultRenderer.addLayer(new GloveLayer(defaultRenderer));
         }
 
         PlayerRenderer slimRenderer = event.getSkin(PlayerSkin.Model.SLIM);
+
         if (slimRenderer != null) {
             slimRenderer.addLayer(new GloveLayer(slimRenderer));
         }

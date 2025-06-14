@@ -11,7 +11,7 @@ import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.block.block_entity.HeavensForgeBlockEntity;
 import sad.ami.postalis.init.BlockRegistry;
 
-public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity> {
+    public class HeavensForgeRenderer extends GeoBlockRenderer<HeavensForgeBlockEntity> {
     public HeavensForgeRenderer() {
         super(new ResourceAssetsSample(BlockRegistry.HEAVENS_FORGE.get()));
     }

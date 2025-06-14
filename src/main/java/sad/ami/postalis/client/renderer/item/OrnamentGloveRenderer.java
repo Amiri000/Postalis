@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import sad.ami.postalis.api.system.geo.GeoRenderer;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
@@ -30,7 +32,7 @@ public class OrnamentGloveRenderer extends ItemEntityRenderer {
         pose.pushPose();
 
         if (context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
-           var modifier = 1f / 29f;
+            var modifier = 1f / 29f;
 
             pose.translate(0.65, 0.1, 0.3);
             pose.scale(modifier, modifier, modifier);

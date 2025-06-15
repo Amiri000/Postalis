@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.api.system.geo.util.ItemEntityRenderer;
 
@@ -57,7 +58,11 @@ public class GeoBlockItemRenderer extends ItemEntityRenderer {
             }
         }
 
-        GeoRenderer.INSTANCE.drawModel(pose, buf, texture, geo, context, overlay, light);
+        var functional = GeoItemRendererBuilder.toBuild()
+                .itemDisplayContext(context)
+                .build();
+
+        GeoRenderer.INSTANCE.drawItemModel(pose, buf, texture, geo,  overlay, light, functional);
 
         pose.popPose();
     }

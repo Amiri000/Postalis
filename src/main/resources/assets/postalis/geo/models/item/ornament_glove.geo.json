@@ -12,21 +12,9 @@
       },
       "bones": [
         {
-          "name": "bone",
+          "name": "pidrila",
           "pivot": [0, 0, 0],
           "cubes": [
-            {
-              "origin": [-1, 0, -1],
-              "size": [2, 18, 2],
-              "uv": {
-                "north": {"uv": [0, 0], "uv_size": [2, 16]},
-                "east": {"uv": [0, 0], "uv_size": [2, 16]},
-                "south": {"uv": [0, 0], "uv_size": [2, 16]},
-                "west": {"uv": [0, 0], "uv_size": [2, 16]},
-                "up": {"uv": [2, 2], "uv_size": [-2, -2]},
-                "down": {"uv": [2, 2], "uv_size": [-2, -2]}
-              }
-            },
             {
               "origin": [-5, 0, -1],
               "size": [2, 18, 2],
@@ -41,6 +29,24 @@
             },
             {
               "origin": [3, 0, -1],
+              "size": [2, 18, 2],
+              "uv": {
+                "north": {"uv": [0, 0], "uv_size": [2, 16]},
+                "east": {"uv": [0, 0], "uv_size": [2, 16]},
+                "south": {"uv": [0, 0], "uv_size": [2, 16]},
+                "west": {"uv": [0, 0], "uv_size": [2, 16]},
+                "up": {"uv": [2, 2], "uv_size": [-2, -2]},
+                "down": {"uv": [2, 2], "uv_size": [-2, -2]}
+              }
+            }
+          ]
+        },
+        {
+          "name": "bone",
+          "pivot": [0, 0, 0],
+          "cubes": [
+            {
+              "origin": [-1, 0, -1],
               "size": [2, 18, 2],
               "uv": {
                 "north": {"uv": [0, 0], "uv_size": [2, 16]},

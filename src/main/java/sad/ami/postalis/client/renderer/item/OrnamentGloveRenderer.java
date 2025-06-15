@@ -6,10 +6,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import sad.ami.postalis.api.system.geo.GeoRenderer;
+import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.api.system.geo.util.ItemEntityRenderer;
 
@@ -40,8 +40,30 @@ public class OrnamentGloveRenderer extends ItemEntityRenderer {
             pose.mulPose(Axis.YP.rotationDegrees(-132));
         }
 
-        GeoRenderer.INSTANCE.drawModel(pose, buf, texture, geo, context, overlay, light);
+        var functional = GeoItemRendererBuilder.toBuild()
+                .renderHandler(this::boneHandler)
+                .itemDisplayContext(context)
+                .build();
+
+        GeoRenderer.INSTANCE.drawItemModel(pose, buf, texture, geo, overlay, light, functional);
 
         pose.popPose();
     }
+
+    public void boneHandler(PoseStack pose, GeoModel.Bone bone) {
+        if (!bone.name.equals("pidrila")){
+            pose.translate(1.8F, 4.5f, 10.5f);
+            if (bone.pivot == null || bone.pivot.size() != 3) return;
+
+            float px = -bone.pivot.get(0);
+            float py = bone.pivot.get(1);
+            float pz = bone.pivot.get(2);
+
+            pose.translate(px, py, pz);
+
+            pose.mulPose(Axis.YP.rotationDegrees((System.currentTimeMillis() / 10) % 360));
+
+            pose.translate(-px, -py, -pz);
+    }
+}
 }

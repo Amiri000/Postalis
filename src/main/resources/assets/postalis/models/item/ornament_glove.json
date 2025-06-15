@@ -12,7 +12,7 @@
       "parent": "postalis:item/ornament_glove_2d"
     },
     "fixed": {
-      "parent": "builtin/entity"
+      "parent": "postalis:item/ornament_glove_2d"
     }
   }
 }

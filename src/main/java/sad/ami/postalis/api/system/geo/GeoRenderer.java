@@ -13,6 +13,7 @@ import org.joml.Vector4f;
 import sad.ami.postalis.api.system.geo.animations.AnimationUtils;
 import sad.ami.postalis.api.system.geo.animations.GeoAnimationContainer;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
+import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.util.FaceNormal;
 import sad.ami.postalis.api.system.geo.util.VertexPos;
 
@@ -21,37 +22,40 @@ import java.util.List;
 public class GeoRenderer implements IClientItemExtensions {
     public static final GeoRenderer INSTANCE = new GeoRenderer();
 
-    public void drawModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, int overlay, int packedLight) {
-        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, null, 0, overlay, packedLight);
-    }
-
-    public void drawModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, ItemDisplayContext context, int overlay, int packedLight) {
+    public void drawItemModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, int overlay, int packedLight, GeoItemRendererBuilder builder) {
         poseStack.pushPose();
 
-        if (context == ItemDisplayContext.GROUND) {
-            var modifier = 1f / 60;
+        if (builder.getItemDisplayContext() == ItemDisplayContext.GROUND) {
+            float modifier = 1f / 60f;
 
             poseStack.scale(modifier, modifier, modifier);
             poseStack.translate(30, 23, 30);
         }
 
-        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, null, 0, overlay, packedLight);
+        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, null, 0, overlay, packedLight, builder);
 
         poseStack.popPose();
     }
 
-    public void drawModel(PoseStack poseStack, VertexConsumer consumer, GeoModel model, GeoAnimationContainer animation, float timeSeconds, int overlay, int packedLight) {
+    public void drawModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, int overlay, int packedLight) {
+        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, null, 0, overlay, packedLight, null);
+    }
+
+    public void drawModel(PoseStack poseStack, VertexConsumer consumer, GeoModel model, GeoAnimationContainer animation, float timeSeconds, int overlay, int packedLight, GeoItemRendererBuilder builder) {
         GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
 
         int texWidth = geometry.description.texture_width;
         int texHeight = geometry.description.texture_height;
 
         for (GeoModel.Bone bone : geometry.bones)
-            drawBone(poseStack, consumer, bone, texWidth, texHeight, overlay, packedLight, animation, timeSeconds);
+            drawBone(poseStack, consumer, bone, texWidth, texHeight, overlay, packedLight, animation, timeSeconds, builder);
     }
 
-    private void drawBone(PoseStack poseStack, VertexConsumer consumer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight, GeoAnimationContainer animation, float timeSeconds) {
+    private void drawBone(PoseStack poseStack, VertexConsumer consumer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight, GeoAnimationContainer animation, float timeSeconds, GeoItemRendererBuilder builder) {
         poseStack.pushPose();
+
+        if (builder != null && builder.getRenderHandler() != null)
+            builder.getRenderHandler().boneHandler(poseStack, bone);
 
         float pivotX = 0, pivotY = 0, pivotZ = 0;
 
@@ -59,10 +63,12 @@ public class GeoRenderer implements IClientItemExtensions {
             pivotX = -bone.pivot.get(0);
             pivotY = bone.pivot.get(1);
             pivotZ = bone.pivot.get(2);
+
             poseStack.translate(pivotX, pivotY, pivotZ);
         }
 
         float rx = 0, ry = 0, rz = 0;
+
         if (bone.rotation != null && bone.rotation.size() == 3) {
             rx = bone.rotation.get(0);
             ry = bone.rotation.get(1);
@@ -80,6 +86,7 @@ public class GeoRenderer implements IClientItemExtensions {
 
         if (rotOut[0] != 0)
             poseStack.mulPose(Axis.XP.rotationDegrees(-rotOut[0]));
+
 
         poseStack.translate(-pivotX, -pivotY, -pivotZ);
 

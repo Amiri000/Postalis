@@ -8,7 +8,9 @@ import sad.ami.postalis.api.system.geo.funcial.IBoneFunctional;
 @Data
 @Builder(builderMethodName = "toBuild")
 public class GeoItemRendererBuilder {
-    private ItemDisplayContext itemDisplayContext;
+    public static final GeoItemRendererBuilder INSTANCE = GeoItemRendererBuilder.toBuild().build();
 
+    private ItemDisplayContext itemDisplayContext;
     private IBoneFunctional modifyGlobalRender;
+    private boolean hasAnimations;
 }

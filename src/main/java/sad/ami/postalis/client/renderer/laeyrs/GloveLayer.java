@@ -5,6 +5,7 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -20,7 +21,7 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(PoseStack poseStack, MultiBufferSource buf, int packedLight, AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         if (!(player.getMainHandItem().getItem() instanceof OrnamentGlove))
             return;
 
@@ -38,7 +39,8 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
         var assets = new ResourceAssetsSample(ItemRegistry.ORNAMENT_GLOVE.get());
         var geoModel = GeoModelManager.get(assets.getModel());
 
-        GeoRenderer.INSTANCE.drawModel(poseStack, bufferSource, assets.getTexture(), geoModel, OverlayTexture.NO_OVERLAY, packedLight);
+        new GeoRenderer(poseStack, buf.getBuffer(RenderType.entityCutout(assets.getTexture())), GeoModelManager.get(assets.getModel()), OverlayTexture.NO_OVERLAY, packedLight)
+                .draw();
 
         poseStack.popPose();
     }

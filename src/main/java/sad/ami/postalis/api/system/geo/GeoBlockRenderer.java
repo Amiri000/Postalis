@@ -2,6 +2,7 @@ package sad.ami.postalis.api.system.geo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,22 +19,23 @@ public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRende
     }
 
     @Override
-    public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public final void render(T be, float partialTicks, PoseStack pose, MultiBufferSource buf, int packedLight, int packedOverlay) {
         if (geo == null || geo.minecraft_geometry.isEmpty())
             return;
 
         pose.pushPose();
 
-        applyPreTransform(be, partialTicks, pose, buffer, packedLight, packedOverlay);
+        applyPreTransform(be, partialTicks, pose, buf, packedLight, packedOverlay);
 
         pose.translate(0.5, 0, 0.5);
         pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        GeoRenderer.INSTANCE.drawModel(pose, buffer, texture, geo, packedOverlay, packedLight);
+        new GeoRenderer(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, packedOverlay, packedLight)
+                .draw();
 
         pose.popPose();
 
-        renderExtras(be, partialTicks, pose, buffer, packedLight, packedOverlay);
+        renderExtras(be, partialTicks, pose, buf, packedLight, packedOverlay);
     }
 
     protected void applyPreTransform(T be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {

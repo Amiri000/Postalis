@@ -4,20 +4,21 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import sad.ami.postalis.Postalis;
+import sad.ami.postalis.api.system.geo.GeoItemEntityRenderer;
 import sad.ami.postalis.api.system.geo.GeoRenderer;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
-import sad.ami.postalis.api.system.geo.util.ItemEntityRenderer;
 import sad.ami.postalis.init.ShaderRegistry;
 
-public class OrnamentGloveRenderer extends ItemEntityRenderer {
+public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
     private final ResourceLocation model;
     private final ResourceLocation texture;
 
@@ -45,11 +46,12 @@ public class OrnamentGloveRenderer extends ItemEntityRenderer {
         }
 
         var functional = GeoItemRendererBuilder.toBuild()
-                .modifyGlobalRender(this::modifierGlobalRender)
                 .itemDisplayContext(context)
+                .modifyGlobalRender(this::modifierGlobalRender)
                 .build();
 
-        GeoRenderer.INSTANCE.drawItemModel(pose, buf, texture, geo, overlay, light, functional);
+        new GeoRenderer(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light)
+                .drawItemModel(functional);
 
         pose.popPose();
     }
@@ -74,7 +76,7 @@ public class OrnamentGloveRenderer extends ItemEntityRenderer {
             RenderSystem.disableCull();
 
             RenderSystem.setShader(() -> ShaderRegistry.ORNAMENT_SHADER);
-            RenderSystem.setShaderTexture(0,  ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
+            RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
 
             ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Opacity").set((float) (Math.sin(System.currentTimeMillis() / 300.0) * 0.25 + 0.75));
             ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1000.0f);

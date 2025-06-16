@@ -3,15 +3,15 @@ package sad.ami.postalis.api.system.geo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
-import sad.ami.postalis.api.system.geo.util.ItemEntityRenderer;
 
-public class GeoBlockItemRenderer extends ItemEntityRenderer {
+public class GeoBlockItemRenderer extends GeoItemEntityRenderer {
     private final ResourceLocation model;
     private final ResourceLocation texture;
 
@@ -62,7 +62,7 @@ public class GeoBlockItemRenderer extends ItemEntityRenderer {
                 .itemDisplayContext(context)
                 .build();
 
-        GeoRenderer.INSTANCE.drawItemModel(pose, buf, texture, geo,  overlay, light, functional);
+        new GeoRenderer(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light).drawItemModel(functional);
 
         pose.popPose();
     }

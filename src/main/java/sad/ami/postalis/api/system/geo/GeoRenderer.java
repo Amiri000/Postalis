@@ -3,9 +3,7 @@ package sad.ami.postalis.api.system.geo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import lombok.AllArgsConstructor;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.joml.Matrix4f;
@@ -17,43 +15,48 @@ import sad.ami.postalis.api.system.geo.util.VertexPos;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class GeoRenderer implements IClientItemExtensions {
-    public static final GeoRenderer INSTANCE = new GeoRenderer();
+    private PoseStack pose;
+    private VertexConsumer consumer;
+    private GeoModel model;
+    private int overlay;
+    private int packedLight;
 
-    public void drawItemModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, int overlay, int packedLight, GeoItemRendererBuilder builder) {
-        poseStack.pushPose();
+    public void drawItemModel(GeoItemRendererBuilder builder) {
+        pose.pushPose();
 
         if (builder.getItemDisplayContext() == ItemDisplayContext.GROUND) {
             float modifier = 1f / 60f;
 
-            poseStack.scale(modifier, modifier, modifier);
-            poseStack.translate(30, 23, 30);
+            pose.scale(modifier, modifier, modifier);
+            pose.translate(30, 23, 30);
         }
 
-        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, overlay, packedLight, builder);
+        this.drawModel(builder);
 
-        poseStack.popPose();
+        pose.popPose();
     }
 
-    public void drawModel(PoseStack poseStack, MultiBufferSource buffer, ResourceLocation texture, GeoModel model, int overlay, int packedLight) {
-        this.drawModel(poseStack, buffer.getBuffer(RenderType.entityCutout(texture)), model, overlay, packedLight, null);
+    public void draw() {
+        this.drawModel(GeoItemRendererBuilder.INSTANCE);
     }
 
-    public void drawModel(PoseStack poseStack, VertexConsumer consumer, GeoModel model, int overlay, int packedLight, GeoItemRendererBuilder builder) {
+    private void drawModel(GeoItemRendererBuilder builder) {
         GeoModel.Geometry geometry = model.minecraft_geometry.getFirst();
 
         int texWidth = geometry.description.texture_width;
         int texHeight = geometry.description.texture_height;
 
         for (GeoModel.Bone bone : geometry.bones)
-            drawBone(poseStack, consumer, bone, texWidth, texHeight, overlay, packedLight, builder);
+            drawBone(bone, texWidth, texHeight, builder);
     }
 
-    private void drawBone(PoseStack poseStack, VertexConsumer consumer, GeoModel.Bone bone, int texWidth, int texHeight, int overlay, int packedLight, GeoItemRendererBuilder builder) {
-        poseStack.pushPose();
+    private void drawBone(GeoModel.Bone bone, int texWidth, int texHeight, GeoItemRendererBuilder builder) {
+        pose.pushPose();
 
         if (builder != null && builder.getModifyGlobalRender() != null)
-            builder.getModifyGlobalRender().modifyGlobalRender(poseStack, bone);
+            builder.getModifyGlobalRender().modifyGlobalRender(pose, bone);
 
         float pivotX = 0, pivotY = 0, pivotZ = 0;
 
@@ -62,7 +65,7 @@ public class GeoRenderer implements IClientItemExtensions {
             pivotY = bone.pivot.get(1);
             pivotZ = bone.pivot.get(2);
 
-            poseStack.translate(pivotX, pivotY, pivotZ);
+            pose.translate(pivotX, pivotY, pivotZ);
         }
 
         float rx = 0, ry = 0, rz = 0;
@@ -76,25 +79,25 @@ public class GeoRenderer implements IClientItemExtensions {
         float[] rotOut = new float[]{rx, ry, rz};
 
         if (rotOut[2] != 0)
-            poseStack.mulPose(Axis.ZP.rotationDegrees(rotOut[2]));
+            pose.mulPose(Axis.ZP.rotationDegrees(rotOut[2]));
 
         if (rotOut[1] != 0)
-            poseStack.mulPose(Axis.YP.rotationDegrees(-rotOut[1]));
+            pose.mulPose(Axis.YP.rotationDegrees(-rotOut[1]));
 
         if (rotOut[0] != 0)
-            poseStack.mulPose(Axis.XP.rotationDegrees(-rotOut[0]));
+            pose.mulPose(Axis.XP.rotationDegrees(-rotOut[0]));
 
 
-        poseStack.translate(-pivotX, -pivotY, -pivotZ);
+        pose.translate(-pivotX, -pivotY, -pivotZ);
 
         if (bone.cubes != null)
             for (GeoModel.Cube cube : bone.cubes)
-                drawCube(poseStack, consumer, cube, List.of(0f, 0f, 0f), texWidth, texHeight, overlay, packedLight);
+                drawCube(cube, List.of(0f, 0f, 0f), texWidth, texHeight);
 
-        poseStack.popPose();
+        pose.popPose();
     }
 
-    private void drawCube(PoseStack poseStack, VertexConsumer consumer, GeoModel.Cube cube, List<Float> visibleOffset, int texWidth, int texHeight, int overlay, int packedLight) {
+    private void drawCube(GeoModel.Cube cube, List<Float> visibleOffset, int texWidth, int texHeight) {
         float ox = cube.origin.get(0);
         float oy = cube.origin.get(1);
         float oz = cube.origin.get(2);
@@ -121,42 +124,41 @@ public class GeoRenderer implements IClientItemExtensions {
             sx = -sx;
         }
 
-        poseStack.pushPose();
+        pose.pushPose();
 
         if (visibleOffset != null && visibleOffset.size() == 3)
-            poseStack.translate(visibleOffset.get(0), visibleOffset.get(1), visibleOffset.get(2));
+            pose.translate(visibleOffset.get(0), visibleOffset.get(1), visibleOffset.get(2));
 
         if (cube.rotation != null && cube.rotation.size() == 3 && cube.pivot != null && cube.pivot.size() == 3) {
             float pivotX = -cube.pivot.get(0);
             float pivotY = cube.pivot.get(1);
             float pivotZ = cube.pivot.get(2);
 
-            poseStack.translate(pivotX, pivotY, pivotZ);
+            pose.translate(pivotX, pivotY, pivotZ);
 
             float rx = cube.rotation.get(0);
             float ry = cube.rotation.get(1);
             float rz = cube.rotation.get(2);
 
             if (rz != 0)
-                poseStack.mulPose(Axis.ZP.rotationDegrees(rz));
+                pose.mulPose(Axis.ZP.rotationDegrees(rz));
 
             if (ry != 0)
-                poseStack.mulPose(Axis.YP.rotationDegrees(-ry));
+                pose.mulPose(Axis.YP.rotationDegrees(-ry));
 
             if (rx != 0)
-                poseStack.mulPose(Axis.XP.rotationDegrees(-rx));
+                pose.mulPose(Axis.XP.rotationDegrees(-rx));
 
-            poseStack.translate(-pivotX, -pivotY, -pivotZ);
+            pose.translate(-pivotX, -pivotY, -pivotZ);
         }
 
         for (int face = 0; face < 6; face++)
-            drawFace(consumer, poseStack.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face,
-                    FaceNormal.values()[face].getVector(), cube.uv_faces, texWidth, texHeight, overlay, packedLight);
+            drawFace(pose.last().pose(), VertexPos.generateCubeVertices(ox, oy, oz, sx, sy, sz), face, FaceNormal.values()[face].getVector(), cube.uv_faces, texWidth, texHeight);
 
-        poseStack.popPose();
+        pose.popPose();
     }
 
-    private void drawFace(VertexConsumer consumer, Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight, int overlay, int packedLight) {
+    private void drawFace(Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight) {
         int vertexStart = faceIndex * 4;
 
         float[] uv = getUV(faces, faceIndex);

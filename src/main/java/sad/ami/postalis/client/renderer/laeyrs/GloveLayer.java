@@ -79,9 +79,6 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
             if (bone.pivot == null || bone.pivot.size() != 3)
                 return;
 
-            float px = bone.pivot.get(0);
-            float py = bone.pivot.get(1);
-            float pz = bone.pivot.get(2);
             Matrix4f boneMatrix = new Matrix4f(pose.last().pose());
 
             boneMatrix.translate(bone.pivot.get(0), bone.pivot.get(1),  bone.pivot.get(2));

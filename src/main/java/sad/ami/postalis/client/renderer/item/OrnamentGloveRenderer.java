@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -36,13 +35,21 @@ public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
 
         pose.pushPose();
 
-        if (context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
-            var modifier = 1f / 29f;
+        var modifier = 1f / 29f;
 
-            pose.translate(0.65, 0.1, 0.3);
-            pose.scale(modifier, modifier, modifier);
-            pose.mulPose(Axis.XP.rotationDegrees(5));
-            pose.mulPose(Axis.YP.rotationDegrees(-132));
+        switch (context) {
+            case FIRST_PERSON_RIGHT_HAND -> {
+                pose.translate(0.6, 0.1, 0.3);
+                pose.scale(modifier, modifier, modifier);
+                pose.mulPose(Axis.XP.rotationDegrees(5));
+                pose.mulPose(Axis.YP.rotationDegrees(132));
+            }
+            case FIRST_PERSON_LEFT_HAND -> {
+                pose.translate(0.4, 0.1, 0.3);
+                pose.scale(modifier, modifier, modifier);
+                pose.mulPose(Axis.XP.rotationDegrees(5));
+                pose.mulPose(Axis.YP.rotationDegrees(-132));
+            }
         }
 
         var functional = GeoItemRendererBuilder.toBuild()
@@ -50,7 +57,7 @@ public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
                 .modifyGlobalRender(this::modifierGlobalRender)
                 .build();
 
-        new GeoRenderer(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light)
+        new GeoRenderer(pose, buf, texture, geo, overlay, light)
                 .drawItemModel(functional);
 
         pose.popPose();
@@ -67,7 +74,6 @@ public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
 
             boneMatrix.translate(0, 10.25f, 0);
             boneMatrix.rotateX((float) Math.toRadians(-90));
-            boneMatrix.scale(21.5f);
 
             RenderSystem.enableBlend();
             RenderSystem.enableDepthTest();
@@ -83,7 +89,7 @@ public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
 
             var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-            float size = 0.5f;
+            float size = 12f;
 
             consumer.addVertex(boneMatrix, -size, -size, 0).setUv(0, 1);
             consumer.addVertex(boneMatrix, size, -size, 0).setUv(1, 1);

@@ -62,7 +62,7 @@ public class GeoBlockItemRenderer extends GeoItemEntityRenderer {
                 .itemDisplayContext(context)
                 .build();
 
-        new GeoRenderer(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, overlay, light).drawItemModel(functional);
+        new GeoRenderer(pose, buf, texture, geo, overlay, light).drawItemModel(functional);
 
         pose.popPose();
     }

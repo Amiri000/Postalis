@@ -30,7 +30,7 @@ public class GeoBlockRenderer<T extends BlockEntity> implements BlockEntityRende
         pose.translate(0.5, 0, 0.5);
         pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
 
-        new GeoRenderer(pose, buf.getBuffer(RenderType.entityCutout(texture)), geo, packedOverlay, packedLight)
+        new GeoRenderer(pose, buf, texture, geo, packedOverlay, packedLight)
                 .draw();
 
         pose.popPose();

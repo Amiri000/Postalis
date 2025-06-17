@@ -1,18 +1,25 @@
 package sad.ami.postalis.client.renderer.laeyrs;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
+import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoRenderer;
+import sad.ami.postalis.api.system.geo.manage.GeoModel;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
+import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.init.ItemRegistry;
+import sad.ami.postalis.init.ShaderRegistry;
 import sad.ami.postalis.items.OrnamentGlove;
 
 public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
@@ -22,26 +29,89 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buf, int packedLight, AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (!(player.getMainHandItem().getItem() instanceof OrnamentGlove))
+        var rightHandHas = player.getMainHandItem().getItem() instanceof OrnamentGlove;
+        var leftHandHas = player.getOffhandItem().getItem() instanceof OrnamentGlove;
+
+        if (!rightHandHas && !leftHandHas)
             return;
-
-        PlayerModel<AbstractClientPlayer> model = this.getParentModel();
-        ModelPart hand = model.rightArm;
-
-        poseStack.pushPose();
-
-        hand.translateAndRotate(poseStack);
-
-        var modifier = 1f / 29f;
-
-        poseStack.scale(modifier, modifier, modifier);
 
         var assets = new ResourceAssetsSample(ItemRegistry.ORNAMENT_GLOVE.get());
         var geoModel = GeoModelManager.get(assets.getModel());
+        var texture = assets.getTexture();
 
-        new GeoRenderer(poseStack, buf.getBuffer(RenderType.entityCutout(assets.getTexture())), GeoModelManager.get(assets.getModel()), OverlayTexture.NO_OVERLAY, packedLight)
-                .draw();
+        var builder = GeoItemRendererBuilder.toBuild()
+                .modifyGlobalRender(this::modifierGlobalRender)
+                .build();
 
-        poseStack.popPose();
+        float scale = 1f / 29f;
+
+        if (rightHandHas) {
+            poseStack.pushPose();
+
+            this.getParentModel().rightArm.translateAndRotate(poseStack);
+
+            poseStack.scale(scale, scale, scale);
+
+            new GeoRenderer(poseStack, buf, texture, geoModel, OverlayTexture.NO_OVERLAY, packedLight)
+                    .drawItemModel(builder);
+
+            poseStack.popPose();
+        }
+
+        if (leftHandHas) {
+            poseStack.pushPose();
+
+            this.getParentModel().leftArm.translateAndRotate(poseStack);
+
+            poseStack.scale(-scale, scale, scale);
+
+            new GeoRenderer(poseStack, buf, texture, geoModel, OverlayTexture.NO_OVERLAY, packedLight)
+                    .drawItemModel(builder);
+
+            poseStack.popPose();
+        }
+    }
+
+    public void modifierGlobalRender(PoseStack pose, GeoModel.Bone bone) {
+        if (bone.name.equals("bone")) {
+            pose.translate(0F, 4.5f, 0f);
+
+            if (bone.pivot == null || bone.pivot.size() != 3)
+                return;
+
+            float px = bone.pivot.get(0);
+            float py = bone.pivot.get(1);
+            float pz = bone.pivot.get(2);
+            Matrix4f boneMatrix = new Matrix4f(pose.last().pose());
+
+            boneMatrix.translate(bone.pivot.get(0), bone.pivot.get(1),  bone.pivot.get(2));
+            boneMatrix.rotateY((float) Math.toRadians(-90));
+
+            RenderSystem.enableBlend();
+            RenderSystem.enableDepthTest();
+            RenderSystem.depthMask(true);
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableCull();
+
+            RenderSystem.setShader(() -> ShaderRegistry.ORNAMENT_SHADER);
+            RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
+
+            ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Opacity").set((float) (Math.sin(System.currentTimeMillis() / 300.0) * 0.25 + 0.75));
+            ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1000.0f);
+
+            var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+            float size = 12f;
+
+            consumer.addVertex(boneMatrix, -size, -size, 0).setUv(0, 1);
+            consumer.addVertex(boneMatrix, size, -size, 0).setUv(1, 1);
+            consumer.addVertex(boneMatrix, size, size, 0).setUv(1, 0);
+            consumer.addVertex(boneMatrix, -size, size, 0).setUv(0, 0);
+
+            BufferUploader.drawWithShader(consumer.buildOrThrow());
+
+            RenderSystem.enableCull();
+            RenderSystem.disableBlend();
+        }
     }
 }

@@ -4,6 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import lombok.AllArgsConstructor;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.joml.Matrix4f;
@@ -18,7 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class GeoRenderer implements IClientItemExtensions {
     private PoseStack pose;
-    private VertexConsumer consumer;
+    private MultiBufferSource buf;
+    private ResourceLocation texture;
     private GeoModel model;
     private int overlay;
     private int packedLight;
@@ -159,15 +163,17 @@ public class GeoRenderer implements IClientItemExtensions {
     }
 
     private void drawFace(Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight) {
-        int vertexStart = faceIndex * 4;
+        var consumer = buf.getBuffer(RenderType.entityCutout(texture));
+
+        var vertexStart = faceIndex * 4;
 
         float[] uv = getUV(faces, faceIndex);
         float[] size = getUVSize(faces, faceIndex);
 
-        float u0 = uv[0] / texWidth;
-        float v0 = uv[1] / texHeight;
-        float u1 = (uv[0] + size[0]) / texWidth;
-        float v1 = (uv[1] + size[1]) / texHeight;
+        var u0 = uv[0] / texWidth;
+        var v0 = uv[1] / texHeight;
+        var u1 = (uv[0] + size[0]) / texWidth;
+        var v1 = (uv[1] + size[1]) / texHeight;
 
         float[][] uvCords = {{u1, v0}, {u0, v0}, {u0, v1}, {u1, v1}};
 

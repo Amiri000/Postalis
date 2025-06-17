@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -37,36 +38,37 @@ public class Postalis {
 
     @OnlyIn(Dist.CLIENT)
     public static void sssa(AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equippedProgress, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
-        if (Minecraft.getInstance().player.getMainHandItem().getItem() != ItemRegistry.ORNAMENT_GLOVE.get() || hand != InteractionHand.MAIN_HAND)
+        if (player.getItemInHand(hand).getItem() != ItemRegistry.ORNAMENT_GLOVE.get())
             return;
 
         poseStack.pushPose();
+        HumanoidArm humanoidarm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
 
-        var swingRoot = Mth.sqrt(swingProgress);
-
-        var translateX = -0.3F * Mth.sin((float) (swingRoot * Math.PI)) + 0.64000005F;
-        var translateY = 0.4F * Mth.sin((float) (swingRoot * Math.PI * 2.0)) - 0.6F + equippedProgress * -0.6F;
-        var translateZ = -0.4F * Mth.sin((float) (swingProgress * Math.PI)) - 0.71999997F;
-
-        poseStack.translate(translateX, translateY, translateZ);
-        poseStack.mulPose(Axis.YP.rotationDegrees(45.0F));
-
-        var swingSinSq = Mth.sin((float) (swingProgress * swingProgress * Math.PI));
-        var swingSin = Mth.sin((float) (swingRoot * Math.PI));
-
-        poseStack.mulPose(Axis.YP.rotationDegrees(swingSin * 70.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(swingSinSq * -20.0F));
-
-        poseStack.translate(-1.0F, 3.6F, 3.5F);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(120.0F));
+        boolean flag = humanoidarm != HumanoidArm.LEFT;
+        float f = flag ? 1.0F : -1.0F;
+        float f1 = Mth.sqrt(swingProgress);
+        float f2 = -0.3F * Mth.sin(f1 * (float) Math.PI);
+        float f3 = 0.4F * Mth.sin(f1 * (float) (Math.PI * 2));
+        float f4 = -0.4F * Mth.sin(swingProgress * (float) Math.PI);
+        poseStack.translate(f * (f2 + 0.64000005F), f3 + -0.6F + equippedProgress * -0.6F, f4 + -0.71999997F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(f * 45.0F));
+        float f5 = Mth.sin(swingProgress * swingProgress * (float) Math.PI);
+        float f6 = Mth.sin(f1 * (float) Math.PI);
+        poseStack.mulPose(Axis.YP.rotationDegrees(f * f6 * 70.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(f * f5 * -20.0F));
+        poseStack.translate(f * -1.0F, 3.6F, 3.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(f * 120.0F));
         poseStack.mulPose(Axis.XP.rotationDegrees(200.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(-135.0F));
-        poseStack.translate(5.6F, 0.0F, 0.0F);
-
+        poseStack.mulPose(Axis.YP.rotationDegrees(f * -135.0F));
+        poseStack.translate(f * 5.6F, 0.0F, 0.0F);
 
         var renderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
 
-        renderer.renderRightHand(poseStack, buffer, combinedLight, player);
+        if (flag) {
+            renderer.renderRightHand(poseStack, buffer, combinedLight, player);
+        } else {
+            renderer.renderLeftHand(poseStack, buffer, combinedLight, player);
+        }
 
         poseStack.popPose();
     }

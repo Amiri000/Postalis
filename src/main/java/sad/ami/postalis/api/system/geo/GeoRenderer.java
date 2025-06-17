@@ -27,19 +27,8 @@ public class GeoRenderer implements IClientItemExtensions {
     private int overlay;
     private int packedLight;
 
-    public void drawItemModel(GeoItemRendererBuilder builder) {
-        pose.pushPose();
-
-        if (builder.getItemDisplayContext() == ItemDisplayContext.GROUND) {
-            float modifier = 1f / 60f;
-
-            pose.scale(modifier, modifier, modifier);
-            pose.translate(30, 23, 30);
-        }
-
+    public void draw(GeoItemRendererBuilder builder) {
         this.drawModel(builder);
-
-        pose.popPose();
     }
 
     public void draw() {

@@ -27,7 +27,7 @@ public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
+    public void renderItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
         var geo = GeoModelManager.get(model);
 
         if (context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
@@ -53,12 +53,11 @@ public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
         }
 
         var functional = GeoItemRendererBuilder.toBuild()
-                .itemDisplayContext(context)
                 .modifyGlobalRender(this::modifierGlobalRender)
                 .build();
 
         new GeoRenderer(pose, buf, texture, geo, overlay, light)
-                .drawItemModel(functional);
+                .draw(functional);
 
         pose.popPose();
     }

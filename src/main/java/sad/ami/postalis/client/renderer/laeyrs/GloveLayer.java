@@ -53,7 +53,7 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
             poseStack.scale(scale, scale, scale);
 
             new GeoRenderer(poseStack, buf, texture, geoModel, OverlayTexture.NO_OVERLAY, packedLight)
-                    .drawItemModel(builder);
+                    .draw(builder);
 
             poseStack.popPose();
         }
@@ -66,7 +66,7 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
             poseStack.scale(-scale, scale, scale);
 
             new GeoRenderer(poseStack, buf, texture, geoModel, OverlayTexture.NO_OVERLAY, packedLight)
-                    .drawItemModel(builder);
+                    .draw(builder);
 
             poseStack.popPose();
         }

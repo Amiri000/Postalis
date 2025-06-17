@@ -10,7 +10,6 @@ import sad.ami.postalis.api.system.geo.funcial.IBoneFunctional;
 public class GeoItemRendererBuilder {
     public static final GeoItemRendererBuilder INSTANCE = GeoItemRendererBuilder.toBuild().build();
 
-    private ItemDisplayContext itemDisplayContext;
     private IBoneFunctional modifyGlobalRender;
     private boolean hasAnimations;
 }

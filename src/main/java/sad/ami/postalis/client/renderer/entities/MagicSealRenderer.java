@@ -2,6 +2,7 @@ package sad.ami.postalis.client.renderer.entities;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,8 +11,8 @@ import net.minecraft.world.entity.Entity;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.init.ShaderRegistry;
 
-public class OrnamentRenderer<T extends Entity> extends EntityRenderer<T> {
-    public OrnamentRenderer(EntityRendererProvider.Context context) {
+public class MagicSealRenderer<T extends Entity> extends EntityRenderer<T> {
+    public MagicSealRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -23,8 +24,12 @@ public class OrnamentRenderer<T extends Entity> extends EntityRenderer<T> {
 
         poseStack.pushPose();
 
-        poseStack.translate(0, 0.25, 0);
-        poseStack.scale(2f, 2f, 2f);
+        var scaleModifier = 2.5f;
+
+        poseStack.translate(0, entity.getBbHeight() / 2, 0);
+        poseStack.scale(scaleModifier, scaleModifier, scaleModifier);
+
+        poseStack.mulPose(Axis.XP.rotationDegrees(90));
 
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
@@ -36,7 +41,7 @@ public class OrnamentRenderer<T extends Entity> extends EntityRenderer<T> {
         RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
 
         ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Opacity").set((float) (Math.sin(System.currentTimeMillis() / 300.0) * 0.25 + 0.75));
-        ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1000.0f);
+        ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1500.0f);
 
         var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 

@@ -17,11 +17,11 @@ import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.init.ShaderRegistry;
 
-public class OrnamentGloveRenderer extends GeoItemEntityRenderer {
+public class BewitchedGauntletRenderer extends GeoItemEntityRenderer {
     private final ResourceLocation model;
     private final ResourceLocation texture;
 
-    public OrnamentGloveRenderer(ResourceAssetsSample sample) {
+    public BewitchedGauntletRenderer(ResourceAssetsSample sample) {
         this.model = sample.getModel();
         this.texture = sample.getTexture();
     }

@@ -3,7 +3,6 @@ package sad.ami.postalis.init;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -12,14 +11,13 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoBlockItemRenderer;
-import sad.ami.postalis.api.system.geo.animations.GeoAnimationManager;
 import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
-import sad.ami.postalis.client.renderer.entities.OrnamentRenderer;
+import sad.ami.postalis.client.renderer.entities.MagicSealRenderer;
 import sad.ami.postalis.client.renderer.laeyrs.GloveLayer;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class RemoteRegistry {
     public static void entityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityRegistry.DESTRUCTIVE_TORNADO.get(), EmptyRenderer::new);
         event.registerEntityRenderer(EntityRegistry.EMBEDDED_SWORD.get(), EmbeddedSwordRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ORNAMENT.get(), OrnamentRenderer::new);
+        event.registerEntityRenderer(EntityRegistry.MAGIC_SEAL.get(), MagicSealRenderer::new);
 
         event.registerBlockEntityRenderer(BlockEntitiesRegistry.HEAVENS_FORGE.get(), c -> new HeavensForgeRenderer());
     }
@@ -70,8 +68,8 @@ public class RemoteRegistry {
     public static void onClientSetup(FMLClientSetupEvent event) {
         var resourceManager = Minecraft.getInstance().getResourceManager();
 
-        var animationPath = ResourceLocation.fromNamespaceAndPath("postalis", "geo/animations/heavens_forge/unknown.animation.json");
-        GeoAnimationManager.preload(animationPath);
+//        var animationPath = ResourceLocation.fromNamespaceAndPath("postalis", "geo/animations/heavens_forge/unknown.animation.json");
+//        GeoAnimationManager.preload(animationPath);
 
         for (var folder : List.of("geo/models/block", "geo/models/item"))
             for (var loc : resourceManager.listResources(folder, path -> path.getPath().endsWith(".geo.json")).keySet())

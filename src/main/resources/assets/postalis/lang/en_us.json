@@ -12,9 +12,9 @@
   "entity.postalis.destructive_tornado": "Destructive Tornado",
 
   "item.postalis.wind_breaker": "Wind Breaker",
-  "item.postalis.ornament_glove": "Ornament Glove",
 
   "block.postalis.heavens_forge": "Heavens Forge",
 
-  "tooltip.postalis.ornament_glove": "An elegant glove capable of inscribing unique ornaments for weapons attuned to the elements."
+  "tooltip.postalis.bewitched_gauntlet": "An elegant glove capable of inscribing unique ornaments for weapons attuned to the elements.",
+  "item.postalis.bewitched_gauntlet": "Bewitched Gauntlet"
 }

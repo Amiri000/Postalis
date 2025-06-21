@@ -87,22 +87,4 @@ public class ItemInHandRendererMixin {
 
         poseStack.popPose();
     }
-
-    @Inject(method = "renderItem", at = @At("RETURN"))
-    private void onRenderItemPost(LivingEntity entity, ItemStack stack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed, CallbackInfo ci) {
-        if (!(stack.getItem() instanceof BaseSwordItem baseSword))
-            return;
-
-        var mc = Minecraft.getInstance();
-        var player = mc.player;
-
-        if (mc.isPaused() || player == null)
-            return;
-
-        var localPos = new Vector4f(0, 0, 0, 1).mul(poseStack.last().pose());
-        var camPos = mc.gameRenderer.getMainCamera().getPosition();
-
-        ClientPlayerHandlers.handPos = new Vec3(camPos.x + localPos.x(), camPos.y + localPos.y(), camPos.z + localPos.z());
-    }
-
 }

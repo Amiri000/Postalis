@@ -103,52 +103,6 @@ public class ClientPlayerHandlers {
         }
     }
 
-    private static Matrix4f savedRot;
-    public static Vec3 handPos;
-    public static RendererItemInHandEvent ev;
-
-    @SubscribeEvent
-    public static void onRenderWorld(RenderLevelStageEvent event) {
-//        if (mc.level == null || mc.player == null || event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || savedRot == null || handPos == null)
-//            return;
-//
-//        var poseStack = event.getPoseStack();
-//        var camPos = event.getCamera().getPosition();
-//
-//        poseStack.pushPose();
-//
-//        poseStack.translate(handPos.x - camPos.x, handPos.y - camPos.y, handPos.z - camPos.z);
-//        poseStack.mulPose(savedRot);
-//
-//        if (mc.options.getCameraType() == CameraType.FIRST_PERSON) {
-//            poseStack.translate(-0.22F, 0.2F, 0.4F);
-//            poseStack.scale(0.5F, 0.5F, 0.5F);
-//        }
-//
-//        ItemStack stack = new ItemStack(ItemRegistry.WIND_BREAKER.get());
-//
-//        mc.getItemRenderer().render(stack, ev.getContext(), false, poseStack, ev.getBuffer(), ev.getLight(), OverlayTexture.NO_OVERLAY, mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0));
-//
-//        poseStack.popPose();
-    }
-
-    @SubscribeEvent
-    public static void onRenderItem(RendererItemInHandEvent event) {
-        var stack = event.getStack();
-        var context = event.getContext();
-
-        if (!(stack.getItem() instanceof IBranchableItem usageItem) || context == ItemDisplayContext.GUI
-                || context == ItemDisplayContext.GROUND || context == ItemDisplayContext.FIXED || context == ItemDisplayContext.HEAD)
-            return;
-
-        ev = event;
-        Matrix4f rot = new Matrix4f(event.getPoseStack().last().pose());
-        rot.setTranslation(0, 0, 0);
-
-        usageItem.onRenderUsage(event.getRenderer(), event.getPlayer(), event.getStack(), event.getContext(), event.getPoseStack(), event.getBuffer(), event.getLight());
-        savedRot = rot;
-    }
-
     @SubscribeEvent
     public static void onKeyPress(InputEvent.InteractionKeyMappingTriggered event) {
         if (Minecraft.getInstance().player != null && ClientCastAnimation.getChargeTicks(Minecraft.getInstance().player) != 0) {

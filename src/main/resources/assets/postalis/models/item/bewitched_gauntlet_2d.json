@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "postalis:item/ornament_glove_2d"
+    "layer0": "postalis:item/bewitched_gauntlet_2d"
   }
 }

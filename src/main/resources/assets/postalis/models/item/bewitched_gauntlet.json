@@ -9,10 +9,10 @@
       "parent": "builtin/entity"
     },
     "gui": {
-      "parent": "postalis:item/ornament_glove_2d"
+      "parent": "postalis:item/bewitched_gauntlet_2d"
     },
     "fixed": {
-      "parent": "postalis:item/ornament_glove_2d"
+      "parent": "postalis:item/bewitched_gauntlet_2d"
     }
   }
 }

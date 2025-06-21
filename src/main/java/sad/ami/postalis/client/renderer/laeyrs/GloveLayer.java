@@ -2,9 +2,7 @@ package sad.ami.postalis.client.renderer.laeyrs;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Axis;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -20,7 +18,7 @@ import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.init.ItemRegistry;
 import sad.ami.postalis.init.ShaderRegistry;
-import sad.ami.postalis.items.OrnamentGlove;
+import sad.ami.postalis.items.BewitchedGauntletItem;
 
 public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
     public GloveLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer) {
@@ -29,8 +27,8 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buf, int packedLight, AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        var rightHandHas = player.getMainHandItem().getItem() instanceof OrnamentGlove;
-        var leftHandHas = player.getOffhandItem().getItem() instanceof OrnamentGlove;
+        var rightHandHas = player.getMainHandItem().getItem() instanceof BewitchedGauntletItem;
+        var leftHandHas = player.getOffhandItem().getItem() instanceof BewitchedGauntletItem;
 
         if (!rightHandHas && !leftHandHas)
             return;

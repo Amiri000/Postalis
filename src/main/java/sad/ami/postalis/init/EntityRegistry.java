@@ -8,7 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.entities.DestructiveTornadoEntity;
 import sad.ami.postalis.entities.EmbeddedSwordEntity;
-import sad.ami.postalis.entities.OrnamentEntity;
+import sad.ami.postalis.entities.MagicSealEntity;
 
 public class EntityRegistry {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Postalis.MODID);
@@ -21,7 +21,7 @@ public class EntityRegistry {
             () -> EntityType.Builder.<EmbeddedSwordEntity>of((spawnEntityType, level) -> new EmbeddedSwordEntity(level), MobCategory.MISC)
                     .sized(0.4F, 1.2F).build("embedded_sword"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<OrnamentEntity>> ORNAMENT = ENTITIES.register("ornament",
-            () -> EntityType.Builder.<OrnamentEntity>of((spawnEntityType, level) -> new OrnamentEntity(level), MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<MagicSealEntity>> MAGIC_SEAL = ENTITIES.register("magic_seal",
+            () -> EntityType.Builder.<MagicSealEntity>of((spawnEntityType, level) -> new MagicSealEntity(level), MobCategory.MISC)
                     .sized(0.5F, 0.5F).build("ornament"));
 }

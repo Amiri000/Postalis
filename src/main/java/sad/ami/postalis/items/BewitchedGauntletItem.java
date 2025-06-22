@@ -1,13 +1,11 @@
 package sad.ami.postalis.items;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -24,15 +22,14 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import sad.ami.postalis.api.system.geo.manage.IGeoRendererManager;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.client.renderer.item.BewitchedGauntletRenderer;
+import sad.ami.postalis.entities.MagicSealEntity;
 import sad.ami.postalis.init.PDataComponentRegistry;
-import sad.ami.postalis.networking.NetworkHandler;
-import sad.ami.postalis.networking.packets.CreateSealEntityPacket;
 
 import java.util.List;
 import java.util.UUID;
 
 public class BewitchedGauntletItem extends Item implements IGeoRendererManager {
-    private static final int useDurationTick = 80;
+    private static final int useDurationTick = 20;
     private BlockPos lastTargetedBlock = null;
     private int holdTicks = 0;
 
@@ -40,10 +37,9 @@ public class BewitchedGauntletItem extends Item implements IGeoRendererManager {
         super(new Properties().stacksTo(1));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
-        if (!(livingEntity instanceof LocalPlayer player) || !level.isClientSide())
+        if (!(livingEntity instanceof Player player) || level.isClientSide())
             return;
 
         var reach = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
@@ -65,7 +61,13 @@ public class BewitchedGauntletItem extends Item implements IGeoRendererManager {
             lastTargetedBlock = pos;
 
         if (holdTicks >= useDurationTick) {
-            NetworkHandler.sendToServer(new CreateSealEntityPacket(stack, pos.getCenter().add(0, 0.35, 0)));
+            var magicSeal = new MagicSealEntity(player.level());
+
+            magicSeal.setPos(pos.getCenter().add(0, 0.35, 0));
+
+            level.addFreshEntity(magicSeal);
+
+            saveUUIDSeal(stack, magicSeal.getUUID());
 
             player.stopUsingItem();
         }
@@ -76,11 +78,28 @@ public class BewitchedGauntletItem extends Item implements IGeoRendererManager {
         var level = context.getLevel();
         var player = context.getPlayer();
 
-        if (!level.isClientSide() && getUUIDEntity(context.getItemInHand()) == null) {
+        if (player != null && !level.isClientSide() && !hasSeal(context.getItemInHand()))
             player.startUsingItem(context.getHand());
-        }
 
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        var sealUUID = getSealUUID(stack);
+
+        if (level.isClientSide())
+            return;
+
+        if (((ServerLevel) level).getEntity(sealUUID) == null) {
+            setSealPresence(stack, false);
+            saveUUIDSeal(stack, null);
+        } else {
+            if (hasSeal(stack))
+                return;
+
+            setSealPresence(stack, true);
+        }
     }
 
     @Override
@@ -94,11 +113,19 @@ public class BewitchedGauntletItem extends Item implements IGeoRendererManager {
         holdTicks = 0;
     }
 
+    public void setSealPresence(ItemStack stack, boolean flag) {
+        stack.set(PDataComponentRegistry.BOOLEAN, flag);
+    }
+
+    public boolean hasSeal(ItemStack stack) {
+        return stack.getOrDefault(PDataComponentRegistry.BOOLEAN, false);
+    }
+
     public void saveUUIDSeal(ItemStack stack, UUID uuid) {
         stack.set(PDataComponentRegistry.UUID, uuid);
     }
 
-    public UUID getUUIDEntity(ItemStack stack) {
+    public UUID getSealUUID(ItemStack stack) {
         return stack.get(PDataComponentRegistry.UUID);
     }
 

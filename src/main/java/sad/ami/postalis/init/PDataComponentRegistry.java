@@ -20,6 +20,9 @@ public class PDataComponentRegistry {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> STRING = DATA_COMPONENTS.register("string",
             () -> DataComponentType.<String>builder().persistent(Codec.STRING).build());
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> BOOLEAN = DATA_COMPONENTS.register("boolean",
+            () -> DataComponentType.<Boolean>builder().persistent(Codec.BOOL).build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> UUID = DATA_COMPONENTS.register("uuid",
-            () -> DataComponentType.<java.util.UUID>builder().persistent(UUIDUtil.CODEC).build());
+            () -> DataComponentType.<UUID>builder().persistent(UUIDUtil.CODEC).build());
 }

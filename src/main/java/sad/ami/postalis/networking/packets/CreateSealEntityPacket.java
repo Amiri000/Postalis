@@ -9,6 +9,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.entities.MagicSealEntity;
+import sad.ami.postalis.init.PDataComponentRegistry;
 import sad.ami.postalis.items.BewitchedGauntletItem;
 import sad.ami.postalis.networking.StreamCodecs;
 
@@ -23,10 +24,11 @@ public record CreateSealEntityPacket(ItemStack stack, Vec3 pos) implements Custo
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (!(stack.getItem() instanceof BewitchedGauntletItem gauntletItem))
+            var player = ctx.player();
+
+            if (!(player.getUseItem().getItem() instanceof BewitchedGauntletItem gauntletItem))
                 return;
 
-            var player = ctx.player();
             var serverLevel = player.getCommandSenderWorld();
 
             var magicSeal = new MagicSealEntity(player.level());

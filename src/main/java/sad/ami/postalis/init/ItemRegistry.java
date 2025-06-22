@@ -14,7 +14,7 @@ import sad.ami.postalis.items.base.BaseSwordItem;
 public class ItemRegistry {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Postalis.MODID);
 
-    public static final DeferredHolder<Item, Item> ORNAMENT_GLOVE = ITEMS.register("bewitched_gauntlet", BewitchedGauntletItem::new);
+    public static final DeferredHolder<Item, Item> BEWITCHED_GAUNTLET = ITEMS.register("bewitched_gauntlet", BewitchedGauntletItem::new);
 
     public static final DeferredHolder<Item, BaseSwordItem> WIND_BREAKER = ITEMS.register("wind_breaker", WindBreakerItem::new);
 

@@ -3,8 +3,10 @@ package sad.ami.postalis.client.renderer.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
@@ -16,6 +18,7 @@ import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.init.ShaderRegistry;
+import sad.ami.postalis.items.BewitchedGauntletItem;
 
 public class BewitchedGauntletRenderer extends GeoItemEntityRenderer {
     private final ResourceLocation model;
@@ -63,42 +66,54 @@ public class BewitchedGauntletRenderer extends GeoItemEntityRenderer {
     }
 
     public void modifierGlobalRender(PoseStack pose, GeoModel.Bone bone) {
-        if (bone.name.equals("bone")) {
-            pose.translate(0F, 4.5f, 0f);
+        var player = Minecraft.getInstance().player;
 
-            if (bone.pivot == null || bone.pivot.size() != 3)
-                return;
+        if (player == null)
+            return;
 
-            Matrix4f boneMatrix = new Matrix4f(pose.last().pose());
+        var mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+        var offHand = player.getItemInHand(InteractionHand.OFF_HAND);
 
-            boneMatrix.translate(0, 10.25f, 0);
-            boneMatrix.rotateX((float) Math.toRadians(-90));
+        var hasValidGauntletInMain = mainHand.getItem() instanceof BewitchedGauntletItem gauntletMain && !gauntletMain.hasSeal(mainHand);
+        var hasValidGauntletInOff = offHand.getItem() instanceof BewitchedGauntletItem gauntletOff && !gauntletOff.hasSeal(offHand);
 
-            RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
-            RenderSystem.depthMask(true);
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.disableCull();
+        if ((!hasValidGauntletInMain && !hasValidGauntletInOff) || !bone.name.equalsIgnoreCase("bone"))
+            return;
 
-            RenderSystem.setShader(() -> ShaderRegistry.ORNAMENT_SHADER);
-            RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
+        pose.translate(0F, 4.5f, 0f);
 
-            ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Opacity").set((float) (Math.sin(System.currentTimeMillis() / 300.0) * 0.25 + 0.75));
-            ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1000.0f);
+        if (bone.pivot == null || bone.pivot.size() != 3)
+            return;
 
-            var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        Matrix4f boneMatrix = new Matrix4f(pose.last().pose());
 
-            float size = 12f;
+        boneMatrix.translate(0, 10.25f, 0);
+        boneMatrix.rotateX((float) Math.toRadians(-90));
 
-            consumer.addVertex(boneMatrix, -size, -size, 0).setUv(0, 1);
-            consumer.addVertex(boneMatrix, size, -size, 0).setUv(1, 1);
-            consumer.addVertex(boneMatrix, size, size, 0).setUv(1, 0);
-            consumer.addVertex(boneMatrix, -size, size, 0).setUv(0, 0);
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
 
-            BufferUploader.drawWithShader(consumer.buildOrThrow());
+        RenderSystem.setShader(() -> ShaderRegistry.ORNAMENT_SHADER);
+        RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(Postalis.MODID, "textures/entities/ornament.png"));
 
-            RenderSystem.enableCull();
-            RenderSystem.disableBlend();
-        }
+        ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Opacity").set((float) (Math.sin(System.currentTimeMillis() / 300.0) * 0.25 + 0.75));
+        ShaderRegistry.ORNAMENT_SHADER.safeGetUniform("Time").set((System.currentTimeMillis() % 100000L) / 1000.0f);
+
+        var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+        float size = 12f;
+
+        consumer.addVertex(boneMatrix, -size, -size, 0).setUv(0, 1);
+        consumer.addVertex(boneMatrix, size, -size, 0).setUv(1, 1);
+        consumer.addVertex(boneMatrix, size, size, 0).setUv(1, 0);
+        consumer.addVertex(boneMatrix, -size, size, 0).setUv(0, 0);
+
+        BufferUploader.drawWithShader(consumer.buildOrThrow());
+
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
     }
 }

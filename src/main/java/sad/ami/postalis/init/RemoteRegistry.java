@@ -18,7 +18,7 @@ import sad.ami.postalis.client.renderer.block_entity.HeavensForgeRenderer;
 import sad.ami.postalis.client.renderer.entities.EmbeddedSwordRenderer;
 import sad.ami.postalis.client.renderer.entities.EmptyRenderer;
 import sad.ami.postalis.client.renderer.entities.MagicSealRenderer;
-import sad.ami.postalis.client.renderer.laeyrs.GloveLayer;
+import sad.ami.postalis.client.renderer.laeyrs.BewitchedGauntletLayer;
 
 import java.util.List;
 
@@ -38,13 +38,13 @@ public class RemoteRegistry {
         PlayerRenderer defaultRenderer = event.getSkin(PlayerSkin.Model.WIDE);
 
         if (defaultRenderer != null) {
-            defaultRenderer.addLayer(new GloveLayer(defaultRenderer));
+            defaultRenderer.addLayer(new BewitchedGauntletLayer(defaultRenderer));
         }
 
         PlayerRenderer slimRenderer = event.getSkin(PlayerSkin.Model.SLIM);
 
         if (slimRenderer != null) {
-            slimRenderer.addLayer(new GloveLayer(slimRenderer));
+            slimRenderer.addLayer(new BewitchedGauntletLayer(slimRenderer));
         }
     }
 

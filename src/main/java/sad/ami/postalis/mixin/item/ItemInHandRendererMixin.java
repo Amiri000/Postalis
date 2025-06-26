@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.event.RendererItemInHandEvent;
 import sad.ami.postalis.init.ItemRegistry;
 import sad.ami.postalis.items.base.BaseSwordItem;
@@ -48,40 +49,6 @@ public class ItemInHandRendererMixin {
 
     @Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 0, shift = At.Shift.AFTER))
     private void postalis$afterIsEmptyCheck(AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equippedProgress, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
-        if (player.getItemInHand(hand).getItem() != ItemRegistry.BEWITCHED_GAUNTLET.get())
-            return;
-
-        poseStack.pushPose();
-
-        var arm = (hand == InteractionHand.MAIN_HAND) ? player.getMainArm() : player.getMainArm().getOpposite();
-        var isRightArm = arm != HumanoidArm.LEFT;
-        var armSide = isRightArm ? 1.0F : -1.0F;
-
-        var swingSqrt = Mth.sqrt(swingProgress);
-        var swingSin1 = Mth.sin(swingSqrt * (float) Math.PI);
-        var swingSin2 = Mth.sin(swingSqrt * (float) Math.PI * 2);
-        var swingSinFull = Mth.sin(swingProgress * (float) Math.PI);
-        var swingSinPow = Mth.sin(swingProgress * swingProgress * (float) Math.PI);
-
-        poseStack.translate(armSide * (-0.3F * swingSin1 + 0.64F), -0.6F + equippedProgress * -0.6F + 0.4F * swingSin2, -0.72F + -0.4F * swingSinFull);
-
-        poseStack.mulPose(Axis.YP.rotationDegrees(armSide * 45.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(armSide * swingSin1 * 70.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(armSide * swingSinPow * -20.0F));
-
-        poseStack.translate(armSide * -1.0F, 3.6F, 3.5F);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(armSide * 120.0F));
-        poseStack.mulPose(Axis.XP.rotationDegrees(200.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(armSide * -135.0F));
-        poseStack.translate(armSide * 5.6F, 0.0F, 0.0F);
-
-        var renderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
-
-        if (isRightArm)
-            renderer.renderRightHand(poseStack, buffer, combinedLight, player);
-        else
-            renderer.renderLeftHand(poseStack, buffer, combinedLight, player);
-
-        poseStack.popPose();
+        Postalis.ss(player, partialTicks, pitch, hand, swingProgress, stack, equippedProgress, poseStack, buffer, combinedLight, ci);
     }
 }

@@ -2,6 +2,7 @@ package sad.ami.postalis.client.renderer.laeyrs;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -15,15 +16,14 @@ import org.joml.Matrix4f;
 import sad.ami.postalis.Postalis;
 import sad.ami.postalis.api.system.geo.GeoRenderer;
 import sad.ami.postalis.api.system.geo.manage.GeoModel;
-import sad.ami.postalis.api.system.geo.manage.GeoModelManager;
 import sad.ami.postalis.api.system.geo.samples.GeoItemRendererBuilder;
 import sad.ami.postalis.api.system.geo.samples.ResourceAssetsSample;
 import sad.ami.postalis.init.ItemRegistry;
 import sad.ami.postalis.init.ShaderRegistry;
 import sad.ami.postalis.items.BewitchedGauntletItem;
 
-public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
-    public GloveLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer) {
+public class BewitchedGauntletLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
+    public BewitchedGauntletLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderer) {
         super(renderer);
     }
 
@@ -36,23 +36,25 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
             return;
 
         var assets = new ResourceAssetsSample(ItemRegistry.BEWITCHED_GAUNTLET.get());
-        var geoModel = GeoModelManager.get(assets.getModel());
-        var texture = assets.getTexture();
-
         var builder = GeoItemRendererBuilder.toBuild()
                 .modifyGlobalRender(this::modifierGlobalRender)
                 .build();
 
-        float scale = 1f / 29f;
+        float scale = 1f / 17.5f;
 
         if (rightHandHas) {
             poseStack.pushPose();
 
             this.getParentModel().rightArm.translateAndRotate(poseStack);
-
             poseStack.scale(scale, scale, scale);
 
-            new GeoRenderer(poseStack, buf, texture, geoModel, OverlayTexture.NO_OVERLAY, packedLight)
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            poseStack.mulPose(Axis.XN.rotationDegrees(181.5F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(3));
+
+            poseStack.translate(0, -12, 0);
+
+            new GeoRenderer(poseStack, buf, assets.getTexture(), assets.getGeoModel(), OverlayTexture.NO_OVERLAY, packedLight)
                     .draw(builder);
 
             poseStack.popPose();
@@ -65,7 +67,13 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
 
             poseStack.scale(-scale, scale, scale);
 
-            new GeoRenderer(poseStack, buf, texture, geoModel, OverlayTexture.NO_OVERLAY, packedLight)
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            poseStack.mulPose(Axis.XN.rotationDegrees(181.5F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(3));
+
+            poseStack.translate(0, -12, 0);
+
+            new GeoRenderer(poseStack, buf, assets.getTexture(), assets.getGeoModel(), OverlayTexture.NO_OVERLAY, packedLight)
                     .draw(builder);
 
             poseStack.popPose();
@@ -84,12 +92,7 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
         var hasValidGauntletInMain = mainHand.getItem() instanceof BewitchedGauntletItem gauntletMain && !gauntletMain.hasSeal(mainHand);
         var hasValidGauntletInOff = offHand.getItem() instanceof BewitchedGauntletItem gauntletOff && !gauntletOff.hasSeal(offHand);
 
-        if ((!hasValidGauntletInMain && !hasValidGauntletInOff) || !bone.name.equalsIgnoreCase("bone"))
-            return;
-
-        pose.translate(0F, 4.5f, 0f);
-
-        if (bone.pivot == null || bone.pivot.size() != 3)
+        if ((!hasValidGauntletInMain && !hasValidGauntletInOff) || !bone.name.equalsIgnoreCase("seal") || bone.pivot == null || bone.pivot.size() != 3)
             return;
 
         var boneMatrix = new Matrix4f(pose.last().pose());
@@ -111,7 +114,7 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
 
         var consumer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-        float size = 12f;
+        float size = 6;
 
         consumer.addVertex(boneMatrix, -size, -size, 0).setUv(0, 1);
         consumer.addVertex(boneMatrix, size, -size, 0).setUv(1, 1);
@@ -122,6 +125,5 @@ public class GloveLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
 
         RenderSystem.enableCull();
         RenderSystem.disableBlend();
-
     }
 }

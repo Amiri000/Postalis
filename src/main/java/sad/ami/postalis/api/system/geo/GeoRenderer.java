@@ -152,7 +152,7 @@ public class GeoRenderer implements IClientItemExtensions {
     }
 
     private void drawFace(Matrix4f pose, List<VertexPos> positions, int faceIndex, float[] normal, GeoModel.FaceUV faces, int texWidth, int texHeight) {
-        var consumer = buf.getBuffer(RenderType.entityCutout(texture));
+        var consumer = buf.getBuffer(RenderType.entityCutoutNoCull(texture));
 
         var vertexStart = faceIndex * 4;
 
